@@ -29,7 +29,7 @@ const sidebarCollapsed = ref(false)
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background: var(--qweb-neutral-2);
+  background: var(--q-color-canvas);
 }
 
 .dashboard-layout__main {
@@ -46,7 +46,7 @@ const sidebarCollapsed = ref(false)
 
 .dashboard-layout__content {
   flex: 1;
-  padding: var(--qweb-spacing-lg);
+  padding: var(--q-space-24);
   overflow-y: auto;
 }
 

@@ -214,49 +214,49 @@ async function handleChangePassword() {
 
 <style scoped>
 .page-container {
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .page-title {
-  margin: 0 0 var(--qweb-spacing-lg);
+  margin: 0 0 var(--q-space-24);
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .grid-layout {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-lg);
+  gap: var(--q-space-24);
   max-width: 600px;
 }
 
 .profile-card {
-  padding: var(--qweb-spacing-xl);
-  border-radius: var(--qweb-radius-lg);
-  background: var(--qweb-surface);
-  box-shadow: var(--qweb-shadow-sm);
+  padding: var(--q-space-32);
+  border-radius: var(--q-radius-lg);
+  background: var(--q-color-surface);
+  box-shadow: var(--q-shadow-sm);
 }
 
 .ident-card {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--qweb-spacing-lg);
+  gap: var(--q-space-24);
 }
 
 h3 {
   margin-top: 0;
-  margin-bottom: var(--qweb-spacing-lg);
+  margin-bottom: var(--q-space-24);
   font-size: 1.25rem;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .profile-avatar {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: var(--qweb-primary);
+  background: var(--q-color-brand);
   color: #fff;
   display: flex;
   align-items: center;
@@ -269,22 +269,22 @@ h3 {
 .profile-info h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .profile-info p {
-  margin: var(--qweb-spacing-xs) 0 0;
-  color: var(--qweb-text-secondary);
+  margin: var(--q-space-8) 0 0;
+  color: var(--q-color-text-secondary);
   font-size: 0.875rem;
 }
 
 .profile-group {
   display: inline-block;
-  margin-top: var(--qweb-spacing-sm);
+  margin-top: var(--q-space-12);
   padding: 2px 10px;
-  border-radius: var(--qweb-radius-full);
-  background: var(--qweb-primary-light, rgba(14, 154, 167, 0.1));
-  color: var(--qweb-primary);
+  border-radius: var(--q-radius-full);
+  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
+  color: var(--q-color-brand);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -292,29 +292,29 @@ h3 {
 .fluent-form {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-lg);
+  gap: var(--q-space-24);
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-xs);
+  gap: var(--q-space-8);
 }
 
 .form-field label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 
 .alert {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-md);
-  border-radius: var(--qweb-radius-sm);
+  padding: var(--q-space-12) var(--q-space-16);
+  border-radius: var(--q-radius-sm);
   font-size: 0.875rem;
 }
 .alert-error {
-  background: var(--qweb-danger-light, #fde7e7);
-  color: var(--qweb-danger, #d32f2f);
+  background: var(--q-color-error-light, #fde7e7);
+  color: var(--q-color-error, #d32f2f);
 }
 .alert-success {
   background: rgba(16, 124, 16, 0.1);

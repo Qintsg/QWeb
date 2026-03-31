@@ -102,56 +102,56 @@ async function handleLogin() {
 }
 
 .login-card {
-  padding: var(--qweb-spacing-xl);
-  border-radius: var(--qweb-radius-lg);
-  box-shadow: var(--qweb-shadow-md);
-  background: var(--qweb-surface);
+  padding: var(--q-space-32);
+  border-radius: var(--q-radius-lg);
+  box-shadow: var(--q-shadow-md);
+  background: var(--q-color-surface);
 }
 
 .login-title {
-  margin: 0 0 var(--qweb-spacing-xl);
+  margin: 0 0 var(--q-space-32);
   font-size: 1.75rem;
   font-weight: 600;
   text-align: center;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-lg);
+  gap: var(--q-space-24);
 }
 
 .login-error {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-md);
-  border-radius: var(--qweb-radius-sm);
-  background: var(--qweb-danger-light, #fde7e7);
-  color: var(--qweb-danger, #d32f2f);
+  padding: var(--q-space-12) var(--q-space-16);
+  border-radius: var(--q-radius-sm);
+  background: var(--q-color-error-light, #fde7e7);
+  color: var(--q-color-error, #d32f2f);
   font-size: 0.875rem;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-xs);
+  gap: var(--q-space-8);
 }
 
 .form-field label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 
 .login-btn {
   width: 100%;
-  margin-top: var(--qweb-spacing-sm);
+  margin-top: var(--q-space-12);
 }
 
 .login-link {
   text-align: center;
   font-size: 0.875rem;
-  margin-top: var(--qweb-spacing-md);
-  color: var(--qweb-text-secondary);
+  margin-top: var(--q-space-16);
+  color: var(--q-color-text-secondary);
 }
 
 .login-link a {

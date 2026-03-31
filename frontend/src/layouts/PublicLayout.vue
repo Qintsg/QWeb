@@ -38,57 +38,57 @@ function toggleLocale() {
   justify-content: center;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 20% 20%, var(--qweb-primary-light) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, var(--qweb-accent-light) 0%, transparent 50%),
-    var(--qweb-neutral-2);
-  padding: var(--qweb-spacing-lg);
+    radial-gradient(circle at 20% 20%, var(--q-color-brand-light) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, var(--q-color-accent-light) 0%, transparent 50%),
+    var(--q-color-canvas);
+  padding: var(--q-space-24);
 }
 
 .public-layout__card {
   width: 100%;
   max-width: 420px;
-  background: var(--qweb-neutral-1);
-  border-radius: var(--qweb-radius-xl);
-  box-shadow: var(--qweb-shadow-lg);
-  padding: var(--qweb-spacing-2xl) var(--qweb-spacing-xl);
+  background: var(--q-color-surface);
+  border-radius: var(--q-radius-xl);
+  box-shadow: var(--q-shadow-lg);
+  padding: var(--q-space-40) var(--q-space-32);
 }
 
 .public-layout__brand {
   text-align: center;
-  margin-bottom: var(--qweb-spacing-xl);
+  margin-bottom: var(--q-space-32);
 }
 
 .public-layout__title {
   margin: 0;
-  font-size: var(--qweb-font-2xl);
+  font-size: var(--q-font-size-2xl);
   font-weight: 700;
-  color: var(--qweb-primary);
+  color: var(--q-color-brand);
   letter-spacing: -0.02em;
 }
 
 .public-layout__subtitle {
-  margin: var(--qweb-spacing-xs) 0 0;
-  font-size: var(--qweb-font-sm);
-  color: var(--qweb-text-secondary);
+  margin: var(--q-space-8) 0 0;
+  font-size: var(--q-font-size-sm);
+  color: var(--q-color-text-secondary);
 }
 
 .public-layout__footer {
-  margin-top: var(--qweb-spacing-lg);
+  margin-top: var(--q-space-24);
 }
 
 .lang-switch {
   background: transparent;
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-sm);
-  padding: var(--qweb-spacing-xs) var(--qweb-spacing-sm);
-  color: var(--qweb-text-secondary);
+  border: 1px solid var(--q-color-stroke);
+  border-radius: var(--q-radius-sm);
+  padding: var(--q-space-8) var(--q-space-12);
+  color: var(--q-color-text-secondary);
   cursor: pointer;
-  font-size: var(--qweb-font-sm);
+  font-size: var(--q-font-size-sm);
   transition: all 0.15s ease;
 }
 
 .lang-switch:hover {
-  border-color: var(--qweb-primary);
-  color: var(--qweb-primary);
+  border-color: var(--q-color-brand);
+  color: var(--q-color-brand);
 }
 </style>

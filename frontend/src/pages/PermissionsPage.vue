@@ -79,7 +79,7 @@ function handleSearch() {
               <td>{{ p.module }}</td>
               <td>{{ p.category }}</td>
               <td>
-                <fluent-badge :appearance="p.is_risk ? 'accent' : 'neutral'" :style="p.is_risk ? 'background: var(--qweb-danger); color: white;' : ''">
+                <fluent-badge :appearance="p.is_risk ? 'accent' : 'neutral'" :style="p.is_risk ? 'background: var(--q-color-error); color: white;' : ''">
                   {{ p.is_risk ? 'High' : 'Normal' }}
                 </fluent-badge>
               </td>
@@ -104,16 +104,16 @@ function handleSearch() {
 </template>
 
 <style scoped>
-.page-container { padding: var(--qweb-spacing-xl); }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--qweb-spacing-lg); }
-.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--qweb-text-primary); }
-.table-card { padding: var(--qweb-spacing-lg); border-radius: var(--qweb-radius-lg); background: var(--qweb-surface); box-shadow: var(--qweb-shadow-sm); }
-.toolbar { margin-bottom: var(--qweb-spacing-lg); display: flex; gap: var(--qweb-spacing-md); }
+.page-container { padding: var(--q-space-32); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--q-space-24); }
+.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--q-color-text-primary); }
+.table-card { padding: var(--q-space-24); border-radius: var(--q-radius-lg); background: var(--q-color-surface); box-shadow: var(--q-shadow-sm); }
+.toolbar { margin-bottom: var(--q-space-24); display: flex; gap: var(--q-space-16); }
 .search-icon { cursor: pointer; padding: 0 8px; line-height: 32px; }
 .table-responsive { overflow-x: auto; }
 .qweb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.qweb-table th, .qweb-table td { text-align: left; padding: var(--qweb-spacing-md); border-bottom: 1px solid var(--qweb-border); }
-.qweb-table th { font-weight: 600; color: var(--qweb-text-secondary); background: var(--qweb-surface-alt, #fafafa); }
-.text-center { text-align: center !important; color: var(--qweb-text-secondary); padding: var(--qweb-spacing-xl) !important; }
-.pagination { margin-top: var(--qweb-spacing-lg); display: flex; justify-content: center; align-items: center; gap: var(--qweb-spacing-md); }
+.qweb-table th, .qweb-table td { text-align: left; padding: var(--q-space-16); border-bottom: 1px solid var(--q-color-stroke); }
+.qweb-table th { font-weight: 600; color: var(--q-color-text-secondary); background: var(--q-color-surface-alt, #fafafa); }
+.text-center { text-align: center !important; color: var(--q-color-text-secondary); padding: var(--q-space-32) !important; }
+.pagination { margin-top: var(--q-space-24); display: flex; justify-content: center; align-items: center; gap: var(--q-space-16); }
 </style>

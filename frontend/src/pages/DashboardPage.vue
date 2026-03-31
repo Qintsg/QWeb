@@ -58,72 +58,72 @@ const { hasPermission } = usePermission()
 
 <style scoped>
 .page-container {
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .welcome-section {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .welcome-title {
-  margin: 0 0 var(--qweb-spacing-xs);
+  margin: 0 0 var(--q-space-8);
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .welcome-subtitle {
-  margin: 0 0 var(--qweb-spacing-sm);
-  color: var(--qweb-text-secondary);
+  margin: 0 0 var(--q-space-12);
+  color: var(--q-color-text-secondary);
   font-size: 0.95rem;
 }
 
 .user-group-badge {
   display: inline-block;
   padding: 2px 12px;
-  border-radius: var(--qweb-radius-full);
-  background: var(--qweb-primary-light, rgba(14, 154, 167, 0.1));
-  color: var(--qweb-primary);
+  border-radius: var(--q-radius-full);
+  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
+  color: var(--q-color-brand);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .section-title {
-  margin: 0 0 var(--qweb-spacing-md);
+  margin: 0 0 var(--q-space-16);
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .quick-nav {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .nav-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 
 .nav-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--qweb-spacing-sm);
-  padding: var(--qweb-spacing-lg);
-  background: var(--qweb-surface);
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-md);
+  gap: var(--q-space-12);
+  padding: var(--q-space-24);
+  background: var(--q-color-surface);
+  border: 1px solid var(--q-color-stroke);
+  border-radius: var(--q-radius-md);
   text-decoration: none;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .nav-card:hover {
-  border-color: var(--qweb-primary);
+  border-color: var(--q-color-brand);
   box-shadow: 0 2px 8px rgba(14, 154, 167, 0.12);
 }
 
@@ -132,81 +132,81 @@ const { hasPermission } = usePermission()
 }
 
 .status-section {
-  margin-bottom: var(--qweb-spacing-xl);
+  margin-bottom: var(--q-space-32);
 }
 
 .page-placeholder {
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 </styl
 <style scoped>
 .page-container {
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .welcome-section {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .welcome-title {
-  margin: 0 0 var(--qweb-spacing-xs);
+  margin: 0 0 var(--q-space-8);
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .welcome-subtitle {
-  margin: 0 0 var(--qweb-spacing-sm);
-  color: var(--qweb-text-secondary);
+  margin: 0 0 var(--q-space-12);
+  color: var(--q-color-text-secondary);
   font-size: 0.95rem;
 }
 
 .user-group-badge {
   display: inline-block;
   padding: 2px 12px;
-  border-radius: var(--qweb-radius-full);
-  background: var(--qweb-primary-light, rgba(14, 154, 167, 0.1));
-  color: var(--qweb-primary);
+  border-radius: var(--q-radius-full);
+  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
+  color: var(--q-color-brand);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .section-title {
-  margin: 0 0 var(--qweb-spacing-md);
+  margin: 0 0 var(--q-space-16);
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .quick-nav {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .nav-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 
 .nav-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--qweb-spacing-sm);
-  padding: var(--qweb-spacing-lg);
-  background: var(--qweb-surface);
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-md);
+  gap: var(--q-space-12);
+  padding: var(--q-space-24);
+  background: var(--q-color-surface);
+  border: 1px solid var(--q-color-stroke);
+  border-radius: var(--q-radius-md);
   text-decoration: none;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .nav-card:hover {
-  border-color: var(--qweb-primary);
+  border-color: var(--q-color-brand);
   box-shadow: 0 2px 8px rgba(14, 154, 167, 0.12);
 }
 
@@ -215,81 +215,81 @@ const { hasPermission } = usePermission()
 }
 
 .status-section {
-  margin-bottom: var(--qweb-spacing-xl);
+  margin-bottom: var(--q-space-32);
 }
 
 .page-placeholder {
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 </styl
 <style scoped>
 .page-container {
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .welcome-section {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .welcome-title {
-  margin: 0 0 var(--qweb-spacing-xs);
+  margin: 0 0 var(--q-space-8);
   font-size: 1.75rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .welcome-subtitle {
-  margin: 0 0 var(--qweb-spacing-sm);
-  color: var(--qweb-text-secondary);
+  margin: 0 0 var(--q-space-12);
+  color: var(--q-color-text-secondary);
   font-size: 0.95rem;
 }
 
 .user-group-badge {
   display: inline-block;
   padding: 2px 12px;
-  border-radius: var(--qweb-radius-full);
-  background: var(--qweb-primary-light, rgba(14, 154, 167, 0.1));
-  color: var(--qweb-primary);
+  border-radius: var(--q-radius-full);
+  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
+  color: var(--q-color-brand);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .section-title {
-  margin: 0 0 var(--qweb-spacing-md);
+  margin: 0 0 var(--q-space-16);
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .quick-nav {
-  margin-bottom: var(--qweb-spacing-2xl);
+  margin-bottom: var(--q-space-40);
 }
 
 .nav-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 
 .nav-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--qweb-spacing-sm);
-  padding: var(--qweb-spacing-lg);
-  background: var(--qweb-surface);
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-md);
+  gap: var(--q-space-12);
+  padding: var(--q-space-24);
+  background: var(--q-color-surface);
+  border: 1px solid var(--q-color-stroke);
+  border-radius: var(--q-radius-md);
   text-decoration: none;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .nav-card:hover {
-  border-color: var(--qweb-primary);
+  border-color: var(--q-color-brand);
   box-shadow: 0 2px 8px rgba(14, 154, 167, 0.12);
 }
 
@@ -298,10 +298,10 @@ const { hasPermission } = usePermission()
 }
 
 .status-section {
-  margin-bottom: var(--qweb-spacing-xl);
+  margin-bottom: var(--q-space-32);
 }
 
 .page-placeholder {
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 </style>

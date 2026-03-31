@@ -23,33 +23,33 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 100vh;
   text-align: center;
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .not-found-code {
   margin: 0;
   font-size: 6rem;
   font-weight: 700;
-  color: var(--qweb-primary);
+  color: var(--q-color-brand);
   line-height: 1;
 }
 
 .not-found-text {
-  margin: var(--qweb-spacing-md) 0 var(--qweb-spacing-xl);
+  margin: var(--q-space-16) 0 var(--q-space-32);
   font-size: 1.25rem;
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 
 .not-found-link {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-xl);
-  border-radius: var(--qweb-radius-sm);
-  background: var(--qweb-primary);
+  padding: var(--q-space-12) var(--q-space-32);
+  border-radius: var(--q-radius-sm);
+  background: var(--q-color-brand);
   color: #fff;
   font-weight: 600;
   transition: background 0.2s;
 }
 
 .not-found-link:hover {
-  background: var(--qweb-primary-dark);
+  background: var(--q-color-brand-dark);
 }
 </style>

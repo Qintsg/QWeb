@@ -138,7 +138,7 @@ async function handleDelete(role: Role) {
               <td>
                 <div class="action-buttons">
                   <fluent-button appearance="stealth" @click="openEdit(role)">Edit</fluent-button>
-                  <fluent-button appearance="stealth" style="color: var(--qweb-danger)" @click="handleDelete(role)">Delete</fluent-button>
+                  <fluent-button appearance="stealth" style="color: var(--q-color-error)" @click="handleDelete(role)">Delete</fluent-button>
                 </div>
               </td>
             </tr>
@@ -201,23 +201,23 @@ async function handleDelete(role: Role) {
 </template>
 
 <style scoped>
-.page-container { padding: var(--qweb-spacing-xl); }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--qweb-spacing-lg); }
-.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--qweb-text-primary); }
-.table-card { padding: var(--qweb-spacing-lg); border-radius: var(--qweb-radius-lg); background: var(--qweb-surface); box-shadow: var(--qweb-shadow-sm); }
-.toolbar { margin-bottom: var(--qweb-spacing-lg); display: flex; gap: var(--qweb-spacing-md); }
+.page-container { padding: var(--q-space-32); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--q-space-24); }
+.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--q-color-text-primary); }
+.table-card { padding: var(--q-space-24); border-radius: var(--q-radius-lg); background: var(--q-color-surface); box-shadow: var(--q-shadow-sm); }
+.toolbar { margin-bottom: var(--q-space-24); display: flex; gap: var(--q-space-16); }
 .search-icon { cursor: pointer; padding: 0 8px; line-height: 32px; }
 .table-responsive { overflow-x: auto; }
 .qweb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.qweb-table th, .qweb-table td { text-align: left; padding: var(--qweb-spacing-md); border-bottom: 1px solid var(--qweb-border); }
-.qweb-table th { font-weight: 600; color: var(--qweb-text-secondary); background: var(--qweb-surface-alt, #fafafa); }
-.text-center { text-align: center !important; color: var(--qweb-text-secondary); padding: var(--qweb-spacing-xl) !important; }
-.action-buttons { display: flex; gap: var(--qweb-spacing-sm); }
-.pagination { margin-top: var(--qweb-spacing-lg); display: flex; justify-content: center; align-items: center; gap: var(--qweb-spacing-md); }
-.dialog-content { padding: var(--qweb-spacing-lg) var(--qweb-spacing-xl); min-width: 400px; }
-.dialog-content h2 { margin-top: 0; margin-bottom: var(--qweb-spacing-md); }
-.dialog-body { display: flex; flex-direction: column; gap: var(--qweb-spacing-md); margin-bottom: var(--qweb-spacing-xl); }
-.form-field { display: flex; flex-direction: column; gap: var(--qweb-spacing-xs); }
-.form-field label { font-size: 0.875rem; font-weight: 500; color: var(--qweb-text-secondary); }
-.dialog-footer { display: flex; justify-content: flex-end; gap: var(--qweb-spacing-md); }
+.qweb-table th, .qweb-table td { text-align: left; padding: var(--q-space-16); border-bottom: 1px solid var(--q-color-stroke); }
+.qweb-table th { font-weight: 600; color: var(--q-color-text-secondary); background: var(--q-color-surface-alt, #fafafa); }
+.text-center { text-align: center !important; color: var(--q-color-text-secondary); padding: var(--q-space-32) !important; }
+.action-buttons { display: flex; gap: var(--q-space-12); }
+.pagination { margin-top: var(--q-space-24); display: flex; justify-content: center; align-items: center; gap: var(--q-space-16); }
+.dialog-content { padding: var(--q-space-24) var(--q-space-32); min-width: 400px; }
+.dialog-content h2 { margin-top: 0; margin-bottom: var(--q-space-16); }
+.dialog-body { display: flex; flex-direction: column; gap: var(--q-space-16); margin-bottom: var(--q-space-32); }
+.form-field { display: flex; flex-direction: column; gap: var(--q-space-8); }
+.form-field label { font-size: 0.875rem; font-weight: 500; color: var(--q-color-text-secondary); }
+.dialog-footer { display: flex; justify-content: flex-end; gap: var(--q-space-16); }
 </style>

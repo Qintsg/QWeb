@@ -172,7 +172,7 @@ async function handleDelete(user: UserInfo) {
               <td>
                 <div class="action-buttons">
                   <fluent-button appearance="stealth" @click="openEdit(user)">Edit</fluent-button>
-                  <fluent-button appearance="stealth" style="color: var(--qweb-danger)" @click="handleDelete(user)">Delete</fluent-button>
+                  <fluent-button appearance="stealth" style="color: var(--q-color-error)" @click="handleDelete(user)">Delete</fluent-button>
                 </div>
               </td>
             </tr>
@@ -251,34 +251,34 @@ async function handleDelete(user: UserInfo) {
 
 <style scoped>
 .page-container {
-  padding: var(--qweb-spacing-xl);
+  padding: var(--q-space-32);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--qweb-spacing-lg);
+  margin-bottom: var(--q-space-24);
 }
 
 .page-title {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--qweb-text-primary);
+  color: var(--q-color-text-primary);
 }
 
 .table-card {
-  padding: var(--qweb-spacing-lg);
-  border-radius: var(--qweb-radius-lg);
-  background: var(--qweb-surface);
-  box-shadow: var(--qweb-shadow-sm);
+  padding: var(--q-space-24);
+  border-radius: var(--q-radius-lg);
+  background: var(--q-color-surface);
+  box-shadow: var(--q-shadow-sm);
 }
 
 .toolbar {
-  margin-bottom: var(--qweb-spacing-lg);
+  margin-bottom: var(--q-space-24);
   display: flex;
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 
 .search-icon {
@@ -300,20 +300,20 @@ async function handleDelete(user: UserInfo) {
 .qweb-table th,
 .qweb-table td {
   text-align: left;
-  padding: var(--qweb-spacing-md);
-  border-bottom: 1px solid var(--qweb-border);
+  padding: var(--q-space-16);
+  border-bottom: 1px solid var(--q-color-stroke);
 }
 
 .qweb-table th {
   font-weight: 600;
-  color: var(--qweb-text-secondary);
-  background: var(--qweb-surface-alt, #fafafa);
+  color: var(--q-color-text-secondary);
+  background: var(--q-color-surface-alt, #fafafa);
 }
 
 .text-center {
   text-align: center !important;
-  color: var(--qweb-text-secondary);
-  padding: var(--qweb-spacing-xl) !important;
+  color: var(--q-color-text-secondary);
+  padding: var(--q-space-32) !important;
 }
 
 .status-dot {
@@ -327,62 +327,62 @@ async function handleDelete(user: UserInfo) {
   background: #107c10;
 }
 .status-dot.inactive {
-  background: var(--qweb-danger, #d32f2f);
+  background: var(--q-color-error, #d32f2f);
 }
 
 .action-buttons {
   display: flex;
-  gap: var(--qweb-spacing-sm);
+  gap: var(--q-space-12);
 }
 
 .pagination {
-  margin-top: var(--qweb-spacing-lg);
+  margin-top: var(--q-space-24);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 
 .dialog-content {
-  padding: var(--qweb-spacing-lg) var(--qweb-spacing-xl);
+  padding: var(--q-space-24) var(--q-space-32);
   min-width: 400px;
 }
 
 .dialog-content h2 {
   margin-top: 0;
-  margin-bottom: var(--qweb-spacing-md);
+  margin-bottom: var(--q-space-16);
 }
 
 .dialog-body {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-md);
-  margin-bottom: var(--qweb-spacing-xl);
+  gap: var(--q-space-16);
+  margin-bottom: var(--q-space-32);
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--qweb-spacing-xs);
+  gap: var(--q-space-8);
 }
 
 .form-field label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--qweb-text-secondary);
+  color: var(--q-color-text-secondary);
 }
 
 .native-select {
   padding: 8px 12px;
   border-radius: 4px;
-  border: 1px solid var(--qweb-border);
-  background: var(--qweb-surface);
+  border: 1px solid var(--q-color-stroke);
+  background: var(--q-color-surface);
   font-size: 0.875rem;
 }
 
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
-  gap: var(--qweb-spacing-md);
+  gap: var(--q-space-16);
 }
 </style>
