@@ -1,33 +1,121 @@
-<script setup lang="ts">
-/**
- * 操作日志页面
- * TODO: Phase 7 实现审计日志列表、筛选、详情
- */
+﻿<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getAuditLogs, type AuditLogQuery, type AuditLog } from '@/api/audit'
 
 const { t } = useI18n()
+
+const loading = ref(false)
+const logs = ref<AuditLog[]>([])
+const totalCount = ref(0)
+const query = ref<AuditLogQuery>({
+  page: 1,
+  page_size: 20,
+  search: '',
+})
+
+async function fetchLogs() {
+  loading.value = true
+  try {
+    const res = await getAuditLogs(query.value)
+    const data = res.data.data
+    logs.value = data.results || []
+    totalCount.value = data.count || 0
+  } catch (err) {
+    console.error('Failed to fetch logs', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => fetchLogs())
+
+function handleSearch() {
+  query.value.page = 1
+  fetchLogs()
+}
+
+function parseDate(d: string) {
+  return new Date(d).toLocaleString()
+}
 </script>
 
 <template>
   <div class="page-container">
-    <h1 class="page-title">{{ t('nav.auditLogs') }}</h1>
-    <p class="page-placeholder">{{ t('common.comingSoon') }}</p>
+    <div class="page-header">
+      <h1 class="page-title">Operation Audit Logs</h1>
+    </div>
+
+    <fluent-card class="table-card">
+      <div class="toolbar">
+        <fluent-text-field
+          :value="query.search"
+          @input="query.search = ($event.target as HTMLInputElement).value"
+          @keyup.enter="handleSearch"
+          placeholder="Search by action, module, description..."
+          style="width: 300px"
+        >
+          <span slot="end" class="search-icon" @click="handleSearch">🔍</span>
+        </fluent-text-field>
+      </div>
+
+      <div class="table-responsive">
+        <table class="qweb-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Module</th>
+              <th>Description</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="loading">
+              <td colspan="6" class="text-center">Loading...</td>
+            </tr>
+            <tr v-else-if="logs.length === 0">
+              <td colspan="6" class="text-center">No logs found.</td>
+            </tr>
+            <tr v-else v-for="log in logs" :key="log.id">
+              <td>{{ parseDate(log.created_at) }}</td>
+              <td>{{ log.username || 'System' }}</td>
+              <td><fluent-badge>{{ log.action }}</fluent-badge></td>
+              <td>{{ log.module }}</td>
+              <td>{{ log.description }}</td>
+              <td>{{ log.ip_address || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" v-if="totalCount > query.page_size!">
+        <fluent-button 
+          :disabled="query.page === 1" 
+          @click="query.page!--; fetchLogs()"
+        >Prev</fluent-button>
+        <span>Page {{ query.page }} (Total: {{ totalCount }})</span>
+        <fluent-button 
+          :disabled="(query.page! * query.page_size!) >= totalCount" 
+          @click="query.page!++; fetchLogs()"
+        >Next</fluent-button>
+      </div>
+    </fluent-card>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: var(--qweb-spacing-xl);
-}
-
-.page-title {
-  margin: 0 0 var(--qweb-spacing-lg);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--qweb-text-primary);
-}
-
-.page-placeholder {
-  color: var(--qweb-text-secondary);
-}
+.page-container { padding: var(--qweb-spacing-xl); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--qweb-spacing-lg); }
+.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--qweb-text-primary); }
+.table-card { padding: var(--qweb-spacing-lg); border-radius: var(--qweb-radius-lg); background: var(--qweb-surface); box-shadow: var(--qweb-shadow-sm); }
+.toolbar { margin-bottom: var(--qweb-spacing-lg); display: flex; gap: var(--qweb-spacing-md); }
+.search-icon { cursor: pointer; padding: 0 8px; line-height: 32px; }
+.table-responsive { overflow-x: auto; }
+.qweb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.qweb-table th, .qweb-table td { text-align: left; padding: var(--qweb-spacing-md); border-bottom: 1px solid var(--qweb-border); }
+.qweb-table th { font-weight: 600; color: var(--qweb-text-secondary); background: var(--qweb-surface-alt, #fafafa); }
+.text-center { text-align: center !important; color: var(--qweb-text-secondary); padding: var(--qweb-spacing-xl) !important; }
+.pagination { margin-top: var(--qweb-spacing-lg); display: flex; justify-content: center; align-items: center; gap: var(--qweb-spacing-md); }
 </style>

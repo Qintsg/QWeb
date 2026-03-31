@@ -50,40 +50,81 @@ async function handleRegister() {
 
 <template>
   <div class="register-page">
-    <h1 class="register-title">{{ t('auth.register') }}</h1>
+    <fluent-card class="register-card">
+      <h1 class="register-title">{{ t('auth.register') }}</h1>
 
-    <form class="register-form" @submit.prevent="handleRegister">
-      <div v-if="errorMsg" class="register-error">{{ errorMsg }}</div>
+      <form class="register-form" @submit.prevent="handleRegister">
+        <div v-if="errorMsg" class="register-error">{{ errorMsg }}</div>
 
-      <div class="form-field">
-        <label for="reg-username">{{ t('auth.username') }}</label>
-        <input id="reg-username" v-model="username" type="text" :placeholder="t('auth.usernamePlaceholder')" required />
-      </div>
+        <div class="form-field">
+          <label for="reg-username">{{ t('auth.username') }}</label>
+          <fluent-text-field
+            id="reg-username"
+            :value="username"
+            @input="username = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.username')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <div class="form-field">
-        <label for="reg-email">{{ t('auth.email') }}</label>
-        <input id="reg-email" v-model="email" type="email" :placeholder="t('auth.emailPlaceholder')" required />
-      </div>
+        <div class="form-field">
+          <label for="reg-email">{{ t('auth.email') }}</label>
+          <fluent-text-field
+            id="reg-email"
+            type="email"
+            :value="email"
+            @input="email = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.email')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <div class="form-field">
-        <label for="reg-password">{{ t('auth.password') }}</label>
-        <input id="reg-password" v-model="password" type="password" :placeholder="t('auth.passwordPlaceholder')" required />
-      </div>
+        <div class="form-field">
+          <label for="reg-password">{{ t('auth.password') }}</label>
+          <fluent-text-field
+            id="reg-password"
+            type="password"
+            :value="password"
+            @input="password = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.password')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <div class="form-field">
-        <label for="reg-confirm">{{ t('auth.confirmPassword') }}</label>
-        <input id="reg-confirm" v-model="confirmPassword" type="password" :placeholder="t('auth.confirmPasswordPlaceholder')" required />
-      </div>
+        <div class="form-field">
+          <label for="reg-confirm">{{ t('auth.confirmPassword') }}</label>
+          <fluent-text-field
+            id="reg-confirm"
+            type="password"
+            :value="confirmPassword"
+            @input="confirmPassword = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.confirmPassword')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <button type="submit" class="register-btn" :disabled="loading">
-        {{ loading ? t('common.loading') : t('auth.register') }}
-      </button>
+        <fluent-button
+          type="submit"
+          appearance="accent"
+          class="register-btn"
+          :disabled="loading"
+          @click="handleRegister"
+        >
+          {{ loading ? t('common.loading') : t('auth.register') }}
+        </fluent-button>
 
-      <p class="register-link">
-        {{ t('auth.hasAccount') }}
-        <router-link to="/login">{{ t('auth.login') }}</router-link>
-      </p>
-    </form>
+        <p class="register-link">
+          {{ t('auth.hasAccount') }}
+          <router-link to="/login">
+            <fluent-anchor appearance="hyperlink">{{ t('auth.login') }}</fluent-anchor>
+          </router-link>
+        </p>
+      </form>
+    </fluent-card>
   </div>
 </template>
 
@@ -91,6 +132,14 @@ async function handleRegister() {
 .register-page {
   width: 100%;
   max-width: 400px;
+  margin: 0 auto;
+}
+
+.register-card {
+  padding: var(--qweb-spacing-xl);
+  border-radius: var(--qweb-radius-lg);
+  box-shadow: var(--qweb-shadow-md);
+  background: var(--qweb-surface);
 }
 
 .register-title {
@@ -127,51 +176,19 @@ async function handleRegister() {
   color: var(--qweb-text-secondary);
 }
 
-.form-field input {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-md);
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-sm);
-  font-size: 0.9375rem;
-  background: var(--qweb-surface);
-  color: var(--qweb-text-primary);
-  transition: border-color 0.2s;
-}
-
-.form-field input:focus {
-  border-color: var(--qweb-primary);
-  outline: none;
-  box-shadow: 0 0 0 2px var(--qweb-primary-light, rgba(14, 154, 167, 0.15));
-}
-
 .register-btn {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-lg);
-  border: none;
-  border-radius: var(--qweb-radius-sm);
-  background: var(--qweb-primary);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.register-btn:hover:not(:disabled) {
-  background: var(--qweb-primary-dark);
-}
-
-.register-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  width: 100%;
+  margin-top: var(--qweb-spacing-sm);
 }
 
 .register-link {
   text-align: center;
   font-size: 0.875rem;
+  margin-top: var(--qweb-spacing-md);
   color: var(--qweb-text-secondary);
 }
 
 .register-link a {
-  color: var(--qweb-primary);
-  font-weight: 500;
+  text-decoration: none;
 }
 </style>

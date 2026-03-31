@@ -42,44 +42,55 @@ async function handleLogin() {
 
 <template>
   <div class="login-page">
-    <h1 class="login-title">{{ t('auth.login') }}</h1>
+    <fluent-card class="login-card">
+      <h1 class="login-title">{{ t('auth.login') }}</h1>
 
-    <form class="login-form" @submit.prevent="handleLogin">
-      <div v-if="errorMsg" class="login-error">{{ errorMsg }}</div>
+      <form class="login-form" @submit.prevent="handleLogin">
+        <div v-if="errorMsg" class="login-error">{{ errorMsg }}</div>
 
-      <div class="form-field">
-        <label for="username">{{ t('auth.username') }}</label>
-        <input
-          id="username"
-          v-model="username"
-          type="text"
-          :placeholder="t('auth.usernamePlaceholder')"
-          autocomplete="username"
-          required
-        />
-      </div>
+        <div class="form-field">
+          <label for="username">{{ t('auth.username') }}</label>
+          <fluent-text-field
+            id="username"
+            :value="username"
+            @input="username = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.username')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <div class="form-field">
-        <label for="password">{{ t('auth.password') }}</label>
-        <input
-          id="password"
-          v-model="password"
-          type="password"
-          :placeholder="t('auth.passwordPlaceholder')"
-          autocomplete="current-password"
-          required
-        />
-      </div>
+        <div class="form-field">
+          <label for="password">{{ t('auth.password') }}</label>
+          <fluent-text-field
+            id="password"
+            type="password"
+            :value="password"
+            @input="password = ($event.target as HTMLInputElement).value"
+            :placeholder="t('auth.password')"
+            required
+            style="width: 100%"
+          ></fluent-text-field>
+        </div>
 
-      <button type="submit" class="login-btn" :disabled="loading">
-        {{ loading ? t('common.loading') : t('auth.login') }}
-      </button>
+        <fluent-button
+          type="submit"
+          appearance="accent"
+          class="login-btn"
+          :disabled="loading"
+          @click="handleLogin"
+        >
+          {{ loading ? t('common.loading') : t('auth.login') }}
+        </fluent-button>
 
-      <p class="login-link">
-        {{ t('auth.noAccount') }}
-        <router-link to="/register">{{ t('auth.register') }}</router-link>
-      </p>
-    </form>
+        <p class="login-link">
+          {{ t('auth.noAccount') }}
+          <router-link to="/register">
+            <fluent-anchor appearance="hyperlink">{{ t('auth.register') }}</fluent-anchor>
+          </router-link>
+        </p>
+      </form>
+    </fluent-card>
   </div>
 </template>
 
@@ -87,6 +98,14 @@ async function handleLogin() {
 .login-page {
   width: 100%;
   max-width: 400px;
+  margin: 0 auto;
+}
+
+.login-card {
+  padding: var(--qweb-spacing-xl);
+  border-radius: var(--qweb-radius-lg);
+  box-shadow: var(--qweb-shadow-md);
+  background: var(--qweb-surface);
 }
 
 .login-title {
@@ -123,51 +142,19 @@ async function handleLogin() {
   color: var(--qweb-text-secondary);
 }
 
-.form-field input {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-md);
-  border: 1px solid var(--qweb-border);
-  border-radius: var(--qweb-radius-sm);
-  font-size: 0.9375rem;
-  background: var(--qweb-surface);
-  color: var(--qweb-text-primary);
-  transition: border-color 0.2s;
-}
-
-.form-field input:focus {
-  border-color: var(--qweb-primary);
-  outline: none;
-  box-shadow: 0 0 0 2px var(--qweb-primary-light, rgba(14, 154, 167, 0.15));
-}
-
 .login-btn {
-  padding: var(--qweb-spacing-sm) var(--qweb-spacing-lg);
-  border: none;
-  border-radius: var(--qweb-radius-sm);
-  background: var(--qweb-primary);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.login-btn:hover:not(:disabled) {
-  background: var(--qweb-primary-dark);
-}
-
-.login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  width: 100%;
+  margin-top: var(--qweb-spacing-sm);
 }
 
 .login-link {
   text-align: center;
   font-size: 0.875rem;
+  margin-top: var(--qweb-spacing-md);
   color: var(--qweb-text-secondary);
 }
 
 .login-link a {
-  color: var(--qweb-primary);
-  font-weight: 500;
+  text-decoration: none;
 }
 </style>
