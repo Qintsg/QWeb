@@ -2,4 +2,4 @@ from django.contrib.staticfiles.management.commands.runserver import Command as 
 
 
 class Command(StaticfilesRunserverCommand):
-    default_port = "8001"
+    default_port = "8000"
