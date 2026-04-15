@@ -19,20 +19,10 @@
 ## 任务
 
 - 探索本仓库(若本次是新会话)(**不要修改此行，若非新会话，忽略本任务**)
-- > 为前端完善完整的首页，目前首页只保留其它页面跳转的功能，且需要完成管理后台可以进行管理，使用fluent风格，需要有动画和点击跳转，build的前端网址对应qintsg.cn和www.qintsg.xyz，后端对应api.qintsg.xyz，所有后端的相关接口也需要修改，页面最下方需要添加copyright和沪ICP备2026000797号-2，使用https连接，开发环境下的默认前后端端口改为8000和3000，请使用MCP具体询问并确认用户需求
-页面需求如下：
-知识图谱驱动的个性化自适应学习系统 - 上海市计算机应用能力大赛作品：https://edu.qintsg.cn/（需要备注：仅用于2026上海市计算机应用能力大赛作品展示，不进行实际运营）
-喵喵湾 - 上海第二工业大学大学生创新创业作品：https://meow.qintsg.cn/（需要备注：仅用于2026上海市第二工业大学大学生创新创业作品展示，不进行实际运营）
-本服务器frps管理网页：https://frps.qintsg.cn/
-本服务器1Panel管理面板：https://panel.qintsg.cn/
-8C16G服务器1Panel管理面板：https://panel.jfy2.qintsg.cn/
-8C16G服务器frpc管理面板：https://frpc.jfy2.qintsg.cn/
-hfs临时文件传输：https://hfs.qintsg.cn/
-Notebook Frpc管理面板：https://frpc.nootbook.cn/
-
-- 使用Interactive MCP对*用户*发出提问，等待用户进行功能测试询问修改意见
+- > 使用Interactive MCP对*用户*发出提问，等待用户进行功能测试询问修改意见
 - 使用Interactive MCP对*用户*发出提问询问下一步需求(**不要结束会话，不要修改本任务，不要使用askQuestion**，此处可能需要多轮互动或持续等待，直到*用户*明确提出需求为止)
 
 ## 已完成任务
 
 - 将后端虚拟环境迁移至uv
+- 为前端完善完整的首页，目前首页只保留其它页面跳转的功能，且需要完成管理后台可以进行管理，使用fluent风格，需要有动画和点击跳转，build的前端网址对应qintsg.cn和www.qintsg.xyz，后端对应api.qintsg.xyz，所有后端的相关接口也需要修改，页面最下方需要添加copyright和沪ICP备2026000797号-2，使用https连接，开发环境下的默认前后端端口改为8000和3000
