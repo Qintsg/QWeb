@@ -6,8 +6,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getPublicServiceLinks, type ServiceLink } from '@/api/homepage'
+import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
+
+// 页面加载时恢复登录状态
+onMounted(() => authStore.initialize())
 
 const serviceLinks = ref<ServiceLink[]>([])
 const loading = ref(true)
@@ -75,7 +80,15 @@ onMounted(fetchLinks)
             </svg>
             <span>GitHub</span>
           </a>
-          <router-link to="/login" class="hero__social-link hero__social-link--login">
+          <!-- 已登录：进入管理后台 -->
+          <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="hero__social-link hero__social-link--login">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            <span>管理后台</span>
+          </router-link>
+          <!-- 未登录：登录 -->
+          <router-link v-else to="/login" class="hero__social-link hero__social-link--login">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
             </svg>
