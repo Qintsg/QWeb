@@ -6,7 +6,7 @@
   <div class="public-layout">
     <div class="public-layout__card">
       <div class="public-layout__brand">
-        <h1 class="public-layout__title">QWeb</h1>
+        <h1 class="public-layout__title">Qintsg's Web</h1>
         <p class="public-layout__subtitle">{{ t('common.appName') }}</p>
       </div>
       <router-view />

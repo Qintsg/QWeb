@@ -7,7 +7,7 @@
     <!-- 品牌标识 -->
     <div class="sidebar__brand" @click="$emit('toggle')">
       <span class="sidebar__logo">Q</span>
-      <span v-if="!collapsed" class="sidebar__brand-text">QWeb</span>
+      <span v-if="!collapsed" class="sidebar__brand-text">Qintsg's Web</span>
     </div>
 
     <!-- 导航列表 -->

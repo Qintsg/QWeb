@@ -3,7 +3,7 @@
  */
 export default {
   common: {
-    appName: "QWeb",
+    appName: "Qintsg's Web",
     confirm: "Confirm",
     cancel: "Cancel",
     save: "Save",

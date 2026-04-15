@@ -143,7 +143,7 @@ router.beforeEach(async (to, _from, next) => {
 /** 路由后置守卫：更新页面标题 */
 router.afterEach((to) => {
   const title = to.meta.title as string | undefined
-  document.title = title ? `${title} - QWeb` : 'QWeb'
+  document.title = title ? `${title} - Qintsg's Web` : "Qintsg's Web"
 })
 
 export default router
