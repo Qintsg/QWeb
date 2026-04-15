@@ -59,10 +59,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { path: '/', labelKey: 'nav.dashboard', icon: '📊' },
+  { path: '/dashboard', labelKey: 'nav.dashboard', icon: '📊' },
   { path: '/users', labelKey: 'nav.users', icon: '👥', permission: 'accounts.view_user' },
   { path: '/roles', labelKey: 'nav.roles', icon: '🛡️', permission: 'iam.view_role' },
   { path: '/permissions', labelKey: 'nav.permissions', icon: '🔑', permission: 'iam.view_permission' },
+  { path: '/service-links', labelKey: 'nav.serviceLinks', icon: '🔗', permission: 'homepage.service_link.manage' },
   { path: '/audit-logs', labelKey: 'nav.auditLogs', icon: '📋', permission: 'audit.view_auditlog' },
   { path: '/login-logs', labelKey: 'nav.loginLogs', icon: '🔒', permission: 'audit.view_loginlog' },
   { path: '/profile', labelKey: 'nav.profile', icon: '👤' },

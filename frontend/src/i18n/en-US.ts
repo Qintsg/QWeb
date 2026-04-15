@@ -71,6 +71,8 @@ export default {
     iam: "Access Control",
     audit: "Audit Center",
     accounts: "Accounts",
+    homepage: "Homepage",
+    serviceLinks: "Service Links",
   },
 
   user: {
@@ -148,5 +150,30 @@ export default {
     networkError: "Network error, please check your connection",
     validationError: "Validation error, please check your input",
     timeout: "Request timed out, please try again",
+  },
+
+  serviceLinks: {
+    title: "Service Links",
+    subtitle: "Manage service links displayed on the homepage",
+    titleField: "Title",
+    url: "URL",
+    description: "Description",
+    remark: "Remark",
+    icon: "Icon",
+    color: "Color",
+    category: "Category",
+    sortOrder: "Sort Order",
+    visible: "Visible",
+    createLink: "Create Link",
+    editLink: "Edit Link",
+    titlePlaceholder: "Enter service name",
+    descPlaceholder: "Brief description",
+    remarkPlaceholder: "Remark info",
+    categories: {
+      project: "Project",
+      server: "Server",
+      tool: "Tool",
+      other: "Other",
+    },
   },
 }

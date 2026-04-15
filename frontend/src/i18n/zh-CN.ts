@@ -71,6 +71,8 @@ export default {
     iam: "权限管理",
     audit: "审计中心",
     accounts: "账号管理",
+    homepage: "首页管理",
+    serviceLinks: "服务链接",
   },
 
   user: {
@@ -148,5 +150,30 @@ export default {
     networkError: "网络连接异常，请检查网络",
     validationError: "输入内容有误，请检查",
     timeout: "请求超时，请稍后重试",
+  },
+
+  serviceLinks: {
+    title: "服务链接管理",
+    subtitle: "管理首页展示的服务链接",
+    titleField: "标题",
+    url: "链接地址",
+    description: "描述",
+    remark: "备注",
+    icon: "图标",
+    color: "颜色",
+    category: "分类",
+    sortOrder: "排序权重",
+    visible: "是否可见",
+    createLink: "创建链接",
+    editLink: "编辑链接",
+    titlePlaceholder: "输入服务名称",
+    descPlaceholder: "简要描述",
+    remarkPlaceholder: "备注信息",
+    categories: {
+      project: "项目",
+      server: "服务",
+      tool: "工具",
+      other: "其他",
+    },
   },
 }

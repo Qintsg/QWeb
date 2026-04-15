@@ -24,10 +24,18 @@ const publicRoutes: RouteRecordRaw[] = [
   },
 ]
 
+/** 首页（独立公开路由，不使用布局包裹） */
+const homeRoute: RouteRecordRaw = {
+  path: '/',
+  name: 'home',
+  component: () => import('@/pages/HomePage.vue'),
+  meta: { title: '首页' },
+}
+
 /** 需要认证的路由 */
 const authenticatedRoutes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/pages/DashboardPage.vue'),
     meta: { title: '仪表盘' },
@@ -68,10 +76,18 @@ const authenticatedRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/ProfilePage.vue'),
     meta: { title: '个人资料' },
   },
+  {
+    path: '/service-links',
+    name: 'service-links',
+    component: () => import('@/pages/ServiceLinksPage.vue'),
+    meta: { title: '服务链接管理', permission: 'homepage.service_link.manage' },
+  },
 ]
 
 /** 布局包裹路由 */
 const routes: RouteRecordRaw[] = [
+  // 首页（独立公开路由）
+  homeRoute,
   // 公开布局
   {
     path: '/',
@@ -116,7 +132,7 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   if (authStore.isAuthenticated && (to.name === 'login' || to.name === 'register')) {
-    // 已登录 → 跳过公开页面
+    // 已登录 → 跳过登录/注册页面，前往仪表盘
     next({ name: 'dashboard' })
     return
   }

@@ -20,7 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "DJANGO_CSRF_TRUSTED_ORIGINS",
-        "http://127.0.0.1:8001,http://localhost:8001",
+        "http://127.0.0.1:8000,http://localhost:8000",
     ).split(",")
     if origin.strip()
 ]
@@ -46,6 +46,7 @@ LOCAL_APPS = [
     "apps.accounts",
     "apps.iam",
     "apps.audit",
+    "apps.homepage",
 ]
 
 INSTALLED_APPS = DJANGO_APPS[:-1] + LOCAL_APPS + [DJANGO_APPS[-1]] + THIRD_PARTY_APPS
@@ -132,7 +133,7 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CORS_ALLOWED_ORIGINS",
-        "http://127.0.0.1:3001,http://localhost:3001",
+        "http://127.0.0.1:3000,http://localhost:3000",
     ).split(",")
     if origin.strip()
 ]

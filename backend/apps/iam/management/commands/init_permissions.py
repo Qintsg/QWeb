@@ -63,6 +63,10 @@ PRESET_PERMISSIONS = [
 
     # 审计
     ("audit", "log", "view", "audit.log.view", "查看审计日志"),
+
+    # 首页管理
+    ("homepage", "service_link", "view", "homepage.service_link.view", "查看服务链接"),
+    ("homepage", "service_link", "manage", "homepage.service_link.manage", "管理服务链接"),
 ]
 
 # ---------- 角色默认权限映射 ----------
@@ -77,6 +81,7 @@ ROLE_PERMISSION_MAP = {
         "wiki.page.view", "wiki.page.create", "wiki.page.update",
         "storage.file.view", "storage.file.upload",
         "audit.log.view",
+        "homepage.service_link.view",
     ],
     "user": [
         "blog.post.view", "blog.post.create",
