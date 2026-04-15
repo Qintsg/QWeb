@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const { data } = await apiLogin(credentials)
       const result = data.data
-      setTokens(result.tokens.access, result.tokens.refresh)
+      setTokens(result.access, result.refresh)
       await fetchUser()
       return result
     } finally {

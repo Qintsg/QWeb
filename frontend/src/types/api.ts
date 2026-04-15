@@ -6,19 +6,16 @@
 
 /** 后端统一成功响应体 */
 export interface ApiResponse<T = unknown> {
-  success: true
-  data: T
+  code: number
   message: string
+  data: T
 }
 
 /** 后端统一错误响应体 */
 export interface ApiErrorResponse {
-  success: false
-  error: {
-    code: string
-    message: string
-    details?: Record<string, unknown>
-  }
+  code: number
+  message: string
+  errors?: Record<string, unknown>
 }
 
 /** 后端分页响应体 */

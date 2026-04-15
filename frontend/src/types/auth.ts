@@ -41,7 +41,8 @@ export interface RegisterRequest {
 
 export interface LoginResponse {
   user: UserInfo
-  tokens: TokenPair
+  access: string
+  refresh: string
 }
 
 export interface TokenPair {

@@ -42,7 +42,7 @@ async function fetchLinks() {
   error.value = ''
   try {
     const response = await getPublicServiceLinks()
-    serviceLinks.value = response.data ?? []
+    serviceLinks.value = response.data.data ?? []
   } catch {
     error.value = '加载服务链接失败'
   } finally {

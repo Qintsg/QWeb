@@ -13,7 +13,7 @@ import axios, {
 
 /** 后端基地址；优先读 Vite 环境变量 */
 const BASE_URL: string =
-  import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8001"
+  import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000"
 
 /** 创建 axios 实例 */
 const apiClient: AxiosInstance = axios.create({

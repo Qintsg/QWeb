@@ -59,7 +59,7 @@ async function fetchLinks() {
   loading.value = true
   try {
     const response = await getAdminServiceLinks()
-    links.value = response.data ?? []
+    links.value = response.data.data ?? []
   } catch {
     // 错误处理：静默
   } finally {

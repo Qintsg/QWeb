@@ -3,6 +3,7 @@
  */
 import apiClient from './client'
 import type { ApiResponse } from '@/types/api'
+import type { AxiosResponse } from 'axios'
 
 export interface ServiceLink {
   id: string
@@ -25,26 +26,26 @@ export interface ServiceLinkAdmin extends ServiceLink {
 export type ServiceLinkCreatePayload = Omit<ServiceLinkAdmin, 'id' | 'created_at' | 'updated_at'>
 
 /** 公开接口：获取可见的服务链接列表 */
-export function getPublicServiceLinks(): Promise<ApiResponse<ServiceLink[]>> {
+export function getPublicServiceLinks(): Promise<AxiosResponse<ApiResponse<ServiceLink[]>>> {
   return apiClient.get('/homepage/links/')
 }
 
 /** 管理接口：获取全部服务链接 */
-export function getAdminServiceLinks(): Promise<ApiResponse<ServiceLinkAdmin[]>> {
+export function getAdminServiceLinks(): Promise<AxiosResponse<ApiResponse<ServiceLinkAdmin[]>>> {
   return apiClient.get('/homepage/admin/links/')
 }
 
 /** 管理接口：创建服务链接 */
-export function createServiceLink(data: ServiceLinkCreatePayload): Promise<ApiResponse<ServiceLinkAdmin>> {
+export function createServiceLink(data: ServiceLinkCreatePayload): Promise<AxiosResponse<ApiResponse<ServiceLinkAdmin>>> {
   return apiClient.post('/homepage/admin/links/', data)
 }
 
 /** 管理接口：更新服务链接 */
-export function updateServiceLink(id: string, data: Partial<ServiceLinkCreatePayload>): Promise<ApiResponse<ServiceLinkAdmin>> {
+export function updateServiceLink(id: string, data: Partial<ServiceLinkCreatePayload>): Promise<AxiosResponse<ApiResponse<ServiceLinkAdmin>>> {
   return apiClient.patch(`/homepage/admin/links/${id}/`, data)
 }
 
 /** 管理接口：删除服务链接 */
-export function deleteServiceLink(id: string): Promise<ApiResponse<null>> {
+export function deleteServiceLink(id: string): Promise<AxiosResponse<ApiResponse<null>>> {
   return apiClient.delete(`/homepage/admin/links/${id}/`)
 }
