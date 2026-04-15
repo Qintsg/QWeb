@@ -29,7 +29,7 @@ async function handleLogin() {
   errorMsg.value = ''
 
   try {
-    await authStore.login({ username: username.value, password: password.value })
+    await authStore.login({ login: username.value, password: password.value })
     const redirect = (route.query.redirect as string) || '/'
     router.push(redirect)
   } catch (err: unknown) {

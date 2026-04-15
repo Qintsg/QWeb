@@ -28,7 +28,7 @@ export interface UserProfile {
 export type UserGroup = "owner" | "admin" | "trusted" | "user" | "guest"
 
 export interface LoginRequest {
-  username: string
+  login: string
   password: string
 }
 
