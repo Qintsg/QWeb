@@ -13,6 +13,8 @@
   - `src/styles/theme.css` — 主题配置（浅色/深色）
   - `src/styles/fluent2.css` — 全局 Fluent 2 基础样式
 
+根目录 `index.html` 是独立部署的静态首页，不能消费 Vue 运行时或 `src/styles/tokens.css`。该文件以内联 CSS 复用当前 Fluent 2 视觉基线：青色品牌色、暖橙强调色、暖色中性画布、8px 卡片圆角、清晰焦点态与响应式网格。
+
 ---
 
 ## 2. 组件目录结构

@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Qintsg 个人基础设施门户，汇总项目展示、服务器管理入口与临时工具服务。"
+    />
+    <meta name="theme-color" content="#0e9aa7" />
+    <link rel="canonical" href="https://qintsg.cn/" />
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%230e9aa7"/><text x="32" y="42" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="34" font-weight="700" fill="white">Q</text></svg>'
+    />
+    <title>Qintsg | 个人基础设施门户</title>
+    <style>
+      :root {
+        --color-brand: #0e9aa7;
+        --color-brand-strong: #0a7a85;
+        --color-accent: #f28a2e;
+        --color-canvas: #f8f5f1;
+        --color-surface: #ffffff;
+        --color-surface-muted: #f3efeb;
+        --color-text-primary: #2d2926;
+        --color-text-secondary: #6b6560;
+        --color-text-tertiary: #8d8680;
+        --color-stroke: rgba(45, 41, 38, 0.11);
+        --color-stroke-strong: rgba(45, 41, 38, 0.18);
+        --shadow-card: 0 18px 44px rgba(45, 41, 38, 0.08);
+        --shadow-soft: 0 8px 24px rgba(14, 154, 167, 0.12);
+        --radius-card: 8px;
+        --radius-pill: 999px;
+        --layout-max: 1160px;
+        --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        font-family: var(--font-sans);
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--color-text-primary);
+        background:
+          linear-gradient(90deg, rgba(14, 154, 167, 0.08) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(45, 41, 38, 0.045) 1px, transparent 1px),
+          var(--color-canvas);
+        background-size: 44px 44px;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.2) 42%, transparent),
+          linear-gradient(180deg, rgba(248, 245, 241, 0), var(--color-canvas) 72%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 20;
+        padding: 8px 12px;
+        color: #ffffff;
+        background: var(--color-brand-strong);
+        border-radius: 4px;
+        transform: translateY(-160%);
+        transition: transform 160ms ease;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .site-shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--color-stroke);
+        background: rgba(248, 245, 241, 0.88);
+        backdrop-filter: blur(16px);
+      }
+
+      .site-header__inner {
+        max-width: var(--layout-max);
+        min-height: 64px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-width: max-content;
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .brand__mark {
+        width: 34px;
+        height: 34px;
+        display: inline-grid;
+        place-items: center;
+        color: #ffffff;
+        background: linear-gradient(135deg, var(--color-brand), var(--color-brand-strong));
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 8px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .site-nav {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .site-nav a {
+        padding: 8px 11px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--color-text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+        transition:
+          background 160ms ease,
+          color 160ms ease;
+      }
+
+      .site-nav a:hover,
+      .site-nav a:focus-visible {
+        color: var(--color-text-primary);
+        background: rgba(14, 154, 167, 0.1);
+        outline: none;
+      }
+
+      .hero {
+        max-width: var(--layout-max);
+        width: 100%;
+        margin: 0 auto;
+        padding: 72px 24px 32px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.72fr);
+        gap: 42px;
+        align-items: end;
+      }
+
+      .hero__eyebrow {
+        width: fit-content;
+        margin: 0 0 18px;
+        padding: 5px 10px;
+        color: var(--color-brand-strong);
+        background: rgba(14, 154, 167, 0.1);
+        border: 1px solid rgba(14, 154, 167, 0.22);
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .hero h1 {
+        max-width: 780px;
+        margin: 0;
+        font-size: clamp(42px, 8vw, 88px);
+        line-height: 0.96;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .hero__summary {
+        max-width: 640px;
+        margin: 22px 0 0;
+        color: var(--color-text-secondary);
+        font-size: clamp(16px, 2vw, 20px);
+        line-height: 1.7;
+      }
+
+      .hero__actions {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid var(--color-stroke-strong);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 700;
+        background: var(--color-surface);
+        box-shadow: 0 6px 18px rgba(45, 41, 38, 0.06);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .action-link--primary {
+        color: #ffffff;
+        background: var(--color-brand-strong);
+        border-color: var(--color-brand-strong);
+      }
+
+      .action-link:hover,
+      .action-link:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+        outline: none;
+      }
+
+      .hero-panel {
+        border: 1px solid var(--color-stroke);
+        border-radius: var(--radius-card);
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+      }
+
+      .hero-panel__top {
+        padding: 18px 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--color-stroke);
+      }
+
+      .hero-panel__label {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .hero-panel__count {
+        margin: 4px 0 0;
+        font-size: 34px;
+        line-height: 1;
+        font-weight: 700;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        margin-top: 5px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+      }
+
+      .hero-panel__list {
+        margin: 0;
+        padding: 8px 0;
+        list-style: none;
+      }
+
+      .hero-panel__list li {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 12px;
+        padding: 10px 20px;
+        color: var(--color-text-secondary);
+        font-size: 13px;
+      }
+
+      .hero-panel__list strong {
+        color: var(--color-text-primary);
+      }
+
+      main {
+        flex: 1;
+      }
+
+      .section {
+        max-width: var(--layout-max);
+        margin: 0 auto;
+        padding: 44px 24px;
+      }
+
+      .section__header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+
+      .section__title {
+        margin: 0;
+        font-size: clamp(24px, 4vw, 34px);
+        line-height: 1.15;
+      }
+
+      .section__note {
+        max-width: 450px;
+        margin: 0;
+        color: var(--color-text-secondary);
+      }
+
+      .service-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 14px;
+      }
+
+      .service-card {
+        --card-color: var(--color-brand);
+        min-height: 214px;
+        grid-column: span 4;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+        color: var(--color-text-primary);
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid var(--color-stroke);
+        border-top: 4px solid var(--card-color);
+        border-radius: var(--radius-card);
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(45, 41, 38, 0.055);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          background 180ms ease;
+      }
+
+      .service-card--wide {
+        grid-column: span 6;
+      }
+
+      .service-card:hover,
+      .service-card:focus-visible {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--card-color) 42%, var(--color-stroke));
+        background: #ffffff;
+        box-shadow: 0 18px 38px color-mix(in srgb, var(--card-color) 18%, transparent);
+        outline: none;
+      }
+
+      .service-card__meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .service-card__icon {
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 8px;
+        font-size: 23px;
+        background: color-mix(in srgb, var(--card-color) 12%, white);
+      }
+
+      .service-card__badge {
+        padding: 4px 10px;
+        border-radius: var(--radius-pill);
+        color: color-mix(in srgb, var(--card-color) 78%, #1f1f1f);
+        background: color-mix(in srgb, var(--card-color) 12%, white);
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .service-card h3 {
+        margin: 0;
+        font-size: 19px;
+        line-height: 1.35;
+      }
+
+      .service-card p {
+        margin: 0;
+        color: var(--color-text-secondary);
+      }
+
+      .service-card__remark {
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--color-stroke);
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .service-card__arrow {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        width: 28px;
+        height: 28px;
+        display: inline-grid;
+        place-items: center;
+        color: var(--card-color);
+        border: 1px solid color-mix(in srgb, var(--card-color) 28%, transparent);
+        border-radius: 50%;
+        transition:
+          transform 180ms ease,
+          background 180ms ease,
+          color 180ms ease;
+      }
+
+      .service-card:hover .service-card__arrow,
+      .service-card:focus-visible .service-card__arrow {
+        color: #ffffff;
+        background: var(--card-color);
+        transform: translate(2px, -2px);
+      }
+
+      .site-footer {
+        border-top: 1px solid var(--color-stroke);
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .site-footer__inner {
+        max-width: var(--layout-max);
+        margin: 0 auto;
+        padding: 22px 24px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--color-text-secondary);
+        font-size: 13px;
+      }
+
+      .site-footer a {
+        text-decoration: none;
+      }
+
+      .site-footer a:hover,
+      .site-footer a:focus-visible {
+        color: var(--color-brand-strong);
+        outline: none;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .hero__eyebrow,
+        .hero h1,
+        .hero__summary,
+        .hero__actions,
+        .hero-panel,
+        .service-card {
+          animation: enter 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero h1 {
+          animation-delay: 80ms;
+        }
+
+        .hero__summary {
+          animation-delay: 140ms;
+        }
+
+        .hero__actions {
+          animation-delay: 190ms;
+        }
+
+        .hero-panel {
+          animation-delay: 150ms;
+        }
+
+        .service-card:nth-child(2) {
+          animation-delay: 40ms;
+        }
+
+        .service-card:nth-child(3) {
+          animation-delay: 80ms;
+        }
+
+        .service-card:nth-child(4) {
+          animation-delay: 120ms;
+        }
+
+        .service-card:nth-child(5) {
+          animation-delay: 160ms;
+        }
+
+        .service-card:nth-child(6) {
+          animation-delay: 200ms;
+        }
+
+        .service-card:nth-child(7) {
+          animation-delay: 240ms;
+        }
+
+        .service-card:nth-child(8) {
+          animation-delay: 280ms;
+        }
+
+        @keyframes enter {
+          from {
+            opacity: 0;
+            transform: translateY(18px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      }
+
+      @media (max-width: 920px) {
+        .hero {
+          grid-template-columns: 1fr;
+          padding-top: 46px;
+        }
+
+        .hero-panel {
+          max-width: 520px;
+        }
+
+        .service-card,
+        .service-card--wide {
+          grid-column: span 6;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .site-header__inner {
+          min-height: auto;
+          padding: 14px 18px;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .site-nav {
+          width: 100%;
+          margin-left: 0;
+          overflow-x: auto;
+          padding-bottom: 2px;
+        }
+
+        .site-nav a {
+          white-space: nowrap;
+        }
+
+        .hero,
+        .section {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .hero__actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .action-link {
+          justify-content: center;
+        }
+
+        .section__header,
+        .site-footer__inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .service-card,
+        .service-card--wide {
+          grid-column: 1 / -1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#services">跳转到服务列表</a>
+    <div class="site-shell">
+      <header class="site-header" aria-label="站点导航">
+        <div class="site-header__inner">
+          <a class="brand" href="https://qintsg.cn/" aria-label="Qintsg 首页">
+            <span class="brand__mark" aria-hidden="true">Q</span>
+            <span>Qintsg</span>
+          </a>
+          <nav class="site-nav" aria-label="主导航">
+            <a href="#projects">项目</a>
+            <a href="#servers">服务器</a>
+            <a href="#tools">工具</a>
+            <a href="https://github.com/qintsg" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="home-title">
+          <div>
+            <p class="hero__eyebrow">Personal Infrastructure Portal</p>
+            <h1 id="home-title">Qintsg 的公开服务入口</h1>
+            <p class="hero__summary">
+              一个静态、无需登录的入口页，用于访问当前公开展示的项目、服务器控制面板与临时工具服务。
+            </p>
+            <div class="hero__actions" aria-label="快捷操作">
+              <a class="action-link action-link--primary" href="#services">
+                查看全部服务
+                <span aria-hidden="true">↓</span>
+              </a>
+              <a class="action-link" href="https://github.com/qintsg" target="_blank" rel="noopener noreferrer">
+                GitHub
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <aside class="hero-panel" aria-label="门户概览">
+            <div class="hero-panel__top">
+              <div>
+                <p class="hero-panel__label">当前公开入口</p>
+                <p class="hero-panel__count">8</p>
+              </div>
+              <span class="status-dot" aria-label="静态页面可用"></span>
+            </div>
+            <ul class="hero-panel__list">
+              <li><strong>部署域名</strong><span>qintsg.cn / www.qintsg.cn</span></li>
+              <li><strong>登录依赖</strong><span>无账号、无后台、无 API 请求</span></li>
+              <li><strong>跳转方式</strong><span>服务卡片打开对应外部链接</span></li>
+            </ul>
+          </aside>
+        </section>
+
+        <section id="services" class="section" aria-labelledby="services-title">
+          <div class="section__header">
+            <div>
+              <h2 id="services-title" class="section__title">服务与项目</h2>
+            </div>
+            <p class="section__note">数据来自当前数据库中可见的首页服务链接，已按排序权重固化为静态内容。</p>
+          </div>
+
+          <div class="service-grid">
+            <a
+              id="projects"
+              class="service-card service-card--wide"
+              style="--card-color: #0e9aa7"
+              href="https://edu.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🎓</span>
+                <span class="service-card__badge">项目展示</span>
+              </div>
+              <div>
+                <h3>知识图谱驱动的个性化自适应学习系统</h3>
+                <p>上海市计算机应用能力大赛作品</p>
+              </div>
+              <p class="service-card__remark">仅用于2026上海市计算机应用能力大赛作品展示，不进行实际运营</p>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              class="service-card service-card--wide"
+              style="--card-color: #f28a2e"
+              href="https://meow.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🐱</span>
+                <span class="service-card__badge">项目展示</span>
+              </div>
+              <div>
+                <h3>喵喵湾</h3>
+                <p>上海第二工业大学大学生创新创业作品</p>
+              </div>
+              <p class="service-card__remark">
+                仅用于2026上海市第二工业大学大学生创新创业作品展示，不进行实际运营
+              </p>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              id="servers"
+              class="service-card"
+              style="--card-color: #3b82f6"
+              href="https://frps.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🖥️</span>
+                <span class="service-card__badge">服务器管理</span>
+              </div>
+              <div>
+                <h3>Frps 管理网页</h3>
+                <p>本服务器 frps 管理网页</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              class="service-card"
+              style="--card-color: #10b981"
+              href="https://panel.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🛠️</span>
+                <span class="service-card__badge">服务器管理</span>
+              </div>
+              <div>
+                <h3>1Panel 管理面板</h3>
+                <p>本服务器 1Panel 管理面板</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              class="service-card"
+              style="--card-color: #6366f1"
+              href="https://panel.jfy2.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🖥️</span>
+                <span class="service-card__badge">服务器管理</span>
+              </div>
+              <div>
+                <h3>8C16G 服务器 1Panel</h3>
+                <p>8C16G 服务器 1Panel 管理面板</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              class="service-card"
+              style="--card-color: #8b5cf6"
+              href="https://frpc.jfy2.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">🔗</span>
+                <span class="service-card__badge">服务器管理</span>
+              </div>
+              <div>
+                <h3>8C16G 服务器 Frpc</h3>
+                <p>8C16G 服务器 frpc 管理面板</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              id="tools"
+              class="service-card"
+              style="--card-color: #f59e0b"
+              href="https://hfs.qintsg.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">📁</span>
+                <span class="service-card__badge">工具</span>
+              </div>
+              <div>
+                <h3>HFS 临时文件传输</h3>
+                <p>hfs 临时文件传输</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              class="service-card"
+              style="--card-color: #ec4899"
+              href="https://frpc.nootbook.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="service-card__meta">
+                <span class="service-card__icon" aria-hidden="true">📓</span>
+                <span class="service-card__badge">服务器管理</span>
+              </div>
+              <div>
+                <h3>Notebook Frpc 管理面板</h3>
+                <p>Notebook Frpc 管理面板</p>
+              </div>
+              <span class="service-card__arrow" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="site-footer__inner">
+          <span>Copyright © <span id="current-year">2026</span> Qintsg. All rights reserved.</span>
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">沪ICP备2026000797号-2</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      document.getElementById("current-year").textContent = String(new Date().getFullYear());
+    </script>
+  </body>
+</html>

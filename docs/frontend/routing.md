@@ -13,6 +13,15 @@
 | 用户工作区 | `DashboardLayout` | 登录 | 仪表盘、个人设置、业务模块 |
 | 管理后台 | `AdminLayout` | 登录 + 管理员权限 | 系统配置、审计日志、用户管理 |
 
+### 1.1 静态公开首页
+
+仓库根目录 `index.html` 是面向 `qintsg.cn` 与 `www.qintsg.cn` 的静态公开首页。
+
+- 不依赖 Vue Router、登录态、后台管理或后端 API。
+- 服务入口数据由当前数据库 `homepage_service_link` 可见记录固化生成。
+- 卡片跳转使用普通 `<a>` 外链，打开对应服务域名。
+- `frontend/index.html` 仍是 Vite 应用入口，二者部署职责分离。
+
 ---
 
 ## 2. 路由树
