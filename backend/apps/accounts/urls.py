@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.accounts.api.views.auth_views import (
     ChangePasswordView,
+    GitHubOAuthAuthorizeView,
+    GitHubOAuthCallbackView,
     LoginView,
     LogoutView,
     RegisterView,
@@ -25,6 +27,8 @@ urlpatterns = [
     # ---- 认证 ----
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/github/authorize/", GitHubOAuthAuthorizeView.as_view(), name="github-authorize"),
+    path("auth/github/callback/", GitHubOAuthCallbackView.as_view(), name="github-callback"),
     path("auth/logout/", LogoutView.as_view(), name="logout"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("auth/change-password/", ChangePasswordView.as_view(), name="change-password"),

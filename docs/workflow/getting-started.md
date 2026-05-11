@@ -8,7 +8,7 @@
 
 | 工具 | 最低版本 | 安装确认 |
 |------|----------|----------|
-| Python | 3.12 | `python --version` |
+| Python | 3.13 | `python --version` |
 | Node.js | 20 LTS | `node --version` |
 | PostgreSQL | 16 | `psql --version` |
 | Redis | 7 | `redis-cli ping` |
@@ -44,29 +44,34 @@ psql -U postgres -f docs/postgresql-init.sql
 ```bash
 cd backend
 
-# 创建虚拟环境
-python -m venv .venv
-
-# 激活虚拟环境
-# Linux/macOS:
-source .venv/bin/activate
-# Windows:
-.venv\Scripts\activate
-
 # 安装依赖
-pip install -r requirements.txt
+uv sync
 
 # 复制环境变量（按需修改 DB 和 Redis 配置）
 cp .env.example .env
 
 # 数据库迁移
-python manage.py migrate
+uv run python manage.py migrate
 
 # 创建超级管理员
-python manage.py createsuperuser
+uv run python manage.py createsuperuser
 
 # 启动开发服务器
-python manage.py runserver 0.0.0.0:8000
+uv run python manage.py runserver 0.0.0.0:8000
+```
+
+如需启用 GitHub 登录，需要在 GitHub OAuth App 中配置回调地址：
+
+```text
+http://127.0.0.1:3000/auth/github/callback
+```
+
+并在 `backend/.env` 中填写：
+
+```env
+GITHUB_OAUTH_CLIENT_ID=your-client-id
+GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
+GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
 ```
 
 验证后端是否运行：
@@ -128,16 +133,16 @@ npm run dev
 
 ```bash
 # 创建新 app
-python manage.py startapp <app_name> apps/<app_name>
+uv run python manage.py startapp <app_name> apps/<app_name>
 
 # 生成迁移
-python manage.py makemigrations <app_name>
+uv run python manage.py makemigrations <app_name>
 
 # 执行迁移
-python manage.py migrate
+uv run python manage.py migrate
 
 # Django Shell
-python manage.py shell
+uv run python manage.py shell
 
 # 启动 Celery Worker
 celery -A config worker -l info
@@ -146,7 +151,7 @@ celery -A config worker -l info
 celery -A config beat -l info
 
 # 运行测试
-python manage.py test
+uv run python manage.py test
 # 或
 pytest
 ```
@@ -197,7 +202,8 @@ QWeb/
 │   │   └── dev_workspace/        # 远程开发
 │   ├── config/                   # Django 项目配置
 │   ├── manage.py
-│   └── requirements.txt
+│   ├── pyproject.toml
+│   └── uv.lock
 ├── frontend/                     # Vue 3 前端
 │   ├── src/
 │   │   ├── api/                  # API 接口

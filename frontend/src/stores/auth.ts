@@ -6,10 +6,16 @@
 import { ref, computed } from "vue"
 import { defineStore } from "pinia"
 import { useRouter } from "vue-router"
-import { login as apiLogin, logout as apiLogout, getMe } from "@/api/auth"
+import {
+  completeGitHubLogin,
+  getGitHubAuthorizeUrl,
+  login as apiLogin,
+  logout as apiLogout,
+  getMe,
+} from "@/api/auth"
 import { setTokens, clearTokens, getAccessToken, getRefreshToken } from "@/api/client"
 import { usePermissionStore } from "./permission"
-import type { UserInfo, LoginRequest } from "@/types/auth"
+import type { UserInfo, LoginRequest, GitHubCallbackRequest } from "@/types/auth"
 
 export const useAuthStore = defineStore("auth", () => {
   const router = useRouter()
@@ -29,6 +35,25 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = true
     try {
       const { data } = await apiLogin(credentials)
+      const result = data.data
+      setTokens(result.access, result.refresh)
+      await fetchUser()
+      return result
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /* ── GitHub 登录 ── */
+  async function startGitHubLogin(redirect?: string) {
+    const { data } = await getGitHubAuthorizeUrl(redirect)
+    window.location.assign(data.data.authorization_url)
+  }
+
+  async function completeGitHubOAuth(payload: GitHubCallbackRequest) {
+    loading.value = true
+    try {
+      const { data } = await completeGitHubLogin(payload)
       const result = data.data
       setTokens(result.access, result.refresh)
       await fetchUser()
@@ -85,6 +110,8 @@ export const useAuthStore = defineStore("auth", () => {
     displayName,
     userGroup,
     login,
+    startGitHubLogin,
+    completeGitHubOAuth,
     logout,
     fetchUser,
     initialize,

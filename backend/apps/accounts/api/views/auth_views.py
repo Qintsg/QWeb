@@ -13,6 +13,8 @@ from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshV
 
 from apps.accounts.api.serializers.auth import (
     ChangePasswordSerializer,
+    GitHubOAuthAuthorizeSerializer,
+    GitHubOAuthCallbackSerializer,
     LoginSerializer,
     RegisterSerializer,
 )
@@ -21,6 +23,10 @@ from apps.accounts.services.auth_service import (
     authenticate_user,
     change_password,
     register_user,
+)
+from apps.accounts.services.github_oauth import (
+    build_github_authorization_url,
+    complete_github_login,
 )
 from apps.audit.services.login_audit import log_logout
 from apps.core.responses import error_response, success_response
@@ -83,6 +89,54 @@ class LoginView(APIView):
                 "refresh": result["refresh"],
             },
             message="登录成功",
+        )
+
+
+class GitHubOAuthAuthorizeView(APIView):
+    """GitHub OAuth 授权地址接口。
+
+    GET /api/v1/auth/github/authorize/
+    返回 GitHub 授权跳转 URL，client secret 不下发到前端。
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request: Request):
+        serializer = GitHubOAuthAuthorizeSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        result = build_github_authorization_url(
+            redirect=serializer.validated_data.get("redirect", "")
+        )
+        return success_response(data=result, message="获取 GitHub 授权地址成功")
+
+
+class GitHubOAuthCallbackView(APIView):
+    """GitHub OAuth 回调完成接口。
+
+    POST /api/v1/auth/github/callback/
+    前端回调页提交 code/state 后，后端换取 GitHub 用户信息并签发本地 JWT。
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request: Request):
+        serializer = GitHubOAuthCallbackSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = complete_github_login(
+            code=serializer.validated_data["code"],
+            state=serializer.validated_data["state"],
+            request=request._request,
+        )
+        return success_response(
+            data={
+                "user": UserSerializer(result["user"]).data,
+                "access": result["access"],
+                "refresh": result["refresh"],
+                "redirect": result["redirect"],
+            },
+            message="GitHub 登录成功",
         )
 
 

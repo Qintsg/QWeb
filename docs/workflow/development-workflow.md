@@ -26,13 +26,11 @@ psql -U postgres -f docs/postgresql-init.sql
 
 # 3. 后端环境
 cd backend
-python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+uv sync
 cp .env.example .env           # 修改 .env 中的数据库与 Redis 配置
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver 0.0.0.0:8000
+uv run python manage.py migrate
+uv run python manage.py createsuperuser
+uv run python manage.py runserver 0.0.0.0:8000
 
 # 4. 前端环境
 cd ../frontend
@@ -49,6 +47,25 @@ npm run dev                    # 启动在 http://localhost:3000
 | Vite 前端 | 3000 | 开发服务器 |
 | PostgreSQL | 5432 | 数据库 |
 | Redis | 6379 | 缓存/队列 |
+
+### 1.4 GitHub OAuth 登录
+
+本地 GitHub OAuth App 的回调地址应配置为：
+
+```text
+http://127.0.0.1:3000/auth/github/callback
+```
+
+后端使用以下环境变量读取 GitHub OAuth 配置：
+
+```env
+GITHUB_OAUTH_CLIENT_ID=your-client-id
+GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
+GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
+GITHUB_OAUTH_STATE_MAX_AGE=600
+```
+
+GitHub `client_secret` 只允许配置在后端 `.env`，前端通过 `/api/v1/auth/github/authorize/` 获取授权地址，不直接持有密钥。
 
 ---
 

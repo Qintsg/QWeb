@@ -79,6 +79,23 @@ class LoginSerializer(serializers.Serializer):
     )
 
 
+class GitHubOAuthAuthorizeSerializer(serializers.Serializer):
+    """GitHub OAuth 授权地址请求。"""
+
+    redirect = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="登录成功后回到前端的相对路径。",
+    )
+
+
+class GitHubOAuthCallbackSerializer(serializers.Serializer):
+    """GitHub OAuth 回调换取本地 Token 请求。"""
+
+    code = serializers.CharField(help_text="GitHub 回调返回的授权码。")
+    state = serializers.CharField(help_text="后端签名生成的 OAuth state。")
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     """修改密码请求。
 

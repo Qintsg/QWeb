@@ -55,6 +55,14 @@
 - 对某个用户，在角色基础上额外 `allow` 或 `deny` 特定权限
 - `deny` 优先于 `allow`（黑名单优先）
 
+### 2.4 第三方登录身份
+
+- 账号认证中心支持 GitHub OAuth 登录。
+- GitHub OAuth 回调由前端接收 `code/state` 后提交给后端完成换取 token，GitHub `client_secret` 只保存在后端环境变量中。
+- 后端保存 `OAuthIdentity` 绑定关系：`provider`、`provider_user_id`、`provider_username`、邮箱、头像和资料页 URL，不持久化 GitHub access token。
+- 如果 GitHub 已验证邮箱匹配现有本地用户，则自动绑定该用户；否则创建一个无本地密码的新用户。
+- 登录成功后仍签发项目自己的 JWT，并继续使用 IAM 解析最终权限。
+
 ---
 
 ## 3. 权限检查流程

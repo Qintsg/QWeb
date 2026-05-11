@@ -23,6 +23,12 @@ const publicRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/RegisterPage.vue'),
     meta: { layout: 'public', title: '注册' },
   },
+  {
+    path: '/auth/github/callback',
+    name: 'github-callback',
+    component: () => import('@/pages/GitHubCallbackPage.vue'),
+    meta: { layout: 'public', title: 'GitHub 登录' },
+  },
 ]
 
 /** 首页（独立公开路由，不使用布局包裹） */

@@ -152,6 +152,14 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+GITHUB_OAUTH_CLIENT_ID = os.getenv("GITHUB_OAUTH_CLIENT_ID", "")
+GITHUB_OAUTH_CLIENT_SECRET = os.getenv("GITHUB_OAUTH_CLIENT_SECRET", "")
+GITHUB_OAUTH_CALLBACK_URL = os.getenv(
+    "GITHUB_OAUTH_CALLBACK_URL",
+    "http://127.0.0.1:3000/auth/github/callback",
+)
+GITHUB_OAUTH_STATE_MAX_AGE = int(os.getenv("GITHUB_OAUTH_STATE_MAX_AGE", "600"))
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "QWeb API",
     "DESCRIPTION": "QWeb personal infrastructure portal backend API.",

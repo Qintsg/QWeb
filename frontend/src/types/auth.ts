@@ -43,6 +43,17 @@ export interface LoginResponse {
   user: UserInfo
   access: string
   refresh: string
+  redirect?: string
+}
+
+export interface GitHubAuthorizeResponse {
+  authorization_url: string
+  state: string
+}
+
+export interface GitHubCallbackRequest {
+  code: string
+  state: string
 }
 
 export interface TokenPair {

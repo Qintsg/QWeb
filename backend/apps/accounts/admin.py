@@ -7,6 +7,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+from apps.accounts.models.oauth_identity import OAuthIdentity
 from apps.accounts.models.user import User
 from apps.accounts.models.user_profile import UserProfile
 
@@ -20,11 +21,33 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = "用户资料"
 
 
+class OAuthIdentityInline(admin.TabularInline):
+    """用户 OAuth 身份绑定内联展示。"""
+
+    model = OAuthIdentity
+    fk_name = "user"
+    extra = 0
+    can_delete = False
+    readonly_fields = (
+        "provider",
+        "provider_user_id",
+        "provider_username",
+        "email",
+        "avatar_url",
+        "profile_url",
+        "last_login_at",
+        "created_at",
+        "updated_at",
+    )
+    fields = readonly_fields
+    verbose_name_plural = "OAuth 身份绑定"
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     """自定义 User 管理后台。"""
 
-    inlines = (UserProfileInline,)
+    inlines = (UserProfileInline, OAuthIdentityInline)
 
     list_display = ("username", "email", "display_name", "is_active", "is_staff", "date_joined")
     list_filter = ("is_active", "is_staff", "is_superuser")
@@ -51,3 +74,13 @@ class UserAdmin(BaseUserAdmin):
     )
 
     readonly_fields = ("date_joined",)
+
+
+@admin.register(OAuthIdentity)
+class OAuthIdentityAdmin(admin.ModelAdmin):
+    """OAuth 身份绑定管理后台。"""
+
+    list_display = ("provider", "provider_username", "email", "user", "last_login_at")
+    list_filter = ("provider",)
+    search_fields = ("provider_user_id", "provider_username", "email", "user__username")
+    readonly_fields = ("created_at", "updated_at", "last_login_at")

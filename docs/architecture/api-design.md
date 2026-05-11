@@ -96,8 +96,10 @@
 | ---- | --------------------------------- | ------------ |
 | POST | /api/v1/auth/register             | 注册         |
 | POST | /api/v1/auth/login                | 登录         |
+| GET  | /api/v1/auth/github/authorize     | 获取 GitHub OAuth 授权地址 |
+| POST | /api/v1/auth/github/callback      | GitHub OAuth 回调换取本地 Token |
 | POST | /api/v1/auth/logout               | 登出         |
-| POST | /api/v1/auth/refresh              | 刷新 Token   |
+| POST | /api/v1/auth/token/refresh        | 刷新 Token   |
 | POST | /api/v1/auth/verify-email         | 邮箱验证     |
 | POST | /api/v1/auth/resend-verification  | 重发验证码   |
 | POST | /api/v1/auth/forgot-password      | 忘记密码     |

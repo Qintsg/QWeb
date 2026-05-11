@@ -50,6 +50,16 @@ export default {
     confirmNewPassword: "Confirm New Password",
     passwordChanged: "Password changed",
     sessionExpired: "Session expired, please login again",
+    githubLogin: "Continue with GitHub",
+    githubLoginFailed: "GitHub login failed",
+    githubCallbackProcessing: "Completing GitHub login",
+    githubCallbackHint: "Verifying GitHub authorization and creating a local session.",
+    githubCallbackMissing: "GitHub callback is missing required parameters. Please start login again.",
+    orLoginWith: "or",
+    backToLogin: "Back to Login",
+    fillAllFields: "Please fill in username and password",
+    loginFailed: "Login failed. Please check your account or password",
+    noAccount: "No account yet?",
   },
 
   dashboard: {

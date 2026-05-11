@@ -13,6 +13,8 @@ import type {
   ChangePasswordRequest,
   UserInfo,
   ResolvedPermissions,
+  GitHubAuthorizeResponse,
+  GitHubCallbackRequest,
 } from "@/types/auth"
 
 /** 用户注册 */
@@ -23,6 +25,19 @@ export function register(payload: RegisterRequest) {
 /** 用户名密码登录 */
 export function login(payload: LoginRequest) {
   return apiClient.post<ApiResponse<LoginResponse>>("/auth/login/", payload)
+}
+
+/** 获取 GitHub OAuth 授权地址 */
+export function getGitHubAuthorizeUrl(redirect?: string) {
+  return apiClient.get<ApiResponse<GitHubAuthorizeResponse>>(
+    "/auth/github/authorize/",
+    { params: { redirect } }
+  )
+}
+
+/** 完成 GitHub OAuth 回调并换取本地 Token */
+export function completeGitHubLogin(payload: GitHubCallbackRequest) {
+  return apiClient.post<ApiResponse<LoginResponse>>("/auth/github/callback/", payload)
 }
 
 /** 登出（黑名单 refresh token） */

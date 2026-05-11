@@ -16,6 +16,7 @@ const authStore = useAuthStore()
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
+const githubLoading = ref(false)
 const errorMsg = ref('')
 
 /** 处理登录 */
@@ -36,6 +37,19 @@ async function handleLogin() {
     errorMsg.value = (err as Error).message || t('auth.loginFailed')
   } finally {
     loading.value = false
+  }
+}
+
+async function handleGitHubLogin() {
+  githubLoading.value = true
+  errorMsg.value = ''
+
+  try {
+    const redirect = (route.query.redirect as string) || '/dashboard'
+    await authStore.startGitHubLogin(redirect)
+  } catch (err: unknown) {
+    errorMsg.value = (err as Error).message || t('auth.githubLoginFailed')
+    githubLoading.value = false
   }
 }
 </script>
@@ -81,6 +95,20 @@ async function handleLogin() {
           @click="handleLogin"
         >
           {{ loading ? t('common.loading') : t('auth.login') }}
+        </fluent-button>
+
+        <div class="login-divider">
+          <span>{{ t('auth.orLoginWith') }}</span>
+        </div>
+
+        <fluent-button
+          type="button"
+          appearance="outline"
+          class="github-login-btn"
+          :disabled="githubLoading || loading"
+          @click="handleGitHubLogin"
+        >
+          {{ githubLoading ? t('common.loading') : t('auth.githubLogin') }}
         </fluent-button>
 
         <p class="login-link">
@@ -145,6 +173,26 @@ async function handleLogin() {
 .login-btn {
   width: 100%;
   margin-top: var(--q-space-12);
+}
+
+.github-login-btn {
+  width: 100%;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--q-space-12);
+  color: var(--q-color-text-tertiary);
+  font-size: var(--q-font-size-sm);
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--q-color-divider);
 }
 
 .login-link {

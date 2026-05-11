@@ -50,6 +50,16 @@ export default {
     confirmNewPassword: "确认新密码",
     passwordChanged: "密码已修改",
     sessionExpired: "登录已过期，请重新登录",
+    githubLogin: "使用 GitHub 登录",
+    githubLoginFailed: "GitHub 登录失败",
+    githubCallbackProcessing: "正在完成 GitHub 登录",
+    githubCallbackHint: "正在验证 GitHub 授权并创建本地会话。",
+    githubCallbackMissing: "GitHub 回调缺少必要参数，请重新发起登录。",
+    orLoginWith: "或",
+    backToLogin: "返回登录",
+    fillAllFields: "请填写用户名和密码",
+    loginFailed: "登录失败，请检查账号或密码",
+    noAccount: "还没有账号？",
   },
 
   dashboard: {
