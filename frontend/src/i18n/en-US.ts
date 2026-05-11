@@ -27,6 +27,7 @@ export default {
     createdAt: "Created At",
     updatedAt: "Updated At",
     comingSoon: "Coming soon",
+    backDashboard: "Back to Dashboard",
   },
 
   auth: {
@@ -145,6 +146,7 @@ export default {
   error: {
     unauthorized: "Unauthorized, please login",
     forbidden: "No permission to perform this action",
+    forbiddenDescription: "Your account does not have the permission required to access this page. Contact the site administrator to adjust your role or user overrides.",
     notFound: "Resource not found",
     serverError: "Internal server error",
     networkError: "Network error, please check your connection",

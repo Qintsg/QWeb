@@ -27,6 +27,7 @@ export default {
     createdAt: "创建时间",
     updatedAt: "更新时间",
     comingSoon: "即将推出",
+    backDashboard: "返回仪表盘",
   },
 
   auth: {
@@ -145,6 +146,7 @@ export default {
   error: {
     unauthorized: "未授权，请先登录",
     forbidden: "没有权限执行此操作",
+    forbiddenDescription: "当前账号缺少访问此页面所需的权限。如需访问，请联系站点管理员调整角色或用户权限覆盖。",
     notFound: "请求的资源不存在",
     serverError: "服务器内部错误",
     networkError: "网络连接异常，请检查网络",

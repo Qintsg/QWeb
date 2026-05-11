@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework import status as http_status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
@@ -76,7 +76,7 @@ class RoleListCreateView(APIView):
         return success_response(
             data=RoleSerializer(role).data,
             message="角色创建成功",
-            status_code=status.HTTP_201_CREATED,
+            status=http_status.HTTP_201_CREATED,
         )
 
 
@@ -180,7 +180,7 @@ class UserRoleAssignView(APIView):
         return success_response(
             data=UserRoleSerializer(user_role).data,
             message="角色分配成功",
-            status_code=status.HTTP_201_CREATED,
+            status=http_status.HTTP_201_CREATED,
         )
 
     def delete(self, request: Request, user_id: UUID):
@@ -251,7 +251,7 @@ class UserOverrideManageView(APIView):
         return success_response(
             data=UserPermissionOverrideSerializer(override).data,
             message="权限覆盖已添加",
-            status_code=status.HTTP_201_CREATED,
+            status=http_status.HTTP_201_CREATED,
         )
 
     def delete(self, request: Request, user_id: UUID):
@@ -260,7 +260,7 @@ class UserOverrideManageView(APIView):
 
         permission_code = request.data.get("permission_code")
         if not permission_code:
-            return error_response(message="缺少 permission_code", status_code=400)
+            return error_response(message="缺少 permission_code", status=http_status.HTTP_400_BAD_REQUEST)
 
         try:
             target_user = User.objects.get(pk=user_id)

@@ -83,8 +83,8 @@ router.beforeEach:
 1. 检查目标路由 meta.requiresAuth
 2. 未登录 → 重定向 /auth/login?redirect=目标路径
 3. 已登录访问 /auth/* → 重定向 /dashboard
-4. 检查目标路由 meta.requiredPermission
-5. 权限不足 → 重定向 /403
+4. 检查目标路由 meta.permission，权限码使用 `{module}.{resource}.{action}` 格式，与后端 IAM 保持一致
+5. 权限不足 → 重定向 /403，并保留来源路径
 6. 检查目标路由 meta.requiredModule
 7. 模块已关闭 → 重定向 /module-disabled
 ```
@@ -94,7 +94,7 @@ router.beforeEach:
 ```typescript
 interface RouteMeta {
   requiresAuth?: boolean        // 是否需要登录
-  requiredPermission?: string   // 所需权限码
+  permission?: string           // 所需权限码
   requiredModule?: string       // 所需模块开关
   layout?: string               // 使用的 Layout
   title?: string                // 页面标题

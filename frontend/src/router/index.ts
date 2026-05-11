@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { usePermissionStore } from '@/stores/permission'
 
 /**
  * 路由配置
@@ -44,31 +45,31 @@ const authenticatedRoutes: RouteRecordRaw[] = [
     path: '/users',
     name: 'users',
     component: () => import('@/pages/UsersPage.vue'),
-    meta: { title: '用户管理', permission: 'accounts.view_user' },
+    meta: { title: '用户管理', permission: 'accounts.user.view' },
   },
   {
     path: '/roles',
     name: 'roles',
     component: () => import('@/pages/RolesPage.vue'),
-    meta: { title: '角色管理', permission: 'iam.view_role' },
+    meta: { title: '角色管理', permission: 'iam.role.view' },
   },
   {
     path: '/permissions',
     name: 'permissions',
     component: () => import('@/pages/PermissionsPage.vue'),
-    meta: { title: '权限管理', permission: 'iam.view_permission' },
+    meta: { title: '权限管理', permission: 'iam.permission.view' },
   },
   {
     path: '/audit-logs',
     name: 'audit-logs',
     component: () => import('@/pages/AuditLogsPage.vue'),
-    meta: { title: '操作日志', permission: 'audit.view_auditlog' },
+    meta: { title: '操作日志', permission: 'audit.log.view' },
   },
   {
     path: '/login-logs',
     name: 'login-logs',
     component: () => import('@/pages/LoginLogsPage.vue'),
-    meta: { title: '登录日志', permission: 'audit.view_loginlog' },
+    meta: { title: '登录日志', permission: 'audit.log.view' },
   },
   {
     path: '/profile',
@@ -81,6 +82,12 @@ const authenticatedRoutes: RouteRecordRaw[] = [
     name: 'service-links',
     component: () => import('@/pages/ServiceLinksPage.vue'),
     meta: { title: '服务链接管理', permission: 'homepage.service_link.manage' },
+  },
+  {
+    path: '/403',
+    name: 'forbidden',
+    component: () => import('@/pages/ForbiddenPage.vue'),
+    meta: { title: '无权限' },
   },
 ]
 
@@ -117,6 +124,7 @@ const router = createRouter({
 /** 全局前置守卫：认证与权限检查 */
 router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore()
+  const permissionStore = usePermissionStore()
 
   // 尝试初始化用户状态（首次加载时）
   if (!authStore.isAuthenticated && !authStore.loading) {
@@ -135,6 +143,21 @@ router.beforeEach(async (to, _from, next) => {
     // 已登录 → 跳过登录/注册页面，前往仪表盘
     next({ name: 'dashboard' })
     return
+  }
+
+  const requiredPermission = to.matched
+    .map((record) => record.meta.permission)
+    .find((permission): permission is string => typeof permission === 'string')
+
+  if (requiredPermission) {
+    if (!permissionStore.permissions && !permissionStore.loading) {
+      await permissionStore.fetchPermissions()
+    }
+
+    if (!permissionStore.hasPermission(requiredPermission)) {
+      next({ name: 'forbidden', query: { from: to.fullPath } })
+      return
+    }
   }
 
   next()

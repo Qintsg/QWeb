@@ -1,12 +1,12 @@
-"""审计模块视图 — 管理员只读查询。"""
+"""审计模块视图 — IAM 授权只读查询。"""
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
-from rest_framework.permissions import IsAdminUser
 
 from apps.audit.api.serializers import AuditLogSerializer, LoginLogSerializer
 from apps.audit.models import AuditLog, LoginLog
 from apps.core.pagination import StandardPagination
+from apps.iam.permissions import RequirePermission
 
 
 class AuditLogListView(generics.ListAPIView):
@@ -17,7 +17,8 @@ class AuditLogListView(generics.ListAPIView):
     """
 
     serializer_class = AuditLogSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [RequirePermission]
+    required_permission = "audit.log.view"
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ["action", "module", "resource"]
@@ -37,7 +38,8 @@ class LoginLogListView(generics.ListAPIView):
     """
 
     serializer_class = LoginLogSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [RequirePermission]
+    required_permission = "audit.log.view"
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ["action"]

@@ -31,17 +31,17 @@ const { hasPermission } = usePermission()
           <span>{{ t('nav.profile') }}</span>
         </router-link>
 
-        <router-link v-if="hasPermission('accounts.view_user')" to="/users" class="nav-card">
+        <router-link v-if="hasPermission('accounts.user.view')" to="/users" class="nav-card">
           <div class="nav-icon">👥</div>
           <span>{{ t('nav.userManagement') }}</span>
         </router-link>
 
-        <router-link v-if="hasPermission('iam.view_role')" to="/roles" class="nav-card">
+        <router-link v-if="hasPermission('iam.role.view')" to="/roles" class="nav-card">
           <div class="nav-icon">🛡️</div>
           <span>{{ t('nav.roleManagement') }}</span>
         </router-link>
 
-        <router-link v-if="hasPermission('audit.view_auditlog')" to="/audit-logs" class="nav-card">
+        <router-link v-if="hasPermission('audit.log.view')" to="/audit-logs" class="nav-card">
           <div class="nav-icon">📋</div>
           <span>{{ t('nav.auditLogs') }}</span>
         </router-link>

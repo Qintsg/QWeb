@@ -32,21 +32,21 @@ pip install -r requirements.txt
 cp .env.example .env           # 修改 .env 中的数据库与 Redis 配置
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 0.0.0.0:8001
+python manage.py runserver 0.0.0.0:8000
 
 # 4. 前端环境
 cd ../frontend
 npm install
 cp .env.example .env           # 修改 API 代理地址
-npm run dev                    # 启动在 http://localhost:3001
+npm run dev                    # 启动在 http://localhost:3000
 ```
 
 ### 1.3 端口规划
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| Django 后端 | 8001 | API 服务 |
-| Vite 前端 | 3001 | 开发服务器 |
+| Django 后端 | 8000 | API 服务 |
+| Vite 前端 | 3000 | 开发服务器 |
 | PostgreSQL | 5432 | 数据库 |
 | Redis | 6379 | 缓存/队列 |
 
@@ -188,7 +188,7 @@ network_tools → frp_manager → ssh_gateway → mc_manager → mail_center →
 ```text
 1. 后端完成 API → 在 /api/docs/ (Swagger) 中验证
 2. 前端根据 Swagger 文档编写 API 层
-3. Vite 开发服务器代理 /api/* → localhost:8001
+3. Vite 开发服务器代理 /api/* → localhost:8000
 4. 联调验证：
    a. 正常流程测试
    b. 权限拒绝场景

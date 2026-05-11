@@ -213,8 +213,8 @@ class PermissionResolver:
 
 前端**不负责安全**，只负责体验优化：
 
-1. 登录后拉取 `GET /api/v1/me/permissions` 获取权限列表
-2. 拉取 `GET /api/v1/me/roles` 获取角色信息
+1. 登录后拉取 `GET /api/v1/iam/me/permissions/` 获取角色与权限列表
+2. 前端路由、菜单和按钮使用与后端一致的 `{module}.{resource}.{action}` 权限码，例如 `accounts.user.view`、`iam.role.view`、`audit.log.view`
 3. 根据权限列表控制：
    - 菜单显示/隐藏
    - 按钮启用/禁用

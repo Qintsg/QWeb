@@ -66,16 +66,16 @@ python manage.py migrate
 python manage.py createsuperuser
 
 # 启动开发服务器
-python manage.py runserver 0.0.0.0:8001
+python manage.py runserver 0.0.0.0:8000
 ```
 
 验证后端是否运行：
 
 | 地址 | 说明 |
 |------|------|
-| http://localhost:8001/api/health/ | 健康检查 |
-| http://localhost:8001/api/docs/ | Swagger 文档 |
-| http://localhost:8001/api/schema/ | OpenAPI Schema |
+| http://localhost:8000/api/health/ | 健康检查 |
+| http://localhost:8000/api/docs/ | Swagger 文档 |
+| http://localhost:8000/api/schema/ | OpenAPI Schema |
 
 ---
 
@@ -94,7 +94,7 @@ cp .env.example .env
 npm run dev
 ```
 
-前端启动后访问：http://localhost:3001
+前端启动后访问：http://localhost:3000
 
 ---
 
