@@ -1,5 +1,12 @@
-"""accounts 模块 Admin 配置。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+accounts 模块 Admin 配置。
+@Project : QWeb
+@File : admin.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
@@ -15,6 +22,7 @@ from apps.accounts.models import (
 
 
 class UserContactInline(admin.StackedInline):
+    """定义 Django Admin 内联展示配置。"""
     model = UserContact
     fk_name = "user"
     can_delete = False
@@ -23,6 +31,7 @@ class UserContactInline(admin.StackedInline):
 
 
 class UserSecurityInline(admin.StackedInline):
+    """定义 Django Admin 内联展示配置。"""
     model = UserSecurity
     fk_name = "user"
     can_delete = False
@@ -32,6 +41,7 @@ class UserSecurityInline(admin.StackedInline):
 
 
 class UserProfileInline(admin.StackedInline):
+    """定义 Django Admin 内联展示配置。"""
     model = UserProfile
     fk_name = "user"
     can_delete = False
@@ -40,6 +50,7 @@ class UserProfileInline(admin.StackedInline):
 
 
 class UserSettingsInline(admin.StackedInline):
+    """定义 Django Admin 内联展示配置。"""
     model = UserSettings
     fk_name = "user"
     can_delete = False
@@ -48,6 +59,7 @@ class UserSettingsInline(admin.StackedInline):
 
 
 class OAuthAccountInline(admin.TabularInline):
+    """定义 Django Admin 内联展示配置。"""
     model = UserOAuthAccount
     fk_name = "user"
     extra = 0

@@ -1,9 +1,12 @@
-"""用户权限覆盖模型。
-
-在角色权限基础上，对个别用户做 allow/deny 级别的精确控制。
-deny 优先于 allow（黑名单优先原则）。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户权限覆盖模型。
+@Project : QWeb
+@File : user_permission_override.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.conf import settings
 from django.db import models
 
@@ -18,6 +21,7 @@ class UserPermissionOverride(BaseModel):
     """
 
     class Effect(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         ALLOW = "allow", "允许"
         DENY = "deny", "拒绝"
 
@@ -47,6 +51,7 @@ class UserPermissionOverride(BaseModel):
     )
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "iam_user_permission_override"
         verbose_name = "用户权限覆盖"
         verbose_name_plural = "用户权限覆盖"
@@ -58,4 +63,5 @@ class UserPermissionOverride(BaseModel):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user_id} {self.effect} {self.permission_id}"

@@ -1,9 +1,11 @@
 /**
- * API 通用类型定义
+ * API 通用类型定义。
  *
- * 与后端 apps/core/responses.py 中的响应格式一一对应。
+ * :project: QWeb
+ * :file: api.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
-
 /** 后端统一成功响应体 */
 export interface ApiResponse<T = unknown> {
   code: number

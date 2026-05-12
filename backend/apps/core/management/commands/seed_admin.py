@@ -1,7 +1,14 @@
-"""创建初始管理员账号。
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+创建初始管理员账号。
+@Project : QWeb
+@File : seed_admin.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
+from typing import Any
 
-Usage: python manage.py seed_admin
-"""
 from django.core.management.base import BaseCommand
 
 from apps.accounts.models import User, UserContact
@@ -10,9 +17,11 @@ from apps.iam.models import Role, UserRole
 
 
 class Command(BaseCommand):
+    """实现当前 Django 管理命令。"""
     help = "创建初始管理员账号并分配 owner 角色（幂等操作）"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
+        """执行当前 Django 管理命令。"""
         username = "qintsg"
         password = "Ss201803@Qintsg"
         email = "admin@qintsg.cn"

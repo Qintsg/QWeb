@@ -1,3 +1,11 @@
+<!--
+  实现 ServiceLinksPage 页面视图。
+
+  :project: QWeb
+  :file: ServiceLinksPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 /**
  * 服务链接管理页面

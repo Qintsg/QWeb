@@ -1,8 +1,12 @@
-﻿"""accounts 模块 URL 路由配置。
-
-路由前缀由 config/urls.py 中 api/v1/ 挂载。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+accounts 模块 URL 路由配置。
+@Project : QWeb
+@File : urls.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 

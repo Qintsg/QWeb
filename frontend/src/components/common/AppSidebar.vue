@@ -1,6 +1,10 @@
 <!--
-  侧边导航栏
-  支持折叠/展开，根据权限动态渲染导航项
+  侧边导航栏。
+
+  :project: QWeb
+  :file: AppSidebar.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
 -->
 <template>
   <aside class="sidebar" :class="{ 'sidebar--collapsed': collapsed }">

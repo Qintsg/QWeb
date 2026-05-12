@@ -1,4 +1,12 @@
-﻿<script setup lang="ts">
+<!--
+  实现 LoginLogsPage 页面视图。
+
+  :project: QWeb
+  :file: LoginLogsPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getLoginLogs, type LoginLogQuery, type LoginLog } from '@/api/audit'

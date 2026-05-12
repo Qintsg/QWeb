@@ -1,10 +1,15 @@
-"""用户核心模型。
-
-用户主键采用从 1 递增的 BIGINT uid。邮箱、手机号、资料、设置与
-OAuth 绑定信息拆分到独立表中，核心表只保留认证框架和账号展示所需字段。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户核心模型。
+@Project : QWeb
+@File : user.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
+
+from datetime import datetime
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
@@ -17,6 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """系统用户核心账号。"""
 
     class Status(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         ACTIVE = "active", "正常"
         INACTIVE = "inactive", "未激活"
         BANNED = "banned", "已封禁"
@@ -24,6 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         PENDING = "pending", "待确认"
 
     class UserType(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         NORMAL = "normal", "普通用户"
         ADMIN = "admin", "管理员"
         SYSTEM = "system", "系统用户"
@@ -96,6 +103,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS: list[str] = []
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "users"
         verbose_name = "用户"
         verbose_name_plural = "用户"
@@ -108,6 +116,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return self.nickname or self.username
 
     @property
@@ -116,6 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.nickname or self.username
 
     @property
-    def date_joined(self):
+    def date_joined(self) -> datetime:
         """兼容 Django Admin 和现有前端字段名。"""
         return self.created_at

@@ -1,5 +1,12 @@
-"""用户名规则校验。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户名规则校验。
+@Project : QWeb
+@File : username_policy.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import re

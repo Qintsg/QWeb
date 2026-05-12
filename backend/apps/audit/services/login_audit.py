@@ -1,8 +1,16 @@
-"""登录审计服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+登录审计服务。
+@Project : QWeb
+@File : login_audit.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from django.http import HttpRequest
 
@@ -12,7 +20,7 @@ from apps.audit.services.audit_service import _extract_client_info
 logger = logging.getLogger(__name__)
 
 
-def log_login(*, user, request: HttpRequest | None = None) -> LoginLog | None:
+def log_login(*, user: Any, request: HttpRequest | None = None) -> LoginLog | None:
     """记录登录成功事件。"""
     ip_address, user_agent = _extract_client_info(request)
     try:
@@ -32,7 +40,7 @@ def log_login(*, user, request: HttpRequest | None = None) -> LoginLog | None:
 
 def log_oauth_login(
     *,
-    user,
+    user: Any,
     provider: str,
     request: HttpRequest | None = None,
     action: str = LoginLog.Action.LOGIN,
@@ -55,7 +63,7 @@ def log_oauth_login(
         return None
 
 
-def log_logout(*, user, request: HttpRequest | None = None) -> LoginLog | None:
+def log_logout(*, user: Any, request: HttpRequest | None = None) -> LoginLog | None:
     """记录登出事件。"""
     ip_address, user_agent = _extract_client_info(request)
     try:
@@ -84,10 +92,9 @@ def log_login_failed(
     """
     记录登录失败事件。
 
-    Args:
-        username: 尝试登录的用户名
-        reason: 失败原因（如"密码错误"、"账户已禁用"等）
-        request: HTTP 请求对象
+    :param username: 尝试登录的用户名
+    :param reason: 失败原因（如"密码错误"、"账户已禁用"等）
+    :param request: HTTP 请求对象
     """
     ip_address, user_agent = _extract_client_info(request)
     try:

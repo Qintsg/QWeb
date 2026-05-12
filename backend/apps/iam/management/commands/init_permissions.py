@@ -1,9 +1,13 @@
-"""初始化 IAM 预置角色与权限数据。
-
-用法:
-    python manage.py init_permissions
-    python manage.py init_permissions --reset  # 清除后重新创建
-"""
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+初始化 IAM 预置角色与权限数据。
+@Project : QWeb
+@File : init_permissions.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
+from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -96,9 +100,11 @@ ROLE_PERMISSION_MAP = {
 
 
 class Command(BaseCommand):
+    """实现当前 Django 管理命令。"""
     help = "初始化 IAM 预置角色与权限数据"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: Any) -> None:
+        """注册当前管理命令支持的命令行参数。"""
         parser.add_argument(
             "--reset",
             action="store_true",
@@ -106,7 +112,8 @@ class Command(BaseCommand):
         )
 
     @transaction.atomic
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
+        """执行当前 Django 管理命令。"""
         reset = options["reset"]
 
         # 1. 创建权限

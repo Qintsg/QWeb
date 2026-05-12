@@ -1,6 +1,10 @@
 <!--
-  公开布局 - 用于登录、注册等未认证页面
-  居中卡片式布局，背景使用品牌色渐变
+  公开布局 - 用于登录、注册等未认证页面。
+
+  :project: QWeb
+  :file: PublicLayout.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
 -->
 <template>
   <div class="public-layout">

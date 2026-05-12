@@ -1,6 +1,15 @@
-"""用户信息序列化器。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户信息序列化器。
+@Project : QWeb
+@File : user.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
+
+from typing import Any
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -14,6 +23,7 @@ class UserContactSerializer(serializers.ModelSerializer):
     """用户联系方式序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = UserContact
         fields = ["email", "phone", "email_verified_at", "phone_verified_at"]
         read_only_fields = ["email_verified_at", "phone_verified_at"]
@@ -23,6 +33,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """用户资料序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = UserProfile
         fields = [
             "real_name",
@@ -42,6 +53,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
     """用户设置序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = UserSettings
         fields = [
             "language",
@@ -61,6 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
     settings = UserSettingsSerializer(read_only=True)
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = User
         fields = [
             "uid",
@@ -89,6 +102,7 @@ class MeSerializer(serializers.ModelSerializer):
     settings = UserSettingsSerializer(required=False)
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = User
         fields = [
             "uid",
@@ -116,7 +130,7 @@ class MeSerializer(serializers.ModelSerializer):
             "last_login",
         ]
 
-    def update(self, instance, validated_data: dict):
+    def update(self, instance: Any, validated_data: dict) -> Any:
         """更新用户及其嵌套扩展表。"""
         contact_data = validated_data.pop("contact", None)
         profile_data = validated_data.pop("profile", None)
@@ -155,6 +169,7 @@ class UserAdminSerializer(MeSerializer):
     """管理员视角的用户序列化器。"""
 
     class Meta(MeSerializer.Meta):
+        """定义当前对象的 Django 元数据。"""
         fields = MeSerializer.Meta.fields + ["is_staff", "is_superuser"]
         read_only_fields = [
             "uid",

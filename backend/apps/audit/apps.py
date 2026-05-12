@@ -1,5 +1,12 @@
-"""审计模块应用配置。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+审计模块应用配置。
+@Project : QWeb
+@File : apps.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.apps import AppConfig
 
 

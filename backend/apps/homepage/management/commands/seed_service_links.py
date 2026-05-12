@@ -1,7 +1,14 @@
-"""
-初始化首页服务链接数据
-Usage: python manage.py seed_service_links
-"""
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+初始化首页服务链接数据。
+@Project : QWeb
+@File : seed_service_links.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
+from typing import Any
+
 from django.core.management.base import BaseCommand
 
 from apps.homepage.models import ServiceLink
@@ -86,9 +93,11 @@ SEED_DATA = [
 
 
 class Command(BaseCommand):
+    """实现当前 Django 管理命令。"""
     help = "初始化首页服务链接种子数据（幂等操作，按 URL 去重）"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
+        """执行当前 Django 管理命令。"""
         created_count = 0
         skipped_count = 0
         for item in SEED_DATA:

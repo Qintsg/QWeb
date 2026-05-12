@@ -1,5 +1,12 @@
-"""OAuth 服务共享类型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+OAuth 服务共享类型。
+@Project : QWeb
+@File : oauth_types.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -1,5 +1,12 @@
-"""accounts 核心规则测试。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+accounts 核心规则测试。
+@Project : QWeb
+@File : tests.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from unittest.mock import patch
@@ -22,12 +29,14 @@ from apps.core.exceptions import ValidationException
 class UsernamePolicyTests(TestCase):
     """用户名注册规则测试。"""
 
-    def test_accepts_valid_usernames(self):
+    def test_accepts_valid_usernames(self) -> None:
+        """验证 accepts valid usernames 场景。"""
         for username in ["qintsg", "qin.tsg", "qin-tsg", "qin_tsg", "Qin123"]:
             with self.subTest(username=username):
                 self.assertEqual(validate_username_policy(username), username)
 
-    def test_rejects_invalid_usernames(self):
+    def test_rejects_invalid_usernames(self) -> None:
+        """验证 rejects invalid usernames 场景。"""
         invalid_usernames = [
             "ab",
             ".qintsg",
@@ -44,7 +53,8 @@ class UsernamePolicyTests(TestCase):
                 with self.assertRaises(ValidationException):
                     validate_username_policy(username)
 
-    def test_rejects_case_insensitive_duplicate(self):
+    def test_rejects_case_insensitive_duplicate(self) -> None:
+        """验证 rejects case insensitive duplicate 场景。"""
         User = get_user_model()
         User.objects.create_user(username="Qintsg", password="StrongPass123!")
 
@@ -55,7 +65,8 @@ class UsernamePolicyTests(TestCase):
 class OAuthFirstLoginTests(TestCase):
     """OAuth 首次登录绑定规则测试。"""
 
-    def test_matching_email_requires_account_choice_without_auto_bind(self):
+    def test_matching_email_requires_account_choice_without_auto_bind(self) -> None:
+        """验证 matching email requires account choice without auto bind 场景。"""
         User = get_user_model()
         user = User.objects.create_user(
             username="localuser",
@@ -99,7 +110,8 @@ class OAuthFirstLoginTests(TestCase):
             0,
         )
 
-    def test_oauth_register_keeps_duplicate_email_out_of_contact(self):
+    def test_oauth_register_keeps_duplicate_email_out_of_contact(self) -> None:
+        """验证 oauth register keeps duplicate email out of contact 场景。"""
         User = get_user_model()
         existing_user = User.objects.create_user(
             username="existing",

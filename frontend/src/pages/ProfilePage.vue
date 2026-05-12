@@ -1,4 +1,12 @@
-﻿<script setup lang="ts">
+<!--
+  实现 ProfilePage 页面视图。
+
+  :project: QWeb
+  :file: ProfilePage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
+<script setup lang="ts">
 /**
  * 个人资料页面
  */

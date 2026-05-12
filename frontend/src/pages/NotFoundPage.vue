@@ -1,3 +1,11 @@
+<!--
+  实现 NotFoundPage 页面视图。
+
+  :project: QWeb
+  :file: NotFoundPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 /**
  * 404 页面

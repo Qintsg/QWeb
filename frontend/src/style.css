@@ -1,8 +1,12 @@
 /**
- * 全局基础样式
- * 设计令牌在 styles/tokens.css 中定义
+ * 全局基础样式。
+ * 设计令牌在 styles/tokens.css 中定义。
+ *
+ * :project: QWeb
+ * :file: style.css
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
-
 * {
   box-sizing: border-box;
   margin: 0;

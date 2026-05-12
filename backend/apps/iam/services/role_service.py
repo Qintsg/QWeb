@@ -1,8 +1,15 @@
-"""角色管理服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+角色管理服务。
+@Project : QWeb
+@File : role_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from uuid import UUID
 
 from django.db import transaction
@@ -57,7 +64,7 @@ def update_role(
     role_id: UUID,
     operator: User | None = None,
     request: HttpRequest | None = None,
-    **fields,
+    **fields: Any,
 ) -> Role:
     """更新角色信息。"""
     try:
@@ -160,8 +167,7 @@ def set_role_permissions(
 ) -> int:
     """设置角色权限（全量替换）。
 
-    Returns:
-        新设置的权限数量
+    :return: 新设置的权限数量
     """
     try:
         role = Role.objects.get(pk=role_id)

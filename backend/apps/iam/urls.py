@@ -1,5 +1,12 @@
-"""IAM URL 配置。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+IAM URL 配置。
+@Project : QWeb
+@File : urls.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.urls import path
 
 from apps.iam.api.views import (

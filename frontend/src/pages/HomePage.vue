@@ -1,3 +1,11 @@
+<!--
+  实现 HomePage 页面视图。
+
+  :project: QWeb
+  :file: HomePage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 /**
  * 公开首页

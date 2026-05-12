@@ -1,5 +1,10 @@
 /**
- * English language pack
+ * English language pack。
+ *
+ * :project: QWeb
+ * :file: en-US.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 export default {
   common: {

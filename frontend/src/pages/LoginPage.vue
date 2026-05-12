@@ -1,3 +1,11 @@
+<!--
+  实现 LoginPage 页面视图。
+
+  :project: QWeb
+  :file: LoginPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'

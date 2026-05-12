@@ -1,5 +1,12 @@
-"""用户资料模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户资料模型。
+@Project : QWeb
+@File : user_profile.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -10,6 +17,7 @@ class UserProfile(models.Model):
     """用户扩展资料。"""
 
     class Gender(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         MALE = "male", "男"
         FEMALE = "female", "女"
         OTHER = "other", "其他"
@@ -43,9 +51,11 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_profile"
         verbose_name = "用户资料"
         verbose_name_plural = "用户资料"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user.username} 的资料"

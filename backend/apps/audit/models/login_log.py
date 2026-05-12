@@ -1,5 +1,12 @@
-"""登录审计日志模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+登录审计日志模型。
+@Project : QWeb
+@File : login_log.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -92,11 +99,13 @@ class LoginLog(models.Model):
     )
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_login_logs"
         ordering = ["-created_at"]
         verbose_name = "登录日志"
         verbose_name_plural = "登录日志"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         name = self.user.username if self.user else self.username or "未知"
         return f"[{self.action}] {name} @ {self.ip_address}"

@@ -1,5 +1,12 @@
-"""用户安全信息模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户安全信息模型。
+@Project : QWeb
+@File : user_security.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -71,9 +78,11 @@ class UserSecurity(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_security"
         verbose_name = "用户安全信息"
         verbose_name_plural = "用户安全信息"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user.username} 的安全信息"

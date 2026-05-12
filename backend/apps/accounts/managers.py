@@ -1,6 +1,15 @@
-"""用户管理器。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户管理器。
+@Project : QWeb
+@File : managers.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
+
+from typing import Any
 
 from django.contrib.auth.models import BaseUserManager
 
@@ -13,8 +22,8 @@ class UserManager(BaseUserManager):
         username: str,
         email: str = "",
         password: str | None = None,
-        **extra_fields,
-    ):
+        **extra_fields: Any,
+    ) -> Any:
         """创建普通用户，并在提供邮箱时同步联系方式表。"""
         if not username:
             raise ValueError("用户名不能为空")
@@ -41,8 +50,8 @@ class UserManager(BaseUserManager):
         self,
         username: str,
         password: str | None = None,
-        **extra_fields,
-    ):
+        **extra_fields: Any,
+    ) -> Any:
         """创建超级管理员。
 
         自动设置 is_staff=True, is_superuser=True, is_active=True。

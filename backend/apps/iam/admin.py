@@ -1,5 +1,12 @@
-"""IAM Admin 配置。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+IAM Admin 配置。
+@Project : QWeb
+@File : admin.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.contrib import admin
 
 from apps.iam.models import (

@@ -1,8 +1,10 @@
 /**
- * 权限组合式函数
+ * 权限组合式函数。
  *
- * 封装权限 store，提供模板层使用的权限检查方法
- * 权限以后端为权威来源，前端仅做 UX 优化
+ * :project: QWeb
+ * :file: usePermission.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import { computed } from "vue"
 import { usePermissionStore } from "@/stores/permission"

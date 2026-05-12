@@ -1,7 +1,10 @@
 /**
- * 认证状态管理
+ * 认证状态管理。
  *
- * 管理用户登录状态、Token 存储与用户信息
+ * :project: QWeb
+ * :file: auth.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import { ref, computed } from "vue"
 import { defineStore } from "pinia"

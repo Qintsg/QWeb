@@ -1,3 +1,11 @@
+/**
+ * 定义 index 前端源码。
+ *
+ * :project: QWeb
+ * :file: index.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
+ */
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissionStore } from '@/stores/permission'

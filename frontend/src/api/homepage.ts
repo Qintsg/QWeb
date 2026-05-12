@@ -1,5 +1,10 @@
 /**
- * 首页服务链接 API
+ * 首页服务链接 API。
+ *
+ * :project: QWeb
+ * :file: homepage.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from './client'
 import type { ApiResponse } from '@/types/api'

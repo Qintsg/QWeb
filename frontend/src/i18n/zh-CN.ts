@@ -1,5 +1,10 @@
 /**
- * 中文语言包（默认）
+ * 中文语言包（默认）。
+ *
+ * :project: QWeb
+ * :file: zh-CN.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 export default {
   common: {

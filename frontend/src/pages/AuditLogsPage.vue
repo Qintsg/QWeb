@@ -1,4 +1,12 @@
-﻿<script setup lang="ts">
+<!--
+  实现 AuditLogsPage 页面视图。
+
+  :project: QWeb
+  :file: AuditLogsPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAuditLogs, type AuditLogQuery, type AuditLog } from '@/api/audit'

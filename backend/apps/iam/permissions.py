@@ -1,10 +1,15 @@
-"""DRF 权限类与权限装饰器。
-
-提供基于 IAM 权限解析器的 DRF 权限后端，以及用于视图方法的装饰器。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+DRF 权限类与权限装饰器。
+@Project : QWeb
+@File : permissions.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
+from collections.abc import Callable
 from functools import wraps
 from typing import Any
 
@@ -27,6 +32,7 @@ class RequirePermission(BasePermission):
     """
 
     def has_permission(self, request: Request, view: APIView) -> bool:
+        """检查当前请求是否具备访问权限。"""
         user = request.user
         if not user or not user.is_authenticated:
             return False
@@ -39,6 +45,7 @@ class RequirePermission(BasePermission):
         return PermissionResolver.has_permission(user, permission_code)
 
     def has_object_permission(self, request: Request, view: APIView, obj: Any) -> bool:
+        """检查当前请求是否具备对象级访问权限。"""
         user = request.user
         permission_code = self._get_permission_code(view, request)
         if not permission_code:
@@ -69,13 +76,14 @@ class IsOwner(BasePermission):
     """仅 owner 角色可访问。"""
 
     def has_permission(self, request: Request, view: APIView) -> bool:
+        """检查当前请求是否具备访问权限。"""
         user = request.user
         if not user or not user.is_authenticated:
             return False
         return PermissionResolver._is_owner(user)
 
 
-def require_permission(permission_code: str):
+def require_permission(permission_code: str) -> Callable:
     """视图方法级权限装饰器。
 
     用法:
@@ -85,9 +93,12 @@ def require_permission(permission_code: str):
                 ...
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
+        """构造附加权限校验的视图装饰器。"""
+
         @wraps(func)
-        def wrapper(view_self, request, *args, **kwargs):
+        def wrapper(view_self: Any, request: Request, *args: Any, **kwargs: Any) -> Any:
+            """执行权限校验后调用原始视图方法。"""
             user = request.user
             if not user or not user.is_authenticated:
                 from apps.core.exceptions import AuthenticationFailedException

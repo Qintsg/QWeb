@@ -1,14 +1,18 @@
-"""认证服务层。
-
-包含用户注册、认证等核心业务逻辑，
-与视图层解耦，便于测试和复用。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+认证服务层。
+@Project : QWeb
+@File : auth_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from typing import Any
 
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -33,7 +37,7 @@ def register_user(
     username: str,
     email: str,
     password: str,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> dict[str, Any]:
     """注册新用户并生成 JWT Token。
 
@@ -42,14 +46,12 @@ def register_user(
     2. 自动创建 UserProfile
     3. 生成 JWT Token 对
 
-    Args:
-        username: 用户名
-        email: 邮箱
-        password: 明文密码（将被哈希存储）
-        request: HTTP 请求对象（用于审计）
+    :param username: 用户名
+    :param email: 邮箱
+    :param password: 明文密码（将被哈希存储）
+    :param request: HTTP 请求对象（用于审计）
 
-    Returns:
-        包含 user、access、refresh 的字典
+    :return: 包含 user、access、refresh 的字典
     """
     username = validate_username_policy(username)
     email = email.strip() if email else ""
@@ -86,22 +88,19 @@ def authenticate_user(
     *,
     login: str,
     password: str,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> dict[str, Any]:
     """认证用户并返回 JWT Token。
 
     支持用户名或邮箱登录。
 
-    Args:
-        login: 用户名或邮箱
-        password: 密码
-        request: HTTP 请求对象（用于审计）
+    :param login: 用户名或邮箱
+    :param password: 密码
+    :param request: HTTP 请求对象（用于审计）
 
-    Returns:
-        包含 user、access、refresh 的字典
+    :return: 包含 user、access、refresh 的字典
 
-    Raises:
-        AuthenticationFailedException: 凭据无效或账号被禁用
+    :raises AuthenticationFailedException: 凭据无效或账号被禁用
     """
     login_identifier = login.strip()
     user = (
@@ -134,21 +133,19 @@ def authenticate_user(
 
 def change_password(
     *,
-    user,
+    user: Any,
     old_password: str,
     new_password: str,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> None:
     """修改用户密码。
 
-    Args:
-        user: 当前用户实例
-        old_password: 旧密码
-        new_password: 新密码
-        request: HTTP 请求对象（用于审计）
+    :param user: 当前用户实例
+    :param old_password: 旧密码
+    :param new_password: 新密码
+    :param request: HTTP 请求对象（用于审计）
 
-    Raises:
-        ValidationException: 旧密码不正确
+    :raises ValidationException: 旧密码不正确
     """
     if user.has_usable_password() and not user.check_password(old_password):
         raise ValidationException(message="当前密码不正确")
@@ -175,7 +172,8 @@ def change_password(
     )
 
 
-def _ensure_user_can_login(*, user, login_identifier: str, request=None) -> None:
+def _ensure_user_can_login(*, user: Any, login_identifier: str, request: HttpRequest | None = None) -> None:
+    """确保当前业务对象满足后续流程前置条件。"""
     if not user.is_active or user.status != User.Status.ACTIVE:
         log_login_failed(username=login_identifier, reason="账号不可用", request=request)
         raise AuthenticationFailedException(message="账号已被禁用或不可用，请联系管理员")
@@ -186,7 +184,8 @@ def _ensure_user_can_login(*, user, login_identifier: str, request=None) -> None
         raise AuthenticationFailedException(message="账号临时锁定，请稍后再试")
 
 
-def _record_login_success(*, user, request=None) -> None:
+def _record_login_success(*, user: Any, request: HttpRequest | None = None) -> None:
+    """记录当前业务流程的审计结果。"""
     ip_address = None
     user_agent = ""
     if request:

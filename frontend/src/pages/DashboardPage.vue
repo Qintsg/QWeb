@@ -1,8 +1,15 @@
+<!--
+  实现 DashboardPage 页面视图。
+
+  :project: QWeb
+  :file: DashboardPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 /**
  * 仪表盘首页
- * 展示欢迎信息、快速入口与系统状态概览
- * TODO: Phase 7 实现统计卡片、活动流、模块入口
+ * 展示欢迎信息、权限感知快速入口与当前可用的系统状态占位
  */
 import { useI18n } from 'vue-i18n'
 import { useAuth } from '@/composables/useAuth'

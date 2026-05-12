@@ -1,5 +1,12 @@
-"""角色-权限关联模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+角色-权限关联模型。
+@Project : QWeb
+@File : role_permission.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.db import models
 
 from apps.core.models.base import BaseModel
@@ -25,6 +32,7 @@ class RolePermission(BaseModel):
     )
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "iam_role_permission"
         verbose_name = "角色权限"
         verbose_name_plural = "角色权限"
@@ -36,4 +44,5 @@ class RolePermission(BaseModel):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.role_id} -> {self.permission_id}"

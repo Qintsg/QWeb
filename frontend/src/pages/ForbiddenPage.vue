@@ -1,3 +1,11 @@
+<!--
+  实现 ForbiddenPage 页面视图。
+
+  :project: QWeb
+  :file: ForbiddenPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 

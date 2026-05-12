@@ -1,3 +1,11 @@
+<!--
+  实现 GitHubCallbackPage 页面视图。
+
+  :project: QWeb
+  :file: GitHubCallbackPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

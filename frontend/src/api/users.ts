@@ -1,8 +1,10 @@
 /**
- * 用户管理 API（管理员使用）
+ * 用户管理 API（管理员使用）。
  *
- * 对应后端 apps/accounts/api/views/user_views.py (UserViewSet)
- * 路由前缀：/api/v1/users/
+ * :project: QWeb
+ * :file: users.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from "./client"
 import type { ApiResponse, PaginatedResponse, ListParams } from "@/types/api"

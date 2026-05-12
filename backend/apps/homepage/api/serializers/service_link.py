@@ -1,5 +1,12 @@
-"""首页服务链接序列化器。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+首页服务链接序列化器。
+@Project : QWeb
+@File : service_link.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from rest_framework import serializers
@@ -11,6 +18,7 @@ class ServiceLinkPublicSerializer(serializers.ModelSerializer):
     """公开 API 使用的只读序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = ServiceLink
         fields = [
             "id",
@@ -30,6 +38,7 @@ class ServiceLinkAdminSerializer(serializers.ModelSerializer):
     """管理后台使用的完整序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = ServiceLink
         fields = [
             "id",

@@ -1,3 +1,11 @@
+<!--
+  实现 RegisterPage 页面视图。
+
+  :project: QWeb
+  :file: RegisterPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'

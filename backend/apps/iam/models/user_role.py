@@ -1,5 +1,12 @@
-"""用户-角色关联模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户-角色关联模型。
+@Project : QWeb
+@File : user_role.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.conf import settings
 from django.db import models
 
@@ -26,6 +33,7 @@ class UserRole(BaseModel):
     )
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "iam_user_role"
         verbose_name = "用户角色"
         verbose_name_plural = "用户角色"
@@ -37,4 +45,5 @@ class UserRole(BaseModel):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user_id} -> {self.role_id}"

@@ -1,5 +1,12 @@
-"""IAM 序列化器。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+IAM 序列化器。
+@Project : QWeb
+@File : serializers.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from rest_framework import serializers
@@ -19,6 +26,7 @@ class PermissionSerializer(serializers.ModelSerializer):
     """权限序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = Permission
         fields = ["id", "code", "name", "module", "resource", "action", "description", "is_active"]
         read_only_fields = ["id"]
@@ -28,6 +36,7 @@ class PermissionBriefSerializer(serializers.ModelSerializer):
     """权限简要序列化器（用于嵌套显示）。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = Permission
         fields = ["id", "code", "name"]
 
@@ -38,6 +47,7 @@ class RoleSerializer(serializers.ModelSerializer):
     """角色序列化器。"""
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = Role
         fields = ["id", "name", "display_name", "description", "is_system", "level"]
         read_only_fields = ["id", "is_system"]
@@ -49,6 +59,7 @@ class RoleDetailSerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField()
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = Role
         fields = ["id", "name", "display_name", "description", "is_system", "level", "permissions"]
         read_only_fields = ["id", "is_system"]
@@ -95,6 +106,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
     role = RoleSerializer(read_only=True)
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = UserRole
         fields = ["id", "role", "created_at"]
         read_only_fields = ["id", "created_at"]
@@ -114,6 +126,7 @@ class UserPermissionOverrideSerializer(serializers.ModelSerializer):
     permission = PermissionBriefSerializer(read_only=True)
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         model = UserPermissionOverride
         fields = ["id", "permission", "effect", "reason", "created_at"]
         read_only_fields = ["id", "created_at"]

@@ -1,6 +1,15 @@
-"""账号关联表初始化工具。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+账号关联表初始化工具。
+@Project : QWeb
+@File : account_bootstrap.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
+
+from typing import Any
 
 from django.utils import timezone
 
@@ -9,7 +18,7 @@ from apps.accounts.models import UserContact, UserProfile, UserSecurity, UserSet
 
 def ensure_user_related_records(
     *,
-    user,
+    user: Any,
     email: str = "",
     email_verified: bool = False,
     phone: str = "",

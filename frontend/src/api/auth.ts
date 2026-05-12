@@ -1,7 +1,10 @@
 /**
- * 认证相关 API 调用
+ * 认证相关 API 调用。
  *
- * 对应后端 apps/accounts/views/auth_views.py
+ * :project: QWeb
+ * :file: auth.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from "./client"
 import type { ApiResponse } from "@/types/api"

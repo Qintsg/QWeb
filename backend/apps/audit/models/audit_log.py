@@ -1,5 +1,12 @@
-"""操作审计日志模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+操作审计日志模型。
+@Project : QWeb
+@File : audit_log.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import uuid
@@ -87,11 +94,13 @@ class AuditLog(models.Model):
     )
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "audit_log"
         ordering = ["-created_at"]
         verbose_name = "操作审计日志"
         verbose_name_plural = "操作审计日志"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         username = self.user.username if self.user else "匿名"
         return f"[{self.action}] {username} -> {self.module}.{self.resource}"

@@ -1,6 +1,14 @@
-"""审计模块 Admin 配置。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+审计模块 Admin 配置。
+@Project : QWeb
+@File : admin.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.contrib import admin
+from django.http import HttpRequest
 
 from apps.audit.models import AuditLog, LoginLog
 
@@ -18,13 +26,16 @@ class AuditLogAdmin(admin.ModelAdmin):
     ]
     ordering = ["-created_at"]
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        """禁止通过 Admin 新增只读审计记录。"""
         return False
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        """禁止通过 Admin 修改只读审计记录。"""
         return False
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        """禁止通过 Admin 删除只读审计记录。"""
         return False
 
 
@@ -49,11 +60,14 @@ class LoginLogAdmin(admin.ModelAdmin):
     ]
     ordering = ["-created_at"]
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        """禁止通过 Admin 新增只读审计记录。"""
         return False
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        """禁止通过 Admin 修改只读审计记录。"""
         return False
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        """禁止通过 Admin 删除只读审计记录。"""
         return False

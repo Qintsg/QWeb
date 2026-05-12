@@ -1,4 +1,12 @@
-﻿<script setup lang="ts">
+<!--
+  实现 RolesPage 页面视图。
+
+  :project: QWeb
+  :file: RolesPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getRoles, createRole, updateRole, deleteRole, type RoleListQuery } from '@/api/iam'

@@ -1,3 +1,11 @@
+/**
+ * 定义 main 前端源码。
+ *
+ * :project: QWeb
+ * :file: main.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
+ */
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 

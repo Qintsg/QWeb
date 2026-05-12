@@ -1,5 +1,12 @@
-"""用户设置模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户设置模型。
+@Project : QWeb
+@File : user_settings.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -10,6 +17,7 @@ class UserSettings(models.Model):
     """用户语言、时区、主题与偏好设置。"""
 
     class Theme(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         LIGHT = "light", "浅色"
         DARK = "dark", "深色"
         SYSTEM = "system", "跟随系统"
@@ -37,9 +45,11 @@ class UserSettings(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_settings"
         verbose_name = "用户设置"
         verbose_name_plural = "用户设置"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user.username} 的设置"

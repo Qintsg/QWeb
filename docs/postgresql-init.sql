@@ -1,3 +1,10 @@
+-- QWeb PostgreSQL 本地初始化脚本。
+--
+-- :project: QWeb
+-- :file: postgresql-init.sql
+-- :author: Qintsg
+-- :date: 2026-05-12 00:00
+
 \set ON_ERROR_STOP on
 
 DO

@@ -1,6 +1,10 @@
 <!--
-  顶部头栏
-  显示面包屑/页面标题、用户菜单、语言切换
+  顶部头栏。
+
+  :project: QWeb
+  :file: AppHeader.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
 -->
 <template>
   <header class="header">

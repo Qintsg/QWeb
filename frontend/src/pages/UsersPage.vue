@@ -1,4 +1,12 @@
-﻿<script setup lang="ts">
+<!--
+  实现 UsersPage 页面视图。
+
+  :project: QWeb
+  :file: UsersPage.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
+-->
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getUsers, updateUser, toggleUserActive, type UserListQuery } from '@/api/users'

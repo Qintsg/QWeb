@@ -1,13 +1,20 @@
-"""认证相关视图。
-
-提供注册、登录、登出、Token 刷新等接口。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+认证相关视图。
+@Project : QWeb
+@File : auth_views.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
+
+from typing import Any
 
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView
 
@@ -51,7 +58,8 @@ class RegisterView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
 
-    def post(self, request: Request):
+    def post(self, request: Request) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -83,7 +91,8 @@ class LoginView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
 
-    def post(self, request: Request):
+    def post(self, request: Request) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -114,7 +123,8 @@ class OAuthAuthorizeView(GenericAPIView):
     authentication_classes = []
     serializer_class = OAuthAuthorizeSerializer
 
-    def get(self, request: Request, provider: str):
+    def get(self, request: Request, provider: str) -> Response:
+        """处理 GET 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         result = build_oauth_authorization_url(
@@ -135,7 +145,8 @@ class OAuthCallbackView(GenericAPIView):
     authentication_classes = []
     serializer_class = OAuthCallbackSerializer
 
-    def post(self, request: Request, provider: str):
+    def post(self, request: Request, provider: str) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = complete_oauth_callback(
@@ -165,7 +176,8 @@ class OAuthBindView(GenericAPIView):
     authentication_classes = []
     serializer_class = OAuthBindSerializer
 
-    def post(self, request: Request, provider: str):
+    def post(self, request: Request, provider: str) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = bind_oauth_to_existing_user(
@@ -194,7 +206,8 @@ class OAuthRegisterView(GenericAPIView):
     authentication_classes = []
     serializer_class = OAuthRegisterSerializer
 
-    def post(self, request: Request, provider: str):
+    def post(self, request: Request, provider: str) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = register_user_from_oauth(
@@ -227,7 +240,8 @@ class LogoutView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = LogoutSerializer
 
-    def post(self, request: Request):
+    def post(self, request: Request) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         refresh_token = serializer.validated_data["refresh"]
@@ -254,7 +268,8 @@ class TokenRefreshView(SimpleJWTRefreshView):
     复用 SimpleJWT 刷新逻辑，并同步项目级 refresh token 记录。
     """
 
-    def post(self, request: Request, *args, **kwargs):
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """处理 POST 请求并返回统一响应。"""
         old_refresh_token = str(request.data.get("refresh") or "")
         user = get_user_from_refresh_token(old_refresh_token, verify=True) if old_refresh_token else None
         response = super().post(request, *args, **kwargs)

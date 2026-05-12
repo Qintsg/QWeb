@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+初始化 models Python 包。
+@Project : QWeb
+@File : __init__.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from apps.accounts.models.oauth_account import UserOAuthAccount
 from apps.accounts.models.refresh_token import UserRefreshToken
 from apps.accounts.models.user import User

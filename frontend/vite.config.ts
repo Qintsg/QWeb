@@ -1,3 +1,11 @@
+/**
+ * 配置 Vite 与 Vue 前端构建入口。
+ *
+ * :project: QWeb
+ * :file: vite.config.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
+ */
 import { fileURLToPath, URL } from "node:url"
 
 import vue from "@vitejs/plugin-vue"

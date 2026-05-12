@@ -1,8 +1,12 @@
-"""认证相关序列化器。
-
-包含注册、登录、Token 刷新、修改密码等接口的数据校验。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+认证相关序列化器。
+@Project : QWeb
+@File : auth.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.contrib.auth import get_user_model
@@ -116,6 +120,7 @@ class OAuthRegisterSerializer(serializers.Serializer):
     nickname = serializers.CharField(required=False, allow_blank=True, max_length=64)
 
     def validate_username(self, value: str) -> str:
+        """校验当前字段是否满足业务规则。"""
         try:
             return validate_username_policy(value)
         except Exception as exc:

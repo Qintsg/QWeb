@@ -1,6 +1,10 @@
 <!--
-  管理布局 - 继承仪表盘布局，未来可扩展管理专属功能
-  当前与 DashboardLayout 共用，保留结构以便后续区分
+  管理布局 - 继承仪表盘布局，未来可扩展管理专属功能。
+
+  :project: QWeb
+  :file: AdminLayout.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
 -->
 <template>
   <DashboardLayout />

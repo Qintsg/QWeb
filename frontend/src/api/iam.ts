@@ -1,8 +1,10 @@
 /**
- * IAM 权限管理 API
+ * IAM 权限管理 API。
  *
- * 对应后端 apps/iam/api/views.py
- * 路由前缀：/api/v1/iam/
+ * :project: QWeb
+ * :file: iam.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from "./client"
 import type { ApiResponse, ListParams } from "@/types/api"

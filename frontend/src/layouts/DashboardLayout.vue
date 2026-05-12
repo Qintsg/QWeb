@@ -1,6 +1,10 @@
 <!--
-  仪表盘布局 - 用于已认证的管理页面
-  左侧导航栏 + 顶部头栏 + 内容区域
+  仪表盘布局 - 用于已认证的管理页面。
+
+  :project: QWeb
+  :file: DashboardLayout.vue
+  :author: Qintsg
+  :date: 2026-05-12 00:00
 -->
 <template>
   <div class="dashboard-layout">

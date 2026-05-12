@@ -1,7 +1,11 @@
 /**
- * 认证与用户相关类型定义
+ * 认证与用户相关类型定义。
+ *
+ * :project: QWeb
+ * :file: auth.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
-
 export interface UserContact {
   email: string | null
   phone: string | null

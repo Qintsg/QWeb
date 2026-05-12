@@ -1,5 +1,12 @@
-"""GitHub OAuth provider 接入。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+GitHub OAuth provider 接入。
+@Project : QWeb
+@File : github_oauth_provider.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from typing import Any
@@ -52,6 +59,7 @@ def fetch_github_profile(*, code: str) -> OAuthProfile:
 
 
 def _get_github_oauth_config() -> dict[str, str]:
+    """读取当前流程所需的业务对象。"""
     client_id = getattr(settings, "GITHUB_OAUTH_CLIENT_ID", "")
     client_secret = getattr(settings, "GITHUB_OAUTH_CLIENT_SECRET", "")
     callback_url = getattr(settings, "GITHUB_OAUTH_CALLBACK_URL", "")
@@ -61,6 +69,7 @@ def _get_github_oauth_config() -> dict[str, str]:
 
 
 def _exchange_github_code_for_token(*, code: str) -> str:
+    """执行 _exchange_github_code_for_token 对应的业务逻辑。"""
     config = _get_github_oauth_config()
     try:
         response = requests.post(
@@ -85,6 +94,7 @@ def _exchange_github_code_for_token(*, code: str) -> str:
 
 
 def _fetch_github_user(access_token: str) -> dict[str, Any]:
+    """从外部服务获取所需业务数据。"""
     try:
         response = requests.get(
             GITHUB_USER_URL,
@@ -104,6 +114,7 @@ def _fetch_github_user(access_token: str) -> dict[str, Any]:
 
 
 def _resolve_github_email(access_token: str, github_user: dict[str, Any]) -> tuple[str, bool | None]:
+    """执行 _resolve_github_email 对应的业务逻辑。"""
     email = str(github_user.get("email") or "")
     if email:
         return email, None
@@ -136,6 +147,7 @@ def _resolve_github_email(access_token: str, github_user: dict[str, Any]) -> tup
 
 
 def _parse_github_response(response: requests.Response, fallback_message: str) -> Any:
+    """解析外部服务返回的业务数据。"""
     try:
         payload = response.json()
     except ValueError as exc:

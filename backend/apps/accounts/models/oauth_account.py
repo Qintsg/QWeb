@@ -1,5 +1,12 @@
-"""第三方账号绑定模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+第三方账号绑定模型。
+@Project : QWeb
+@File : oauth_account.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -10,6 +17,7 @@ class UserOAuthAccount(models.Model):
     """外部 OAuth 账号与本地用户的绑定关系。"""
 
     class Provider(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         GITHUB = "github", "GitHub"
 
     id = models.BigAutoField(primary_key=True, verbose_name="绑定记录 ID")
@@ -86,6 +94,7 @@ class UserOAuthAccount(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_oauth_accounts"
         verbose_name = "第三方账号绑定"
         verbose_name_plural = "第三方账号绑定"
@@ -105,5 +114,6 @@ class UserOAuthAccount(models.Model):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         account_name = self.provider_username or self.provider_account_id
         return f"{self.provider}:{account_name}"

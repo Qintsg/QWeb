@@ -1,8 +1,12 @@
-"""IAM 数据模型。
-
-包含权限定义、角色、角色-权限关联、用户-角色关联、用户权限覆盖和资源级策略。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+IAM 数据模型。
+@Project : QWeb
+@File : __init__.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from apps.iam.models.permission import Permission
 from apps.iam.models.role import Role
 from apps.iam.models.role_permission import RolePermission

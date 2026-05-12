@@ -1,8 +1,10 @@
 /**
- * Fluent 2 Web Components 注册入口
+ * Fluent 2 Web Components 注册入口。
  *
- * 在 main.ts 中调用 setupFluentDesignSystem() 完成全局注册。
- * 按需导入组件以控制包体积，新增组件时在此文件追加。
+ * :project: QWeb
+ * :file: fluent-setup.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import {
   provideFluentDesignSystem,

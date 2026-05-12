@@ -1,5 +1,12 @@
-"""通用操作审计服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+通用操作审计服务。
+@Project : QWeb
+@File : audit_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import logging
@@ -30,7 +37,7 @@ def _extract_client_info(request: HttpRequest | None) -> tuple[str | None, str]:
 
 def log_action(
     *,
-    user,
+    user: Any,
     action: str,
     module: str,
     resource: str,
@@ -43,14 +50,13 @@ def log_action(
 
     这是审计模块的统一写入入口，所有业务模块通过此函数记录操作日志。
 
-    Args:
-        user: 操作人（User 实例或 None）
-        action: 操作类型（create/update/delete 等）
-        module: 模块名称（accounts/iam/blog 等）
-        resource: 资源类型（user/role/permission 等）
-        resource_id: 资源标识符
-        detail: 变更详情（JSON 格式）
-        request: HTTP 请求对象（用于提取 IP 和 User-Agent）
+    :param user: 操作人（User 实例或 None）
+    :param action: 操作类型（create/update/delete 等）
+    :param module: 模块名称（accounts/iam/blog 等）
+    :param resource: 资源类型（user/role/permission 等）
+    :param resource_id: 资源标识符
+    :param detail: 变更详情（JSON 格式）
+    :param request: HTTP 请求对象（用于提取 IP 和 User-Agent）
     """
     ip_address, user_agent = _extract_client_info(request)
 

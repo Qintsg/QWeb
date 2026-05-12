@@ -1,5 +1,12 @@
-"""刷新令牌签发、记录与吊销服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+刷新令牌签发、记录与吊销服务。
+@Project : QWeb
+@File : token_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import hashlib
@@ -7,6 +14,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 from django.utils import timezone
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -14,7 +22,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.accounts.models import UserRefreshToken
 
 
-def issue_token_pair(*, user, request=None) -> dict[str, str]:
+def issue_token_pair(*, user: Any, request: HttpRequest | None = None) -> dict[str, str]:
     """签发 JWT token 对，并记录项目级 refresh token 哈希。"""
     refresh = RefreshToken.for_user(user)
     refresh_token = str(refresh)
@@ -25,7 +33,7 @@ def issue_token_pair(*, user, request=None) -> dict[str, str]:
     }
 
 
-def record_refresh_token(*, user, refresh_token: str, request=None) -> UserRefreshToken | None:
+def record_refresh_token(*, user: Any, refresh_token: str, request: HttpRequest | None = None) -> UserRefreshToken | None:
     """记录 refresh token 哈希、设备和过期时间，不保存明文令牌。"""
     try:
         token = RefreshToken(refresh_token, verify=False)
@@ -64,8 +72,8 @@ def record_rotated_refresh_token(
     *,
     old_refresh_token: str,
     new_refresh_token: str | None,
-    user=None,
-    request=None,
+    user: Any | None = None,
+    request: HttpRequest | None = None,
 ) -> None:
     """Token refresh 成功后吊销旧记录，并记录轮换后的新 refresh token。"""
     if user is None:
@@ -75,7 +83,7 @@ def record_rotated_refresh_token(
         record_refresh_token(user=user, refresh_token=new_refresh_token, request=request)
 
 
-def get_user_from_refresh_token(refresh_token: str, *, verify: bool = True):
+def get_user_from_refresh_token(refresh_token: str, *, verify: bool = True) -> Any | None:
     """从 refresh token 中解析本地用户。"""
     try:
         token = RefreshToken(refresh_token, verify=verify)
@@ -96,13 +104,15 @@ def hash_refresh_token(refresh_token: str) -> str:
 
 
 def _expires_at_from_token(token: RefreshToken) -> datetime:
+    """解析令牌过期时间。"""
     expires_at = token.payload.get("exp")
     if not isinstance(expires_at, int):
         return timezone.now()
     return datetime.fromtimestamp(expires_at, tz=UTC)
 
 
-def _extract_request_client(request) -> tuple[str, str]:
+def _extract_request_client(request: HttpRequest | None) -> tuple[str, str]:
+    """提取请求中的客户端上下文。"""
     if request is None:
         return "", ""
     ip_address = request.META.get("HTTP_X_FORWARDED_FOR", request.META.get("REMOTE_ADDR", ""))
@@ -111,7 +121,8 @@ def _extract_request_client(request) -> tuple[str, str]:
     return ip_address, request.META.get("HTTP_USER_AGENT", "")
 
 
-def _get_header(request, key: str) -> str:
+def _get_header(request: HttpRequest | None, key: str) -> str:
+    """读取当前流程所需的业务对象。"""
     if request is None:
         return ""
     value: Any = request.META.get(key, "")

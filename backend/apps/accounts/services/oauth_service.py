@@ -1,5 +1,12 @@
-"""Provider 化 OAuth 登录服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+Provider 化 OAuth 登录服务。
+@Project : QWeb
+@File : oauth_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import secrets
@@ -7,6 +14,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core import signing
+from django.http import HttpRequest
 from django.db import transaction
 from django.utils import timezone
 
@@ -55,7 +63,7 @@ def complete_oauth_callback(
     provider: str,
     code: str,
     state: str,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> dict[str, Any]:
     """完成 OAuth 回调，返回已登录或待选择账号状态。"""
     provider = _normalize_provider(provider)
@@ -115,7 +123,7 @@ def bind_oauth_to_existing_user(
     pending_token: str,
     login: str,
     password: str,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> dict[str, Any]:
     """用户登录已有账号后绑定第三方账号。"""
     provider = _normalize_provider(provider)
@@ -159,7 +167,7 @@ def register_user_from_oauth(
     pending_token: str,
     username: str,
     nickname: str = "",
-    request=None,
+    request: HttpRequest | None = None,
 ) -> dict[str, Any]:
     """用户确认不绑定已有账号后创建新账号并绑定 OAuth。"""
     provider = _normalize_provider(provider)
@@ -217,6 +225,7 @@ def register_user_from_oauth(
 
 
 def _normalize_provider(provider: str) -> str:
+    """规范化输入值以匹配内部业务约束。"""
     normalized = provider.strip().lower()
     if normalized != UserOAuthAccount.Provider.GITHUB:
         raise ValidationException(message="暂不支持该第三方登录平台")
@@ -224,12 +233,14 @@ def _normalize_provider(provider: str) -> str:
 
 
 def _normalize_frontend_redirect(redirect: str) -> str:
+    """规范化输入值以匹配内部业务约束。"""
     if not redirect or not redirect.startswith("/") or redirect.startswith("//"):
         return "/dashboard"
     return redirect
 
 
 def _load_state(state: str, *, expected_provider: str) -> dict[str, Any]:
+    """解析签名载荷并校验业务上下文。"""
     try:
         payload = signing.loads(
             state,
@@ -244,12 +255,14 @@ def _load_state(state: str, *, expected_provider: str) -> dict[str, Any]:
 
 
 def _fetch_provider_profile(*, provider: str, code: str) -> OAuthProfile:
+    """从外部服务获取所需业务数据。"""
     if provider == UserOAuthAccount.Provider.GITHUB:
         return fetch_github_profile(code=code)
     raise ValidationException(message="暂不支持该第三方登录平台")
 
 
 def _dump_pending_profile(*, profile: OAuthProfile, redirect: str) -> str:
+    """序列化临时业务载荷。"""
     return signing.dumps(
         {
             "provider": profile.provider,
@@ -268,6 +281,7 @@ def _dump_pending_profile(*, profile: OAuthProfile, redirect: str) -> str:
 
 
 def _load_pending_profile(pending_token: str, *, expected_provider: str) -> dict[str, Any]:
+    """解析签名载荷并校验业务上下文。"""
     try:
         payload = signing.loads(
             pending_token,
@@ -282,6 +296,7 @@ def _load_pending_profile(pending_token: str, *, expected_provider: str) -> dict
 
 
 def _profile_from_payload(payload: dict[str, Any]) -> OAuthProfile:
+    """执行 _profile_from_payload 对应的业务逻辑。"""
     return OAuthProfile(
         provider=str(payload["provider"]),
         provider_account_id=str(payload["provider_account_id"]),
@@ -296,6 +311,7 @@ def _profile_from_payload(payload: dict[str, Any]) -> OAuthProfile:
 
 
 def _suggest_username(provider_username: str) -> str:
+    """根据外部资料生成可用候选值。"""
     base = "".join(
         char if char.isalnum() or char in ".-_" else "_"
         for char in provider_username
@@ -309,7 +325,8 @@ def _suggest_username(provider_username: str) -> str:
     return ""
 
 
-def _create_or_update_oauth_account(*, user, profile: OAuthProfile) -> UserOAuthAccount:
+def _create_or_update_oauth_account(*, user: Any, profile: OAuthProfile) -> UserOAuthAccount:
+    """创建或更新关联业务记录。"""
     account = UserOAuthAccount.objects.filter(
         provider=profile.provider,
         provider_account_id=profile.provider_account_id,
@@ -337,6 +354,7 @@ def _create_or_update_oauth_account(*, user, profile: OAuthProfile) -> UserOAuth
 
 
 def _update_oauth_account(*, identity: UserOAuthAccount, profile: OAuthProfile) -> None:
+    """更新关联业务记录的同步字段。"""
     identity.provider_username = profile.provider_username or None
     identity.provider_nickname = profile.provider_nickname or None
     identity.provider_email = profile.provider_email or None
@@ -357,7 +375,8 @@ def _update_oauth_account(*, identity: UserOAuthAccount, profile: OAuthProfile) 
     )
 
 
-def _apply_oauth_profile_to_user(*, user, profile: OAuthProfile, fill_existing_only: bool) -> None:
+def _apply_oauth_profile_to_user(*, user: Any, profile: OAuthProfile, fill_existing_only: bool) -> None:
+    """将外部资料同步到本地用户资料。"""
     update_fields: list[str] = []
     if profile.provider_avatar_url and (not fill_existing_only or not user.avatar_url):
         user.avatar_url = profile.provider_avatar_url

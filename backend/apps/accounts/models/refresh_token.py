@@ -1,5 +1,12 @@
-"""刷新令牌记录模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+刷新令牌记录模型。
+@Project : QWeb
+@File : refresh_token.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.conf import settings
@@ -27,6 +34,7 @@ class UserRefreshToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "user_refresh_tokens"
         verbose_name = "用户刷新令牌"
         verbose_name_plural = "用户刷新令牌"
@@ -36,4 +44,5 @@ class UserRefreshToken(models.Model):
         ]
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return f"{self.user.username} refresh token {self.pk}"
