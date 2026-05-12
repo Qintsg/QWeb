@@ -200,8 +200,11 @@ class PermissionResolver:
             permission__code=permission_code,
             permission__is_active=True,
         ).filter(
-            Q(subject_type=ResourcePolicy.SubjectType.USER, subject_id=user.pk)
-            | Q(subject_type=ResourcePolicy.SubjectType.ROLE, subject_id__in=role_ids)
+            Q(subject_type=ResourcePolicy.SubjectType.USER, subject_id=str(user.pk))
+            | Q(
+                subject_type=ResourcePolicy.SubjectType.ROLE,
+                subject_id__in=[str(role_id) for role_id in role_ids],
+            )
         )
 
         if not policies.exists():

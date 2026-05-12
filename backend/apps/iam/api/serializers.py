@@ -127,6 +127,12 @@ class AddOverrideSerializer(serializers.Serializer):
     reason = serializers.CharField(required=False, default="", allow_blank=True)
 
 
+class RemoveOverrideSerializer(serializers.Serializer):
+    """移除权限覆盖序列化器。"""
+
+    permission_code = serializers.CharField(max_length=100)
+
+
 # ---------- 用户权限汇总 ----------
 
 class UserPermissionSummarySerializer(serializers.Serializer):

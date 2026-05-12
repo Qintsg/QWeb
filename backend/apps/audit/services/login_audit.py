@@ -19,12 +19,39 @@ def log_login(*, user, request: HttpRequest | None = None) -> LoginLog | None:
         return LoginLog.objects.create(
             user=user,
             username=user.username,
+            login_type="password",
             action=LoginLog.Action.LOGIN,
             ip_address=ip_address,
             user_agent=user_agent,
+            success=True,
         )
     except Exception:
         logger.exception("登录日志写入失败: user=%s", user)
+        return None
+
+
+def log_oauth_login(
+    *,
+    user,
+    provider: str,
+    request: HttpRequest | None = None,
+    action: str = LoginLog.Action.LOGIN,
+) -> LoginLog | None:
+    """记录 OAuth 登录、绑定或自动注册事件。"""
+    ip_address, user_agent = _extract_client_info(request)
+    try:
+        return LoginLog.objects.create(
+            user=user,
+            username=user.username,
+            login_type="oauth",
+            provider=provider,
+            action=action,
+            ip_address=ip_address,
+            user_agent=user_agent,
+            success=True,
+        )
+    except Exception:
+        logger.exception("OAuth 登录日志写入失败: user=%s provider=%s", user, provider)
         return None
 
 
@@ -35,9 +62,11 @@ def log_logout(*, user, request: HttpRequest | None = None) -> LoginLog | None:
         return LoginLog.objects.create(
             user=user,
             username=user.username,
+            login_type="token",
             action=LoginLog.Action.LOGOUT,
             ip_address=ip_address,
             user_agent=user_agent,
+            success=True,
         )
     except Exception:
         logger.exception("登出日志写入失败: user=%s", user)
@@ -49,6 +78,8 @@ def log_login_failed(
     username: str = "",
     reason: str = "",
     request: HttpRequest | None = None,
+    login_type: str = "password",
+    provider: str | None = None,
 ) -> LoginLog | None:
     """
     记录登录失败事件。
@@ -63,9 +94,12 @@ def log_login_failed(
         return LoginLog.objects.create(
             user=None,
             username=username,
+            login_type=login_type,
+            provider=provider,
             action=LoginLog.Action.FAILED,
             ip_address=ip_address,
             user_agent=user_agent,
+            success=False,
             failure_reason=reason,
         )
     except Exception:

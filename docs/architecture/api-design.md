@@ -94,10 +94,14 @@
 
 | 方法 | 路径                              | 说明         |
 | ---- | --------------------------------- | ------------ |
-| POST | /api/v1/auth/register             | 注册         |
-| POST | /api/v1/auth/login                | 登录         |
-| GET  | /api/v1/auth/github/authorize     | 获取 GitHub OAuth 授权地址 |
-| POST | /api/v1/auth/github/callback      | GitHub OAuth 回调换取本地 Token |
+| POST | /api/v1/auth/register             | 注册本地账号，并创建用户扩展表 |
+| POST | /api/v1/auth/login                | 用户名、邮箱或手机号 + 密码登录 |
+| GET  | /api/v1/auth/oauth/{provider}/authorize | 获取 OAuth 授权地址，当前支持 `github` |
+| POST | /api/v1/auth/oauth/{provider}/callback | OAuth 回调；已绑定则返回 Token，未绑定则返回待选择状态 |
+| POST | /api/v1/auth/oauth/{provider}/bind | 登录已有账号并绑定第三方账号 |
+| POST | /api/v1/auth/oauth/{provider}/register | 使用第三方资料创建新账号并绑定 |
+| GET  | /api/v1/auth/github/authorize     | 兼容旧 GitHub OAuth 授权地址 |
+| POST | /api/v1/auth/github/callback      | 兼容旧 GitHub OAuth 回调 |
 | POST | /api/v1/auth/logout               | 登出         |
 | POST | /api/v1/auth/token/refresh        | 刷新 Token   |
 | POST | /api/v1/auth/verify-email         | 邮箱验证     |
@@ -109,10 +113,10 @@
 
 | 方法  | 路径                    | 说明         |
 | ----- | ----------------------- | ------------ |
-| GET   | /api/v1/me              | 个人信息     |
-| PATCH | /api/v1/me/profile      | 更新资料     |
-| PATCH | /api/v1/me/password     | 修改密码     |
-| GET   | /api/v1/me/permissions  | 权限列表     |
+| GET   | /api/v1/me              | 当前用户信息，包含 contact/profile/settings |
+| PUT/PATCH | /api/v1/me          | 更新昵称、头像、联系方式、资料与设置 |
+| POST/PUT | /api/v1/me/password | 修改密码     |
+| GET   | /api/v1/iam/me/permissions | 权限列表 |
 | GET   | /api/v1/me/roles        | 角色信息     |
 | GET   | /api/v1/me/activity     | 活动记录     |
 
@@ -131,12 +135,12 @@
 | POST   | /api/v1/iam/permissions                     | 创建权限         |
 | GET    | /api/v1/iam/permissions/{id}                | 权限详情         |
 | PATCH  | /api/v1/iam/permissions/{id}                | 更新权限         |
-| GET    | /api/v1/iam/users/{id}/roles                | 用户角色         |
-| PUT    | /api/v1/iam/users/{id}/roles                | 设置用户角色     |
-| GET    | /api/v1/iam/users/{id}/overrides            | 用户覆盖列表     |
-| POST   | /api/v1/iam/users/{id}/overrides            | 创建覆盖         |
-| PATCH  | /api/v1/iam/users/{id}/overrides/{oid}      | 修改覆盖         |
-| DELETE | /api/v1/iam/users/{id}/overrides/{oid}      | 删除覆盖         |
+| GET    | /api/v1/iam/users/{uid}/roles               | 用户角色         |
+| POST   | /api/v1/iam/users/{uid}/roles/manage        | 分配用户角色     |
+| DELETE | /api/v1/iam/users/{uid}/roles/manage        | 移除用户角色     |
+| GET    | /api/v1/iam/users/{uid}/overrides           | 用户覆盖列表     |
+| POST   | /api/v1/iam/users/{uid}/overrides/manage    | 创建用户覆盖     |
+| DELETE | /api/v1/iam/users/{uid}/overrides/manage    | 移除用户覆盖     |
 | GET    | /api/v1/iam/resource-policies               | 资源策略列表     |
 | POST   | /api/v1/iam/resource-policies               | 创建资源策略     |
 | PATCH  | /api/v1/iam/resource-policies/{id}          | 修改资源策略     |
@@ -148,12 +152,11 @@
 | ---- | ---------------------------- | ------------ |
 | GET  | /api/v1/users                | 用户列表     |
 | POST | /api/v1/users                | 创建用户     |
-| GET  | /api/v1/users/{id}           | 用户详情     |
-| PATCH| /api/v1/users/{id}           | 更新用户     |
-| POST | /api/v1/users/{id}/enable    | 启用         |
-| POST | /api/v1/users/{id}/disable   | 禁用         |
-| POST | /api/v1/users/{id}/ban       | 封禁         |
-| POST | /api/v1/users/{id}/unban     | 解封         |
+| GET  | /api/v1/users/{uid}          | 用户详情     |
+| PATCH| /api/v1/users/{uid}          | 更新用户     |
+| POST | /api/v1/users/{uid}/toggle-active | 启用或禁用 |
+
+用户响应主键字段为 `uid`。用户资料分为 `contact`、`profile`、`settings` 三组嵌套字段，邮箱和手机号不再位于用户核心对象顶层。
 
 ### 5.5 博客
 

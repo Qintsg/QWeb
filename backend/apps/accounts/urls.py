@@ -5,7 +5,6 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.accounts.api.views.auth_views import (
     ChangePasswordView,
@@ -13,7 +12,12 @@ from apps.accounts.api.views.auth_views import (
     GitHubOAuthCallbackView,
     LoginView,
     LogoutView,
+    OAuthAuthorizeView,
+    OAuthBindView,
+    OAuthCallbackView,
+    OAuthRegisterView,
     RegisterView,
+    TokenRefreshView,
 )
 from apps.accounts.api.views.me_views import MePasswordView, MeView
 from apps.accounts.api.views.user_views import UserViewSet
@@ -27,6 +31,10 @@ urlpatterns = [
     # ---- 认证 ----
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/oauth/<str:provider>/authorize/", OAuthAuthorizeView.as_view(), name="oauth-authorize"),
+    path("auth/oauth/<str:provider>/callback/", OAuthCallbackView.as_view(), name="oauth-callback"),
+    path("auth/oauth/<str:provider>/bind/", OAuthBindView.as_view(), name="oauth-bind"),
+    path("auth/oauth/<str:provider>/register/", OAuthRegisterView.as_view(), name="oauth-register"),
     path("auth/github/authorize/", GitHubOAuthAuthorizeView.as_view(), name="github-authorize"),
     path("auth/github/callback/", GitHubOAuthCallbackView.as_view(), name="github-callback"),
     path("auth/logout/", LogoutView.as_view(), name="logout"),

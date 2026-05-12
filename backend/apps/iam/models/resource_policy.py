@@ -39,9 +39,10 @@ class ResourcePolicy(BaseModel):
         choices=SubjectType.choices,
         verbose_name="主体类型",
     )
-    subject_id = models.UUIDField(
+    subject_id = models.CharField(
+        max_length=64,
         verbose_name="主体 ID",
-        help_text="用户或角色的 UUID",
+        help_text="用户 uid 或角色 UUID",
     )
     permission = models.ForeignKey(
         "iam.Permission",

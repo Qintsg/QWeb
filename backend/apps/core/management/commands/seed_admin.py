@@ -4,7 +4,8 @@ Usage: python manage.py seed_admin
 """
 from django.core.management.base import BaseCommand
 
-from apps.accounts.models import User
+from apps.accounts.models import User, UserContact
+from apps.accounts.services.account_bootstrap import ensure_user_related_records
 from apps.iam.models import Role, UserRole
 
 
@@ -19,15 +20,17 @@ class Command(BaseCommand):
         user, created = User.objects.get_or_create(
             username=username,
             defaults={
-                "email": email,
                 "is_staff": True,
                 "is_active": True,
-                "display_name": "Qintsg",
+                "nickname": "Qintsg",
+                "user_type": User.UserType.ADMIN,
             },
         )
+        UserContact.objects.update_or_create(user=user, defaults={"email": email})
         if created:
             user.set_password(password)
             user.save()
+            ensure_user_related_records(user=user, email=email)
             self.stdout.write(self.style.SUCCESS(f"创建管理员: {username}"))
         else:
             self.stdout.write(f"管理员已存在: {username}")

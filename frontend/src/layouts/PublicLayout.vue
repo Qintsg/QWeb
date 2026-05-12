@@ -46,7 +46,7 @@ function toggleLocale() {
 
 .public-layout__card {
   width: 100%;
-  max-width: 420px;
+  max-width: min(860px, 100%);
   background: var(--q-color-surface);
   border-radius: var(--q-radius-xl);
   box-shadow: var(--q-shadow-lg);

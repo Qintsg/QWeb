@@ -22,7 +22,7 @@ const dialogForm = ref<CreateUserRequest>({
   username: '',
   email: '',
   password: '',
-  display_name: '',
+  nickname: '',
   user_group: 'user',
 })
 
@@ -58,7 +58,7 @@ function openCreate() {
     username: '',
     email: '',
     password: '',
-    display_name: '',
+    nickname: '',
     user_group: 'user',
   }
   isDialogOpen.value = true
@@ -66,13 +66,13 @@ function openCreate() {
 
 function openEdit(user: UserInfo) {
   dialogMode.value = 'edit'
-  editId.value = user.id
+  editId.value = String(user.uid)
   dialogForm.value = {
     username: user.username,
-    email: user.email,
+    email: user.contact?.email || '',
     password: '', // Leave blank, only fill if changing
-    display_name: user.display_name || '',
-    user_group: user.user_group,
+    nickname: user.nickname || '',
+    user_group: user.user_type === 'admin' ? 'admin' : 'user',
   }
   isDialogOpen.value = true
 }
@@ -87,9 +87,8 @@ async function handleSave() {
       await createUser(dialogForm.value)
     } else {
       const payload: Partial<UserInfo> = {
-        email: dialogForm.value.email,
-        display_name: dialogForm.value.display_name,
-        user_group: dialogForm.value.user_group,
+        nickname: dialogForm.value.nickname,
+        contact: { email: dialogForm.value.email } as UserInfo['contact'],
       }
       if (dialogForm.value.password) {
         // Assume API takes password in patch if we want to reset it, or we handle it separately.
@@ -108,7 +107,7 @@ async function handleSave() {
 async function handleDelete(user: UserInfo) {
   if (confirm(`Are you sure you want to delete user ${user.username}?`)) {
     try {
-      await deleteUser(user.id)
+      await deleteUser(user.uid)
       fetchUsers()
     } catch (err) {
       console.error('Delete failed', err)
@@ -156,13 +155,13 @@ async function handleDelete(user: UserInfo) {
             <tr v-else-if="users.length === 0">
               <td colspan="6" class="text-center">No users found.</td>
             </tr>
-            <tr v-else v-for="user in users" :key="user.id">
+            <tr v-else v-for="user in users" :key="user.uid">
               <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.display_name || '-' }}</td>
+              <td>{{ user.contact?.email || '-' }}</td>
+              <td>{{ user.nickname || '-' }}</td>
               <td>
-                <fluent-badge :appearance="user.user_group === 'admin' || user.user_group === 'owner' ? 'accent' : 'neutral'">
-                  {{ user.user_group }}
+                <fluent-badge :appearance="user.user_type === 'admin' ? 'accent' : 'neutral'">
+                  {{ user.user_type }}
                 </fluent-badge>
               </td>
               <td>
@@ -217,10 +216,10 @@ async function handleDelete(user: UserInfo) {
             ></fluent-text-field>
           </div>
           <div class="form-field">
-            <label>Display Name</label>
+            <label>Nickname</label>
             <fluent-text-field
-              :value="dialogForm.display_name"
-              @input="dialogForm.display_name = ($event.target as HTMLInputElement).value"
+              :value="dialogForm.nickname"
+              @input="dialogForm.nickname = ($event.target as HTMLInputElement).value"
               style="width: 100%"
             ></fluent-text-field>
           </div>

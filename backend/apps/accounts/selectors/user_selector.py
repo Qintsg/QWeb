@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID
 
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
@@ -17,11 +16,11 @@ from apps.core.exceptions import ResourceNotFoundException
 User = get_user_model()
 
 
-def get_user_by_id(user_id: UUID):
-    """根据 UUID 获取用户。
+def get_user_by_id(user_id: int | str):
+    """根据 uid 获取用户。
 
     Args:
-        user_id: 用户 UUID
+        user_id: 用户 uid
 
     Returns:
         User 实例
@@ -30,7 +29,7 @@ def get_user_by_id(user_id: UUID):
         ResourceNotFoundException: 用户不存在
     """
     try:
-        return User.objects.select_related("profile").get(id=user_id)
+        return User.objects.select_related("contact", "profile", "settings").get(pk=user_id)
     except User.DoesNotExist:
         raise ResourceNotFoundException(message="用户不存在")
 
@@ -48,7 +47,9 @@ def get_user_by_email(email: str):
         ResourceNotFoundException: 用户不存在
     """
     try:
-        return User.objects.select_related("profile").get(email=email)
+        return User.objects.select_related("contact", "profile", "settings").get(
+            contact__email__iexact=email
+        )
     except User.DoesNotExist:
         raise ResourceNotFoundException(message="用户不存在")
 
@@ -69,7 +70,7 @@ def list_users(
     Returns:
         User QuerySet
     """
-    qs = User.objects.select_related("profile").all()
+    qs = User.objects.select_related("contact", "profile", "settings").all()
 
     if is_active is not None:
         qs = qs.filter(is_active=is_active)
@@ -79,8 +80,9 @@ def list_users(
 
         qs = qs.filter(
             Q(username__icontains=search)
-            | Q(email__icontains=search)
-            | Q(display_name__icontains=search)
+            | Q(contact__email__icontains=search)
+            | Q(contact__phone__icontains=search)
+            | Q(nickname__icontains=search)
         )
 
     return qs

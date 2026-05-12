@@ -1,8 +1,4 @@
 <script setup lang="ts">
-/**
- * 登录页面
- * TODO: Phase 7 实现完整登录表单
- */
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -13,26 +9,27 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-const username = ref('')
+const loginIdentifier = ref('')
 const password = ref('')
 const loading = ref(false)
 const githubLoading = ref(false)
 const errorMsg = ref('')
 
-/** 处理登录 */
+function redirectPath() {
+  return (route.query.redirect as string) || '/dashboard'
+}
+
 async function handleLogin() {
-  if (!username.value || !password.value) {
+  if (!loginIdentifier.value.trim() || !password.value) {
     errorMsg.value = t('auth.fillAllFields')
     return
   }
 
   loading.value = true
   errorMsg.value = ''
-
   try {
-    await authStore.login({ login: username.value, password: password.value })
-    const redirect = (route.query.redirect as string) || '/'
-    router.push(redirect)
+    await authStore.login({ login: loginIdentifier.value.trim(), password: password.value })
+    router.push(redirectPath())
   } catch (err: unknown) {
     errorMsg.value = (err as Error).message || t('auth.loginFailed')
   } finally {
@@ -43,10 +40,8 @@ async function handleLogin() {
 async function handleGitHubLogin() {
   githubLoading.value = true
   errorMsg.value = ''
-
   try {
-    const redirect = (route.query.redirect as string) || '/dashboard'
-    await authStore.startGitHubLogin(redirect)
+    await authStore.startGitHubLogin(redirectPath())
   } catch (err: unknown) {
     errorMsg.value = (err as Error).message || t('auth.githubLoginFailed')
     githubLoading.value = false
@@ -55,131 +50,125 @@ async function handleGitHubLogin() {
 </script>
 
 <template>
-  <div class="login-page">
-    <fluent-card class="login-card">
-      <h1 class="login-title">{{ t('auth.login') }}</h1>
+  <section class="auth-panel" aria-labelledby="login-title">
+    <header class="auth-panel__header">
+      <h1 id="login-title">{{ t('auth.login') }}</h1>
+      <p>{{ t('auth.loginSubtitle') }}</p>
+    </header>
 
-      <form class="login-form" @submit.prevent="handleLogin">
-        <div v-if="errorMsg" class="login-error">{{ errorMsg }}</div>
+    <form class="auth-form" @submit.prevent="handleLogin">
+      <div v-if="errorMsg" class="auth-alert" role="alert">{{ errorMsg }}</div>
 
-        <div class="form-field">
-          <label for="username">{{ t('auth.username') }}</label>
-          <fluent-text-field
-            id="username"
-            :value="username"
-            @input="username = ($event.target as HTMLInputElement).value"
-            :placeholder="t('auth.username')"
-            required
-            style="width: 100%"
-          ></fluent-text-field>
-        </div>
+      <div class="auth-field">
+        <label for="login-identifier">{{ t('auth.accountIdentifier') }}</label>
+        <fluent-text-field
+          id="login-identifier"
+          :value="loginIdentifier"
+          :placeholder="t('auth.accountIdentifierPlaceholder')"
+          :aria-invalid="Boolean(errorMsg)"
+          autocomplete="username"
+          required
+          @input="loginIdentifier = ($event.target as HTMLInputElement).value"
+        ></fluent-text-field>
+      </div>
 
-        <div class="form-field">
-          <label for="password">{{ t('auth.password') }}</label>
-          <fluent-text-field
-            id="password"
-            type="password"
-            :value="password"
-            @input="password = ($event.target as HTMLInputElement).value"
-            :placeholder="t('auth.password')"
-            required
-            style="width: 100%"
-          ></fluent-text-field>
-        </div>
+      <div class="auth-field">
+        <label for="login-password">{{ t('auth.password') }}</label>
+        <fluent-text-field
+          id="login-password"
+          type="password"
+          :value="password"
+          :placeholder="t('auth.password')"
+          autocomplete="current-password"
+          required
+          @input="password = ($event.target as HTMLInputElement).value"
+        ></fluent-text-field>
+      </div>
 
-        <fluent-button
-          type="submit"
-          appearance="accent"
-          class="login-btn"
-          :disabled="loading"
-          @click="handleLogin"
-        >
-          {{ loading ? t('common.loading') : t('auth.login') }}
-        </fluent-button>
+      <fluent-button
+        type="submit"
+        appearance="accent"
+        class="auth-button"
+        :disabled="loading || githubLoading"
+      >
+        {{ loading ? t('common.loading') : t('auth.login') }}
+      </fluent-button>
 
-        <div class="login-divider">
-          <span>{{ t('auth.orLoginWith') }}</span>
-        </div>
+      <div class="auth-divider"><span>{{ t('auth.orLoginWith') }}</span></div>
 
-        <fluent-button
-          type="button"
-          appearance="outline"
-          class="github-login-btn"
-          :disabled="githubLoading || loading"
-          @click="handleGitHubLogin"
-        >
-          {{ githubLoading ? t('common.loading') : t('auth.githubLogin') }}
-        </fluent-button>
+      <fluent-button
+        type="button"
+        appearance="outline"
+        class="auth-button"
+        :disabled="githubLoading || loading"
+        @click="handleGitHubLogin"
+      >
+        {{ githubLoading ? t('common.loading') : t('auth.githubLogin') }}
+      </fluent-button>
 
-        <p class="login-link">
-          {{ t('auth.noAccount') }}
-          <router-link to="/register">
-            <fluent-anchor appearance="hyperlink">{{ t('auth.register') }}</fluent-anchor>
-          </router-link>
-        </p>
-      </form>
-    </fluent-card>
-  </div>
+      <p class="auth-link">
+        {{ t('auth.noAccount') }}
+        <router-link to="/register">{{ t('auth.register') }}</router-link>
+      </p>
+    </form>
+  </section>
 </template>
 
 <style scoped>
-.login-page {
+.auth-panel {
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
 }
 
-.login-card {
-  padding: var(--q-space-32);
-  border-radius: var(--q-radius-lg);
-  box-shadow: var(--q-shadow-md);
-  background: var(--q-color-surface);
+.auth-panel__header {
+  margin-bottom: var(--q-space-24);
 }
 
-.login-title {
-  margin: 0 0 var(--q-space-32);
-  font-size: 1.75rem;
-  font-weight: 600;
-  text-align: center;
+.auth-panel__header h1 {
+  margin: 0;
   color: var(--q-color-text-primary);
+  font-size: var(--q-font-size-2xl);
+  font-weight: var(--q-font-weight-semibold);
 }
 
-.login-form {
+.auth-panel__header p {
+  margin: var(--q-space-8) 0 0;
+  color: var(--q-color-text-secondary);
+  line-height: var(--q-line-height-base);
+}
+
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: var(--q-space-24);
+  gap: var(--q-space-20);
 }
 
-.login-error {
+.auth-alert {
   padding: var(--q-space-12) var(--q-space-16);
+  border: 1px solid var(--q-color-error, #d13438);
   border-radius: var(--q-radius-sm);
-  background: var(--q-color-error-light, #fde7e7);
-  color: var(--q-color-error, #d32f2f);
-  font-size: 0.875rem;
+  background: var(--q-color-error-light, #fde7e9);
+  color: var(--q-color-error, #d13438);
+  font-size: var(--q-font-size-sm);
 }
 
-.form-field {
+.auth-field {
   display: flex;
   flex-direction: column;
   gap: var(--q-space-8);
 }
 
-.form-field label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--q-color-text-secondary);
+.auth-field label {
+  color: var(--q-color-text-primary);
+  font-size: var(--q-font-size-sm);
+  font-weight: var(--q-font-weight-semibold);
 }
 
-.login-btn {
-  width: 100%;
-  margin-top: var(--q-space-12);
-}
-
-.github-login-btn {
+.auth-field fluent-text-field,
+.auth-button {
   width: 100%;
 }
 
-.login-divider {
+.auth-divider {
   display: flex;
   align-items: center;
   gap: var(--q-space-12);
@@ -187,22 +176,24 @@ async function handleGitHubLogin() {
   font-size: var(--q-font-size-sm);
 }
 
-.login-divider::before,
-.login-divider::after {
+.auth-divider::before,
+.auth-divider::after {
   content: "";
   flex: 1;
   height: 1px;
   background: var(--q-color-divider);
 }
 
-.login-link {
-  text-align: center;
-  font-size: 0.875rem;
-  margin-top: var(--q-space-16);
+.auth-link {
+  margin: 0;
   color: var(--q-color-text-secondary);
+  font-size: var(--q-font-size-sm);
+  text-align: center;
 }
 
-.login-link a {
+.auth-link a {
+  color: var(--q-color-brand);
+  font-weight: var(--q-font-weight-semibold);
   text-decoration: none;
 }
 </style>

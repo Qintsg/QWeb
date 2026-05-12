@@ -38,6 +38,7 @@
 /auth/register              # 注册
 /auth/forgot-password       # 忘记密码
 /auth/reset-password        # 重置密码
+/auth/github/callback       # GitHub OAuth 回调与首次绑定/注册选择
 
 /dashboard                  # 仪表盘首页
 /dashboard/profile          # 个人资料
@@ -71,6 +72,14 @@
 /admin/config               # 系统配置
 /admin/notifications        # 通知管理
 ```
+
+---
+
+### 2.1 认证路由约定
+
+- GitHub 回调页统一承载三种状态：已绑定登录成功、未绑定时选择绑定已有账号、未绑定时创建新账号。
+- 前端统一调用 provider 化接口 `/api/v1/auth/oauth/{provider}/...`，当前仅接线 `github`；旧 `/api/v1/auth/github/...` 仅作为兼容入口。
+- 第三方邮箱相同只能用于提示用户，不作为自动绑定依据；绑定已有账号必须完成本地账号认证。
 
 ---
 

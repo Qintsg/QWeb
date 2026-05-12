@@ -17,7 +17,7 @@ from apps.iam.api.views import (
 app_name = "iam"
 
 urlpatterns = [
-    # ---- 当前用户权限（放在最前避免被 users/<uuid> 匹配） ----
+    # ---- 当前用户权限（放在最前避免被 users/<int> 匹配） ----
     path("me/permissions/", MePermissionsView.as_view(), name="me-permissions"),
 
     # ---- 权限 ----
@@ -29,10 +29,10 @@ urlpatterns = [
     path("roles/<uuid:role_id>/permissions/", RolePermissionsView.as_view(), name="role-permissions"),
 
     # ---- 用户角色 ----
-    path("users/<uuid:user_id>/roles/", UserRoleListView.as_view(), name="user-role-list"),
-    path("users/<uuid:user_id>/roles/manage/", UserRoleAssignView.as_view(), name="user-role-manage"),
+    path("users/<int:user_id>/roles/", UserRoleListView.as_view(), name="user-role-list"),
+    path("users/<int:user_id>/roles/manage/", UserRoleAssignView.as_view(), name="user-role-manage"),
 
     # ---- 用户权限覆盖 ----
-    path("users/<uuid:user_id>/overrides/", UserOverrideListView.as_view(), name="user-override-list"),
-    path("users/<uuid:user_id>/overrides/manage/", UserOverrideManageView.as_view(), name="user-override-manage"),
+    path("users/<int:user_id>/overrides/", UserOverrideListView.as_view(), name="user-override-list"),
+    path("users/<int:user_id>/overrides/manage/", UserOverrideManageView.as_view(), name="user-override-manage"),
 ]

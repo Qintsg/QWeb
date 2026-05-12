@@ -57,10 +57,11 @@
 
 ### 2.4 第三方登录身份
 
-- 账号认证中心支持 GitHub OAuth 登录。
+- 账号认证中心支持 provider 化 OAuth 登录，当前已接线 GitHub。
 - GitHub OAuth 回调由前端接收 `code/state` 后提交给后端完成换取 token，GitHub `client_secret` 只保存在后端环境变量中。
-- 后端保存 `OAuthIdentity` 绑定关系：`provider`、`provider_user_id`、`provider_username`、邮箱、头像和资料页 URL，不持久化 GitHub access token。
-- 如果 GitHub 已验证邮箱匹配现有本地用户，则自动绑定该用户；否则创建一个无本地密码的新用户。
+- 后端保存 `user_oauth_accounts` 绑定关系：`provider`、`provider_account_id`、第三方用户名、昵称、邮箱、头像和原始资料快照。
+- 第三方账号首次登录时，如果未找到 `UNIQUE(provider, provider_account_id)` 对应绑定，后端返回待选择状态，前端让用户选择绑定已有账号或创建新账号。
+- 不能仅凭第三方邮箱相同自动绑定已有账号；邮箱相同只能作为提示，绑定前必须登录已有账号确认控制权。
 - 登录成功后仍签发项目自己的 JWT，并继续使用 IAM 解析最终权限。
 
 ---
@@ -133,7 +134,7 @@
 | 字段    | 类型 | 说明     |
 | ------- | ---- | -------- |
 | id      | UUID | 主键     |
-| user_id | FK   | 用户     |
+| user_id | FK   | 用户 `uid` |
 | role_id | FK   | 角色     |
 
 ### 4.5 user_permission_overrides（用户权限覆盖）
@@ -141,7 +142,7 @@
 | 字段          | 类型    | 说明                    |
 | ------------- | ------- | ----------------------- |
 | id            | UUID    | 主键                    |
-| user_id       | FK      | 用户                    |
+| user_id       | FK      | 用户 `uid`              |
 | permission_id | FK      | 权限                    |
 | effect        | VARCHAR | `allow` 或 `deny`       |
 | reason        | TEXT    | 覆盖原因                |
@@ -154,7 +155,7 @@
 | resource_type | VARCHAR | 资源类型（如 blog_post）   |
 | resource_id   | UUID    | 资源 ID                    |
 | subject_type  | VARCHAR | 主体类型（user / role）    |
-| subject_id    | UUID    | 主体 ID                    |
+| subject_id    | VARCHAR | 主体 ID，用户为 `uid`，角色为 UUID |
 | permission_id | FK      | 权限                       |
 | effect        | VARCHAR | `allow` 或 `deny`          |
 
@@ -163,7 +164,7 @@
 | 字段        | 类型      | 说明             |
 | ----------- | --------- | ---------------- |
 | id          | UUID      | 主键             |
-| user_id     | FK        | 操作人           |
+| user_id     | FK        | 操作人 `uid`     |
 | action      | VARCHAR   | 操作类型         |
 | module      | VARCHAR   | 模块             |
 | resource    | VARCHAR   | 资源描述         |

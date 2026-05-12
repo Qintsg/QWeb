@@ -74,6 +74,8 @@ GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
 GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
 ```
 
+前端通过 `/api/v1/auth/oauth/github/authorize/` 获取授权地址。首次 GitHub 登录未绑定本地账号时，会在回调页选择“绑定已有账号”或“创建新账号”；邮箱相同不会自动绑定。
+
 验证后端是否运行：
 
 | 地址 | 说明 |

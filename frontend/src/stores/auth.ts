@@ -7,15 +7,23 @@ import { ref, computed } from "vue"
 import { defineStore } from "pinia"
 import { useRouter } from "vue-router"
 import {
-  completeGitHubLogin,
-  getGitHubAuthorizeUrl,
+  bindOAuthAccount,
+  completeOAuthLogin,
+  getOAuthAuthorizeUrl,
   login as apiLogin,
   logout as apiLogout,
   getMe,
+  registerWithOAuth,
 } from "@/api/auth"
 import { setTokens, clearTokens, getAccessToken, getRefreshToken } from "@/api/client"
 import { usePermissionStore } from "./permission"
-import type { UserInfo, LoginRequest, GitHubCallbackRequest } from "@/types/auth"
+import type {
+  UserInfo,
+  LoginRequest,
+  OAuthBindRequest,
+  OAuthCallbackRequest,
+  OAuthRegisterRequest,
+} from "@/types/auth"
 
 export const useAuthStore = defineStore("auth", () => {
   const router = useRouter()
@@ -27,8 +35,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   /* ── 计算属性 ── */
   const isAuthenticated = computed(() => !!user.value && !!getAccessToken())
-  const displayName = computed(() => user.value?.display_name || user.value?.username || "")
-  const userGroup = computed(() => user.value?.user_group ?? "guest")
+  const displayName = computed(() => user.value?.nickname || user.value?.username || "")
+  const userGroup = computed(() => {
+    if (user.value?.user_type === "admin" || user.value?.is_staff) return "admin"
+    return "user"
+  })
 
   /* ── 登录 ── */
   async function login(credentials: LoginRequest) {
@@ -46,14 +57,43 @@ export const useAuthStore = defineStore("auth", () => {
 
   /* ── GitHub 登录 ── */
   async function startGitHubLogin(redirect?: string) {
-    const { data } = await getGitHubAuthorizeUrl(redirect)
+    const { data } = await getOAuthAuthorizeUrl("github", redirect)
     window.location.assign(data.data.authorization_url)
   }
 
-  async function completeGitHubOAuth(payload: GitHubCallbackRequest) {
+  async function completeGitHubOAuth(payload: OAuthCallbackRequest) {
     loading.value = true
     try {
-      const { data } = await completeGitHubLogin(payload)
+      const { data } = await completeOAuthLogin("github", payload)
+      const result = data.data
+      if (result.status === "requires_account_choice") {
+        return result
+      }
+      setTokens(result.access, result.refresh)
+      await fetchUser()
+      return result
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function bindGitHubOAuth(payload: OAuthBindRequest) {
+    loading.value = true
+    try {
+      const { data } = await bindOAuthAccount("github", payload)
+      const result = data.data
+      setTokens(result.access, result.refresh)
+      await fetchUser()
+      return result
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function registerGitHubOAuth(payload: OAuthRegisterRequest) {
+    loading.value = true
+    try {
+      const { data } = await registerWithOAuth("github", payload)
       const result = data.data
       setTokens(result.access, result.refresh)
       await fetchUser()
@@ -112,6 +152,8 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     startGitHubLogin,
     completeGitHubOAuth,
+    bindGitHubOAuth,
+    registerGitHubOAuth,
     logout,
     fetchUser,
     initialize,

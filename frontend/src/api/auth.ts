@@ -13,13 +13,16 @@ import type {
   ChangePasswordRequest,
   UserInfo,
   ResolvedPermissions,
-  GitHubAuthorizeResponse,
-  GitHubCallbackRequest,
+  OAuthAuthorizeResponse,
+  OAuthBindRequest,
+  OAuthCallbackRequest,
+  OAuthCallbackResponse,
+  OAuthRegisterRequest,
 } from "@/types/auth"
 
 /** 用户注册 */
 export function register(payload: RegisterRequest) {
-  return apiClient.post<ApiResponse<UserInfo>>("/auth/register/", payload)
+  return apiClient.post<ApiResponse<LoginResponse>>("/auth/register/", payload)
 }
 
 /** 用户名密码登录 */
@@ -27,17 +30,36 @@ export function login(payload: LoginRequest) {
   return apiClient.post<ApiResponse<LoginResponse>>("/auth/login/", payload)
 }
 
-/** 获取 GitHub OAuth 授权地址 */
-export function getGitHubAuthorizeUrl(redirect?: string) {
-  return apiClient.get<ApiResponse<GitHubAuthorizeResponse>>(
-    "/auth/github/authorize/",
+/** 获取 OAuth 授权地址 */
+export function getOAuthAuthorizeUrl(provider: string, redirect?: string) {
+  return apiClient.get<ApiResponse<OAuthAuthorizeResponse>>(
+    `/auth/oauth/${provider}/authorize/`,
     { params: { redirect } }
   )
 }
 
-/** 完成 GitHub OAuth 回调并换取本地 Token */
-export function completeGitHubLogin(payload: GitHubCallbackRequest) {
-  return apiClient.post<ApiResponse<LoginResponse>>("/auth/github/callback/", payload)
+/** 完成 OAuth 回调 */
+export function completeOAuthLogin(provider: string, payload: OAuthCallbackRequest) {
+  return apiClient.post<ApiResponse<OAuthCallbackResponse>>(
+    `/auth/oauth/${provider}/callback/`,
+    payload
+  )
+}
+
+/** 绑定 OAuth 到已有账号 */
+export function bindOAuthAccount(provider: string, payload: OAuthBindRequest) {
+  return apiClient.post<ApiResponse<LoginResponse>>(
+    `/auth/oauth/${provider}/bind/`,
+    payload
+  )
+}
+
+/** 使用 OAuth 注册新账号 */
+export function registerWithOAuth(provider: string, payload: OAuthRegisterRequest) {
+  return apiClient.post<ApiResponse<LoginResponse>>(
+    `/auth/oauth/${provider}/register/`,
+    payload
+  )
 }
 
 /** 登出（黑名单 refresh token） */

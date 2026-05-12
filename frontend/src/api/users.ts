@@ -20,7 +20,7 @@ export interface CreateUserRequest {
   username: string
   email: string
   password: string
-  display_name?: string
+  nickname?: string
   user_group?: UserGroup
 }
 
@@ -30,7 +30,7 @@ export function getUsers(params?: UserListQuery) {
 }
 
 /** 获取单个用户详情 */
-export function getUser(userId: string) {
+export function getUser(userId: number | string) {
   return apiClient.get<ApiResponse<UserInfo>>(`/users/${userId}/`)
 }
 
@@ -40,11 +40,11 @@ export function createUser(payload: CreateUserRequest) {
 }
 
 /** 更新用户信息 */
-export function updateUser(userId: string, payload: Partial<UserInfo>) {
+export function updateUser(userId: number | string, payload: Partial<UserInfo>) {
   return apiClient.patch<ApiResponse<UserInfo>>(`/users/${userId}/`, payload)
 }
 
 /** 删除用户（软删除） */
-export function deleteUser(userId: string) {
+export function deleteUser(userId: number | string) {
   return apiClient.delete<ApiResponse<null>>(`/users/${userId}/`)
 }

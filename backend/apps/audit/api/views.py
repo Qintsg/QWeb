@@ -42,8 +42,8 @@ class LoginLogListView(generics.ListAPIView):
     required_permission = "audit.log.view"
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["action"]
-    search_fields = ["username", "ip_address"]
+    filterset_fields = ["action", "login_type", "provider", "success"]
+    search_fields = ["username", "ip_address", "provider"]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
 

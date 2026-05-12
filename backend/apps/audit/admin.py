@@ -32,12 +32,20 @@ class AuditLogAdmin(admin.ModelAdmin):
 class LoginLogAdmin(admin.ModelAdmin):
     """登录日志 Admin。"""
 
-    list_display = ["created_at", "username", "action", "ip_address", "failure_reason"]
-    list_filter = ["action", "created_at"]
-    search_fields = ["username", "ip_address"]
+    list_display = [
+        "created_at",
+        "username",
+        "login_type",
+        "provider",
+        "action",
+        "success",
+        "ip_address",
+    ]
+    list_filter = ["action", "login_type", "provider", "success", "created_at"]
+    search_fields = ["username", "ip_address", "provider"]
     readonly_fields = [
-        "id", "user", "username", "action", "ip_address",
-        "user_agent", "failure_reason", "created_at",
+        "id", "user", "username", "login_type", "provider", "action", "ip_address",
+        "user_agent", "device_info", "success", "failure_reason", "created_at",
     ]
     ordering = ["-created_at"]
 

@@ -1,86 +1,121 @@
-"""自定义用户模型。
+"""用户核心模型。
 
-使用 UUID 主键，继承 AbstractBaseUser + PermissionsMixin，
-支持用户名 + 邮箱双重唯一标识。
+用户主键采用从 1 递增的 BIGINT uid。邮箱、手机号、资料、设置与
+OAuth 绑定信息拆分到独立表中，核心表只保留认证框架和账号展示所需字段。
 """
 
 from __future__ import annotations
 
-import uuid
-
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.db.models.functions import Lower
 
 from apps.accounts.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """自定义用户模型。
+    """系统用户核心账号。"""
 
-    字段说明：
-    - id: UUID 主键
-    - username: 用户名，唯一
-    - email: 邮箱，唯一
-    - display_name: 显示名称（可选）
-    - is_active: 是否激活
-    - is_staff: 是否允许访问管理后台
-    - date_joined: 注册时间
-    """
+    class Status(models.TextChoices):
+        ACTIVE = "active", "正常"
+        INACTIVE = "inactive", "未激活"
+        BANNED = "banned", "已封禁"
+        DELETED = "deleted", "已删除"
+        PENDING = "pending", "待确认"
 
-    id = models.UUIDField(
+    class UserType(models.TextChoices):
+        NORMAL = "normal", "普通用户"
+        ADMIN = "admin", "管理员"
+        SYSTEM = "system", "系统用户"
+
+    uid = models.BigAutoField(
         primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name="用户 ID",
+        verbose_name="用户 UID",
     )
     username = models.CharField(
-        max_length=64,
+        max_length=32,
         unique=True,
         db_index=True,
         verbose_name="用户名",
-        help_text="3-64 个字符，仅限字母、数字、下划线。",
+        help_text="3-32 个字符，允许字母、数字、短横线、下划线和点号。",
     )
-    email = models.EmailField(
-        unique=True,
-        db_index=True,
-        verbose_name="邮箱",
-    )
-    display_name = models.CharField(
-        max_length=128,
+    nickname = models.CharField(
+        max_length=64,
+        null=True,
         blank=True,
-        default="",
-        verbose_name="显示名称",
+        verbose_name="展示昵称",
+    )
+    avatar_url = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="头像 URL",
+    )
+    status = models.CharField(
+        max_length=32,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+        db_index=True,
+        verbose_name="账号状态",
+    )
+    user_type = models.CharField(
+        max_length=32,
+        choices=UserType.choices,
+        default=UserType.NORMAL,
+        db_index=True,
+        verbose_name="用户类型",
     )
     is_active = models.BooleanField(
         default=True,
-        verbose_name="是否激活",
-        help_text="未激活的用户无法登录。",
+        db_index=True,
+        verbose_name="Django 认证是否启用",
+        help_text="与 status 一起用于 Django 认证框架判断。",
     )
     is_staff = models.BooleanField(
         default=False,
         verbose_name="管理后台权限",
         help_text="允许访问 Django Admin 后台。",
     )
-    date_joined = models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="注册时间",
+        verbose_name="创建时间",
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="更新时间",
+    )
+    deleted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name="软删除时间",
     )
 
     objects = UserManager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email"]
+    REQUIRED_FIELDS: list[str] = []
 
     class Meta:
-        db_table = "accounts_user"
+        db_table = "users"
         verbose_name = "用户"
         verbose_name_plural = "用户"
-        ordering = ["-date_joined"]
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("username"),
+                name="uq_users_username_ci",
+            ),
+        ]
 
     def __str__(self) -> str:
-        return self.display_name or self.username
+        return self.nickname or self.username
 
     @property
     def name(self) -> str:
         """返回用于前端显示的友好名称。"""
-        return self.display_name or self.username
+        return self.nickname or self.username
+
+    @property
+    def date_joined(self):
+        """兼容 Django Admin 和现有前端字段名。"""
+        return self.created_at

@@ -16,7 +16,7 @@ const authStore = useAuthStore()
 const profileLoading = ref(false)
 const profileMsg = ref({ type: '', text: '' })
 const profileForm = ref({
-  display_name: '',
+  nickname: '',
   phone: '',
   website: '',
   bio: '',
@@ -33,8 +33,8 @@ const pwdForm = ref({
 
 onMounted(() => {
   if (user.value) {
-    profileForm.value.display_name = user.value.display_name || ''
-    profileForm.value.phone = user.value.profile?.phone || ''
+    profileForm.value.nickname = user.value.nickname || ''
+    profileForm.value.phone = user.value.contact?.phone || ''
     profileForm.value.website = user.value.profile?.website || ''
     profileForm.value.bio = user.value.profile?.bio || ''
   }
@@ -45,9 +45,11 @@ async function handleUpdateProfile() {
   profileMsg.value = { type: '', text: '' }
   try {
     const payload = {
-      display_name: profileForm.value.display_name,
-      profile: {
+      nickname: profileForm.value.nickname,
+      contact: {
         phone: profileForm.value.phone,
+      },
+      profile: {
         website: profileForm.value.website,
         bio: profileForm.value.bio,
       }
@@ -96,7 +98,7 @@ async function handleChangePassword() {
         <div class="profile-avatar">{{ displayName.charAt(0).toUpperCase() }}</div>
         <div class="profile-info">
           <h2>{{ displayName }}</h2>
-          <p>{{ user.username }} ({{ user.email }})</p>
+          <p>{{ user.username }} ({{ user.contact?.email || '-' }})</p>
           <span class="profile-group">{{ userGroup }}</span>
         </div>
       </fluent-card>
@@ -110,10 +112,10 @@ async function handleChangePassword() {
           </div>
 
           <div class="form-field">
-            <label>Display Name</label>
+            <label>{{ t('auth.nickname') }}</label>
             <fluent-text-field
-              :value="profileForm.display_name"
-              @input="profileForm.display_name = ($event.target as HTMLInputElement).value"
+              :value="profileForm.nickname"
+              @input="profileForm.nickname = ($event.target as HTMLInputElement).value"
               style="width: 100%"
             ></fluent-text-field>
           </div>

@@ -35,9 +35,13 @@ class LoginLogSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "username",
+            "login_type",
+            "provider",
             "action",
             "ip_address",
             "user_agent",
+            "device_info",
+            "success",
             "failure_reason",
             "created_at",
         ]
