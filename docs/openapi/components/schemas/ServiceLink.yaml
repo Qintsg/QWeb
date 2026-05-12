@@ -1,0 +1,49 @@
+type: object
+required:
+  - id
+  - title
+  - url
+  - description
+  - remark
+  - icon
+  - color
+  - category
+  - sort_order
+properties:
+  id:
+    type: string
+    format: uuid
+  title:
+    type: string
+    maxLength: 100
+    example: Qintsg Blog
+  url:
+    type: string
+    format: uri
+    maxLength: 500
+    example: https://qintsg.cn
+  description:
+    type: string
+    maxLength: 300
+    example: 个人网站入口
+  remark:
+    type: string
+    maxLength: 500
+  icon:
+    type: string
+    maxLength: 50
+    example: globe
+  color:
+    type: string
+    maxLength: 20
+    example: "#0f6cbd"
+  category:
+    type: string
+    enum:
+      - project
+      - server
+      - tool
+      - other
+  sort_order:
+    type: integer
+    example: 10

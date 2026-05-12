@@ -1,0 +1,5 @@
+bearerAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: 认证接口签发的 JWT access token。

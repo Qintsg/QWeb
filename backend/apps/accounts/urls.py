@@ -7,9 +7,6 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.accounts.api.views.auth_views import (
-    ChangePasswordView,
-    GitHubOAuthAuthorizeView,
-    GitHubOAuthCallbackView,
     LoginView,
     LogoutView,
     OAuthAuthorizeView,
@@ -35,11 +32,8 @@ urlpatterns = [
     path("auth/oauth/<str:provider>/callback/", OAuthCallbackView.as_view(), name="oauth-callback"),
     path("auth/oauth/<str:provider>/bind/", OAuthBindView.as_view(), name="oauth-bind"),
     path("auth/oauth/<str:provider>/register/", OAuthRegisterView.as_view(), name="oauth-register"),
-    path("auth/github/authorize/", GitHubOAuthAuthorizeView.as_view(), name="github-authorize"),
-    path("auth/github/callback/", GitHubOAuthCallbackView.as_view(), name="github-callback"),
     path("auth/logout/", LogoutView.as_view(), name="logout"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
-    path("auth/change-password/", ChangePasswordView.as_view(), name="change-password"),
     # ---- 当前用户 ----
     path("me/", MeView.as_view(), name="me"),
     path("me/password/", MePasswordView.as_view(), name="me-password"),

@@ -1,0 +1,8 @@
+description: 当前认证用户没有执行该操作的权限。
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/ErrorResponse.yaml
+    example:
+      code: 403
+      message: 权限不足

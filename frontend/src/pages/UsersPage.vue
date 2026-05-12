@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getUsers, createUser, updateUser, deleteUser, type UserListQuery, type CreateUserRequest } from '@/api/users'
+import { getUsers, updateUser, toggleUserActive, type UserListQuery } from '@/api/users'
 import type { UserInfo, UserGroup } from '@/types/auth'
 
 const { t } = useI18n()
@@ -16,12 +16,10 @@ const query = ref<UserListQuery>({
 })
 
 const isDialogOpen = ref(false)
-const dialogMode = ref<'create'|'edit'>('create')
 const editId = ref('')
-const dialogForm = ref<CreateUserRequest>({
+const dialogForm = ref({
   username: '',
   email: '',
-  password: '',
   nickname: '',
   user_group: 'user',
 })
@@ -52,25 +50,11 @@ function handleSearch() {
   fetchUsers()
 }
 
-function openCreate() {
-  dialogMode.value = 'create'
-  dialogForm.value = {
-    username: '',
-    email: '',
-    password: '',
-    nickname: '',
-    user_group: 'user',
-  }
-  isDialogOpen.value = true
-}
-
 function openEdit(user: UserInfo) {
-  dialogMode.value = 'edit'
   editId.value = String(user.uid)
   dialogForm.value = {
     username: user.username,
     email: user.contact?.email || '',
-    password: '', // Leave blank, only fill if changing
     nickname: user.nickname || '',
     user_group: user.user_type === 'admin' ? 'admin' : 'user',
   }
@@ -83,19 +67,11 @@ function closeDialog() {
 
 async function handleSave() {
   try {
-    if (dialogMode.value === 'create') {
-      await createUser(dialogForm.value)
-    } else {
-      const payload: Partial<UserInfo> = {
-        nickname: dialogForm.value.nickname,
-        contact: { email: dialogForm.value.email } as UserInfo['contact'],
-      }
-      if (dialogForm.value.password) {
-        // Assume API takes password in patch if we want to reset it, or we handle it separately.
-        (payload as any).password = dialogForm.value.password
-      }
-      await updateUser(editId.value, payload)
+    const payload: Partial<UserInfo> = {
+      nickname: dialogForm.value.nickname,
+      contact: { email: dialogForm.value.email } as UserInfo['contact'],
     }
+    await updateUser(editId.value, payload)
     isDialogOpen.value = false
     fetchUsers()
   } catch (err) {
@@ -104,14 +80,15 @@ async function handleSave() {
   }
 }
 
-async function handleDelete(user: UserInfo) {
-  if (confirm(`Are you sure you want to delete user ${user.username}?`)) {
+async function handleToggleActive(user: UserInfo) {
+  const action = user.is_active ? 'disable' : 'enable'
+  if (confirm(`Are you sure you want to ${action} user ${user.username}?`)) {
     try {
-      await deleteUser(user.uid)
+      await toggleUserActive(user.uid)
       fetchUsers()
     } catch (err) {
-      console.error('Delete failed', err)
-      alert('Delete failed. See console for details.')
+      console.error('Toggle active failed', err)
+      alert('Operation failed. See console for details.')
     }
   }
 }
@@ -121,7 +98,6 @@ async function handleDelete(user: UserInfo) {
   <div class="page-container">
     <div class="page-header">
       <h1 class="page-title">{{ t('nav.users', 'User Management') }}</h1>
-      <fluent-button appearance="accent" @click="openCreate">Add User</fluent-button>
     </div>
 
     <fluent-card class="table-card">
@@ -171,7 +147,9 @@ async function handleDelete(user: UserInfo) {
               <td>
                 <div class="action-buttons">
                   <fluent-button appearance="stealth" @click="openEdit(user)">Edit</fluent-button>
-                  <fluent-button appearance="stealth" style="color: var(--q-color-error)" @click="handleDelete(user)">Delete</fluent-button>
+                  <fluent-button appearance="stealth" style="color: var(--q-color-error)" @click="handleToggleActive(user)">
+                    {{ user.is_active ? 'Disable' : 'Enable' }}
+                  </fluent-button>
                 </div>
               </td>
             </tr>
@@ -195,14 +173,14 @@ async function handleDelete(user: UserInfo) {
     <!-- Dialog -->
     <fluent-dialog :hidden="!isDialogOpen" id="user-dialog" trap-focus modal>
       <div class="dialog-content">
-        <h2 slot="header">{{ dialogMode === 'create' ? 'Create User' : 'Edit User' }}</h2>
+        <h2 slot="header">Edit User</h2>
         <div class="dialog-body">
           <div class="form-field">
             <label>Username</label>
             <fluent-text-field
               :value="dialogForm.username"
               @input="dialogForm.username = ($event.target as HTMLInputElement).value"
-              :disabled="dialogMode === 'edit'"
+              disabled
               style="width: 100%"
             ></fluent-text-field>
           </div>
@@ -224,17 +202,8 @@ async function handleDelete(user: UserInfo) {
             ></fluent-text-field>
           </div>
           <div class="form-field">
-            <label>Password {{ dialogMode === 'edit' ? '(Leave blank to keep)' : '' }}</label>
-            <fluent-text-field
-              type="password"
-              :value="dialogForm.password"
-              @input="dialogForm.password = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-          <div class="form-field">
             <label>User Group</label>
-            <select class="native-select" v-model="dialogForm.user_group" style="width: 100%">
+            <select class="native-select" v-model="dialogForm.user_group" disabled style="width: 100%">
               <option v-for="g in userGroups" :key="g" :value="g">{{ g }}</option>
             </select>
           </div>

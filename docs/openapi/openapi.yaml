@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: QWeb API
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  description: |
+    QWeb 个人基础设施门户后端 API。
+
+    本入口文件只保留全局 OpenAPI 信息和引用关系。
+    具体接口、数据结构、复用响应、参数和示例保存在 `docs/openapi/` 下的相邻文件中。
+servers:
+  - url: http://127.0.0.1:8000
+    description: 本地开发后端
+  - url: /
+    description: 同源部署入口
+tags:
+  - name: system
+    description: 健康检查与运行时 schema 接口。
+  - name: auth
+    description: 注册、登录、令牌、登出与 OAuth 流程。
+  - name: me
+    description: 当前登录用户资料与安全操作。
+  - name: users
+    description: 管理员用户管理。
+  - name: iam
+    description: 角色、权限、用户角色分配与权限覆盖。
+  - name: audit
+    description: 操作审计日志与登录日志。
+  - name: homepage
+    description: 公开首页与管理端服务链接。
+security:
+  - bearerAuth: []
+paths:
+  /api/health/:
+    $ref: ./paths/system.yaml#/~1api~1health~1
+  /api/schema/:
+    $ref: ./paths/system.yaml#/~1api~1schema~1
+  /api/v1/auth/register/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1register~1
+  /api/v1/auth/login/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1login~1
+  /api/v1/auth/oauth/{provider}/authorize/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1oauth~1{provider}~1authorize~1
+  /api/v1/auth/oauth/{provider}/callback/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1oauth~1{provider}~1callback~1
+  /api/v1/auth/oauth/{provider}/bind/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1oauth~1{provider}~1bind~1
+  /api/v1/auth/oauth/{provider}/register/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1oauth~1{provider}~1register~1
+  /api/v1/auth/logout/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1logout~1
+  /api/v1/auth/token/refresh/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1token~1refresh~1
+  /api/v1/me/:
+    $ref: ./paths/me.yaml#/~1api~1v1~1me~1
+  /api/v1/me/password/:
+    $ref: ./paths/me.yaml#/~1api~1v1~1me~1password~1
+  /api/v1/users/:
+    $ref: ./paths/users.yaml#/~1api~1v1~1users~1
+  /api/v1/users/{uid}/:
+    $ref: ./paths/users.yaml#/~1api~1v1~1users~1{uid}~1
+  /api/v1/users/{uid}/toggle-active/:
+    $ref: ./paths/users.yaml#/~1api~1v1~1users~1{uid}~1toggle-active~1
+  /api/v1/iam/me/permissions/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1me~1permissions~1
+  /api/v1/iam/permissions/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1permissions~1
+  /api/v1/iam/roles/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1roles~1
+  /api/v1/iam/roles/{role_id}/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1roles~1{role_id}~1
+  /api/v1/iam/roles/{role_id}/permissions/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1roles~1{role_id}~1permissions~1
+  /api/v1/iam/users/{user_id}/roles/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1users~1{user_id}~1roles~1
+  /api/v1/iam/users/{user_id}/roles/manage/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1users~1{user_id}~1roles~1manage~1
+  /api/v1/iam/users/{user_id}/overrides/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1users~1{user_id}~1overrides~1
+  /api/v1/iam/users/{user_id}/overrides/manage/:
+    $ref: ./paths/iam.yaml#/~1api~1v1~1iam~1users~1{user_id}~1overrides~1manage~1
+  /api/v1/logs/:
+    $ref: ./paths/audit.yaml#/~1api~1v1~1logs~1
+  /api/v1/login-logs/:
+    $ref: ./paths/audit.yaml#/~1api~1v1~1login-logs~1
+  /api/v1/homepage/links/:
+    $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1links~1
+  /api/v1/homepage/admin/links/:
+    $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1admin~1links~1
+  /api/v1/homepage/admin/links/{id}/:
+    $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1admin~1links~1{id}~1
+components:
+  securitySchemes:
+    bearerAuth:
+      $ref: ./components/securitySchemes.yaml#/bearerAuth
+  parameters:
+    Page:
+      $ref: ./components/parameters/Page.yaml
+    PageSize:
+      $ref: ./components/parameters/PageSize.yaml
+    Uid:
+      $ref: ./components/parameters/Uid.yaml
+    RoleId:
+      $ref: ./components/parameters/RoleId.yaml
+    UserId:
+      $ref: ./components/parameters/UserId.yaml
+    Provider:
+      $ref: ./components/parameters/Provider.yaml
+  responses:
+    Unauthorized:
+      $ref: ./components/responses/Unauthorized.yaml
+    Forbidden:
+      $ref: ./components/responses/Forbidden.yaml
+    NotFound:
+      $ref: ./components/responses/NotFound.yaml
+    ValidationError:
+      $ref: ./components/responses/ValidationError.yaml
+  schemas:
+    ErrorResponse:
+      $ref: ./components/schemas/ErrorResponse.yaml
+    HealthResponse:
+      $ref: ./components/schemas/HealthResponse.yaml
+    ApiSuccess:
+      $ref: ./components/schemas/ApiSuccess.yaml
+    PaginatedResponse:
+      $ref: ./components/schemas/PaginatedResponse.yaml
+    User:
+      $ref: ./components/schemas/User.yaml
+    UserAdmin:
+      $ref: ./components/schemas/UserAdmin.yaml
+    UserContact:
+      $ref: ./components/schemas/UserContact.yaml
+    UserProfile:
+      $ref: ./components/schemas/UserProfile.yaml
+    UserSettings:
+      $ref: ./components/schemas/UserSettings.yaml
+    AuthenticatedSession:
+      $ref: ./components/schemas/AuthenticatedSession.yaml
+    OAuthChoiceResponse:
+      $ref: ./components/schemas/OAuthChoiceResponse.yaml
+    Permission:
+      $ref: ./components/schemas/Permission.yaml
+    Role:
+      $ref: ./components/schemas/Role.yaml
+    AuditLog:
+      $ref: ./components/schemas/AuditLog.yaml
+    LoginLog:
+      $ref: ./components/schemas/LoginLog.yaml
+    ServiceLink:
+      $ref: ./components/schemas/ServiceLink.yaml
+    ServiceLinkAdmin:
+      $ref: ./components/schemas/ServiceLinkAdmin.yaml

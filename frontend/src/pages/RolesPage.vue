@@ -8,10 +8,7 @@ const { t } = useI18n()
 
 const loading = ref(false)
 const roles = ref<Role[]>([])
-const totalCount = ref(0)
 const query = ref<RoleListQuery>({
-  page: 1,
-  page_size: 10,
   search: '',
 })
 
@@ -28,9 +25,7 @@ async function fetchRoles() {
   loading.value = true
   try {
     const res = await getRoles(query.value)
-    const data = res.data.data
-    roles.value = data.results || []
-    totalCount.value = data.count || 0
+    roles.value = res.data.data || []
   } catch (err) {
     console.error('Failed to fetch roles', err)
   } finally {
@@ -41,7 +36,6 @@ async function fetchRoles() {
 onMounted(() => fetchRoles())
 
 function handleSearch() {
-  query.value.page = 1
   fetchRoles()
 }
 
@@ -145,18 +139,6 @@ async function handleDelete(role: Role) {
           </tbody>
         </table>
       </div>
-
-      <div class="pagination" v-if="totalCount > query.page_size!">
-        <fluent-button 
-          :disabled="query.page === 1" 
-          @click="query.page!--; fetchRoles()"
-        >Prev</fluent-button>
-        <span>Page {{ query.page }}</span>
-        <fluent-button 
-          :disabled="(query.page! * query.page_size!) >= totalCount" 
-          @click="query.page!++; fetchRoles()"
-        >Next</fluent-button>
-      </div>
     </fluent-card>
 
     <fluent-dialog :hidden="!isDialogOpen" id="role-dialog" trap-focus modal>
@@ -213,7 +195,6 @@ async function handleDelete(role: Role) {
 .qweb-table th { font-weight: 600; color: var(--q-color-text-secondary); background: var(--q-color-surface-alt, #fafafa); }
 .text-center { text-align: center !important; color: var(--q-color-text-secondary); padding: var(--q-space-32) !important; }
 .action-buttons { display: flex; gap: var(--q-space-12); }
-.pagination { margin-top: var(--q-space-24); display: flex; justify-content: center; align-items: center; gap: var(--q-space-16); }
 .dialog-content { padding: var(--q-space-24) var(--q-space-32); min-width: 400px; }
 .dialog-content h2 { margin-top: 0; margin-bottom: var(--q-space-16); }
 .dialog-body { display: flex; flex-direction: column; gap: var(--q-space-16); margin-bottom: var(--q-space-32); }

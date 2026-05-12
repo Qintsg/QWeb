@@ -1,0 +1,46 @@
+type: object
+required:
+  - status
+  - provider
+  - pending_token
+  - suggested_username
+  - suggested_nickname
+  - provider_email
+  - provider_email_verified
+  - provider_avatar_url
+  - email_matches_existing_account
+  - redirect
+properties:
+  status:
+    type: string
+    enum:
+      - requires_account_choice
+  provider:
+    type: string
+    enum:
+      - github
+  pending_token:
+    type: string
+    description: 用于绑定或注册 OAuth 资料的签名临时令牌。
+  suggested_username:
+    type: string
+    example: qintsg
+  suggested_nickname:
+    type: string
+    example: Qintsg
+  provider_email:
+    type: string
+    format: email
+    nullable: true
+  provider_email_verified:
+    type: boolean
+    nullable: true
+  provider_avatar_url:
+    type: string
+    nullable: true
+  email_matches_existing_account:
+    type: boolean
+    description: 仅作为提示；邮箱相同绝不会触发自动绑定。
+  redirect:
+    type: string
+    example: /dashboard

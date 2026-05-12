@@ -1,0 +1,17 @@
+allOf:
+  - $ref: ./ServiceLink.yaml
+  - type: object
+    required:
+      - is_visible
+      - created_at
+      - updated_at
+    properties:
+      is_visible:
+        type: boolean
+        example: true
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time

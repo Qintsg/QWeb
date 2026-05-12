@@ -1,0 +1,386 @@
+/api/v1/auth/register/:
+  post:
+    tags:
+      - auth
+    operationId: registerLocalAccount
+    summary: 注册本地账号
+    description: 创建用户及一对一扩展记录，并签发 JWT。
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - username
+              - email
+              - password
+              - password_confirm
+            properties:
+              username:
+                type: string
+                minLength: 3
+                maxLength: 32
+                pattern: "^[A-Za-z0-9](?!.*[._-]{2})[A-Za-z0-9._-]*[A-Za-z0-9]$"
+              email:
+                type: string
+                format: email
+              password:
+                type: string
+                format: password
+                minLength: 8
+              password_confirm:
+                type: string
+                format: password
+          example:
+            username: qintsg
+            email: qintsg@example.com
+            password: StrongPass123!
+            password_confirm: StrongPass123!
+    responses:
+      "201":
+        description: 注册成功。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 注册成功
+                data:
+                  $ref: ../components/schemas/AuthenticatedSession.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/login/:
+  post:
+    tags:
+      - auth
+    operationId: loginWithPassword
+    summary: 密码登录
+    description: 使用用户名、邮箱或手机号加密码登录。
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - login
+              - password
+            properties:
+              login:
+                type: string
+                description: 用户名、邮箱或手机号。
+              password:
+                type: string
+                format: password
+          example:
+            login: qintsg
+            password: StrongPass123!
+    responses:
+      "200":
+        description: 登录成功。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 登录成功
+                data:
+                  $ref: ../components/schemas/AuthenticatedSession.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/oauth/{provider}/authorize/:
+  get:
+    tags:
+      - auth
+    operationId: getOAuthAuthorizeUrl
+    summary: 获取 OAuth 授权地址
+    description: 返回第三方平台授权地址。当前实现仅支持 GitHub。
+    security: []
+    parameters:
+      - $ref: ../components/parameters/Provider.yaml
+      - name: redirect
+        in: query
+        required: false
+        description: 本地登录完成后返回的前端相对路径。
+        schema:
+          type: string
+    responses:
+      "200":
+        description: 授权地址已生成。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 获取第三方授权地址成功
+                data:
+                  type: object
+                  required:
+                    - authorization_url
+                    - state
+                    - provider
+                  properties:
+                    authorization_url:
+                      type: string
+                      format: uri
+                    state:
+                      type: string
+                    provider:
+                      type: string
+                      enum:
+                        - github
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/oauth/{provider}/callback/:
+  post:
+    tags:
+      - auth
+    operationId: completeOAuthCallback
+    summary: 完成 OAuth 回调
+    description: |
+      使用 OAuth code 和 state 换取本地处理结果。若第三方账号已绑定本地用户，
+      直接返回本地令牌；若未绑定，则要求前端展示“绑定已有账号 / 创建新账号”选择流程。
+      第三方邮箱相同仅作为提示，绝不会自动绑定已有账号。
+    security: []
+    parameters:
+      - $ref: ../components/parameters/Provider.yaml
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+              - state
+            properties:
+              code:
+                type: string
+              state:
+                type: string
+    responses:
+      "200":
+        description: OAuth 已完成，或需要用户选择绑定方式。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  oneOf:
+                    - $ref: ../components/schemas/AuthenticatedSession.yaml
+                    - $ref: ../components/schemas/OAuthChoiceResponse.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/oauth/{provider}/bind/:
+  post:
+    tags:
+      - auth
+    operationId: bindOAuthToExistingAccount
+    summary: 绑定 OAuth 到已有账号
+    description: 用户必须用本地账号登录名和密码证明对已有账号的控制权。
+    security: []
+    parameters:
+      - $ref: ../components/parameters/Provider.yaml
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - pending_token
+              - login
+              - password
+            properties:
+              pending_token:
+                type: string
+              login:
+                type: string
+                description: 已有账号的用户名、邮箱或手机号。
+              password:
+                type: string
+                format: password
+    responses:
+      "200":
+        description: 第三方账号已绑定，并签发本地令牌。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 第三方账号绑定成功
+                data:
+                  $ref: ../components/schemas/AuthenticatedSession.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/oauth/{provider}/register/:
+  post:
+    tags:
+      - auth
+    operationId: registerWithOAuth
+    summary: 使用 OAuth 资料创建新账号
+    description: 创建新的本地账号，并绑定待处理的第三方账号资料。
+    security: []
+    parameters:
+      - $ref: ../components/parameters/Provider.yaml
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - pending_token
+              - username
+            properties:
+              pending_token:
+                type: string
+              username:
+                type: string
+                minLength: 3
+                maxLength: 32
+              nickname:
+                type: string
+                maxLength: 64
+    responses:
+      "201":
+        description: 第三方登录账号已创建。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 第三方账号注册成功
+                data:
+                  $ref: ../components/schemas/AuthenticatedSession.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/logout/:
+  post:
+    tags:
+      - auth
+    operationId: logout
+    summary: 登出
+    description: 吊销项目级 refresh token，并尽可能将 JWT refresh token 加入黑名单。
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refresh
+            properties:
+              refresh:
+                type: string
+    responses:
+      "200":
+        description: 登出完成。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+            example:
+              code: 0
+              message: 已登出
+              data: null
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+
+/api/v1/auth/token/refresh/:
+  post:
+    tags:
+      - auth
+    operationId: refreshJwtToken
+    summary: 刷新 JWT
+    description: 轮换 refresh token，并返回新的 access token。
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refresh
+            properties:
+              refresh:
+                type: string
+    responses:
+      "200":
+        description: 令牌刷新成功。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access:
+                  type: string
+                refresh:
+                  type: string
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml

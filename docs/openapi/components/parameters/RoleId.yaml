@@ -1,0 +1,7 @@
+name: role_id
+in: path
+required: true
+description: 角色 UUID。
+schema:
+  type: string
+  format: uuid

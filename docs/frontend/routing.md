@@ -78,7 +78,7 @@
 ### 2.1 认证路由约定
 
 - GitHub 回调页统一承载三种状态：已绑定登录成功、未绑定时选择绑定已有账号、未绑定时创建新账号。
-- 前端统一调用 provider 化接口 `/api/v1/auth/oauth/{provider}/...`，当前仅接线 `github`；旧 `/api/v1/auth/github/...` 仅作为兼容入口。
+- 前端统一调用 provider 化接口 `/api/v1/auth/oauth/{provider}/...`，当前仅接线 `github`；旧 `/api/v1/auth/github/...` 后端入口已删除。
 - 第三方邮箱相同只能用于提示用户，不作为自动绑定依据；绑定已有账号必须完成本地账号认证。
 
 ---

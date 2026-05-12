@@ -1,0 +1,458 @@
+/api/v1/iam/me/permissions/:
+  get:
+    tags:
+      - iam
+    operationId: getMyResolvedPermissions
+    summary: 获取当前用户权限
+    responses:
+      "200":
+        description: 已解析的角色与权限。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 获取权限汇总成功
+                data:
+                  $ref: ../components/schemas/PermissionSummary.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+
+/api/v1/iam/permissions/:
+  get:
+    tags:
+      - iam
+    operationId: listPermissions
+    summary: 获取权限列表
+    parameters:
+      - name: module
+        in: query
+        required: false
+        schema:
+          type: string
+    responses:
+      "200":
+        description: 权限列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/Permission.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/iam/roles/:
+  get:
+    tags:
+      - iam
+    operationId: listRoles
+    summary: 获取角色列表
+    responses:
+      "200":
+        description: 角色列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/Role.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+  post:
+    tags:
+      - iam
+    operationId: createRole
+    summary: 创建角色
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - display_name
+            properties:
+              name:
+                type: string
+                maxLength: 50
+              display_name:
+                type: string
+                maxLength: 100
+              description:
+                type: string
+              level:
+                type: integer
+                default: 100
+    responses:
+      "201":
+        description: 角色已创建。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 角色创建成功
+                data:
+                  $ref: ../components/schemas/Role.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/iam/roles/{role_id}/:
+  parameters:
+    - $ref: ../components/parameters/RoleId.yaml
+  get:
+    tags:
+      - iam
+    operationId: getRole
+    summary: 获取角色详情
+    responses:
+      "200":
+        description: 包含权限列表的角色详情。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/Role.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+  patch:
+    tags:
+      - iam
+    operationId: updateRole
+    summary: 更新角色
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              display_name:
+                type: string
+                maxLength: 100
+              description:
+                type: string
+              level:
+                type: integer
+    responses:
+      "200":
+        description: 角色已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 角色更新成功
+                data:
+                  $ref: ../components/schemas/Role.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+  delete:
+    tags:
+      - iam
+    operationId: deleteRole
+    summary: 删除角色
+    responses:
+      "200":
+        description: 角色已删除。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+
+/api/v1/iam/roles/{role_id}/permissions/:
+  parameters:
+    - $ref: ../components/parameters/RoleId.yaml
+  put:
+    tags:
+      - iam
+    operationId: replaceRolePermissions
+    summary: 替换角色权限
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - permission_ids
+            properties:
+              permission_ids:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    responses:
+      "200":
+        description: 角色权限已替换。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    count:
+                      type: integer
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/iam/users/{user_id}/roles/:
+  parameters:
+    - $ref: ../components/parameters/UserId.yaml
+  get:
+    tags:
+      - iam
+    operationId: listUserRoles
+    summary: 获取用户角色
+    responses:
+      "200":
+        description: 用户角色列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/UserRole.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/iam/users/{user_id}/roles/manage/:
+  parameters:
+    - $ref: ../components/parameters/UserId.yaml
+  post:
+    tags:
+      - iam
+    operationId: assignUserRole
+    summary: 为用户分配角色
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - role_id
+            properties:
+              role_id:
+                type: string
+                format: uuid
+    responses:
+      "201":
+        description: 角色已分配。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/UserRole.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+  delete:
+    tags:
+      - iam
+    operationId: unassignUserRole
+    summary: 移除用户角色
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - role_id
+            properties:
+              role_id:
+                type: string
+                format: uuid
+    responses:
+      "200":
+        description: 角色已移除。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/iam/users/{user_id}/overrides/:
+  parameters:
+    - $ref: ../components/parameters/UserId.yaml
+  get:
+    tags:
+      - iam
+    operationId: listUserPermissionOverrides
+    summary: 获取用户权限覆盖
+    responses:
+      "200":
+        description: 用户权限覆盖列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/UserPermissionOverride.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/iam/users/{user_id}/overrides/manage/:
+  parameters:
+    - $ref: ../components/parameters/UserId.yaml
+  post:
+    tags:
+      - iam
+    operationId: addUserPermissionOverride
+    summary: 添加用户权限覆盖
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - permission_code
+              - effect
+            properties:
+              permission_code:
+                type: string
+                maxLength: 100
+              effect:
+                type: string
+                enum:
+                  - allow
+                  - deny
+              reason:
+                type: string
+    responses:
+      "201":
+        description: 权限覆盖已添加。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/UserPermissionOverride.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+  delete:
+    tags:
+      - iam
+    operationId: removeUserPermissionOverride
+    summary: 移除用户权限覆盖
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - permission_code
+            properties:
+              permission_code:
+                type: string
+                maxLength: 100
+    responses:
+      "200":
+        description: 权限覆盖已移除。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml

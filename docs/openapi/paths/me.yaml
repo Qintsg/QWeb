@@ -1,0 +1,194 @@
+/api/v1/me/:
+  get:
+    tags:
+      - me
+    operationId: getCurrentUser
+    summary: 获取当前用户
+    responses:
+      "200":
+        description: 当前用户资料。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/User.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+  patch:
+    tags:
+      - me
+    operationId: updateCurrentUser
+    summary: 更新当前用户
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nickname:
+                type: string
+                nullable: true
+              avatar_url:
+                type: string
+                nullable: true
+              contact:
+                $ref: ../components/schemas/UserContact.yaml
+              profile:
+                $ref: ../components/schemas/UserProfile.yaml
+              settings:
+                $ref: ../components/schemas/UserSettings.yaml
+    responses:
+      "200":
+        description: 用户已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/User.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+  put:
+    tags:
+      - me
+    operationId: replaceCurrentUserEditableFields
+    summary: 更新当前用户
+    description: 后端对该接口按局部更新语义处理。
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nickname:
+                type: string
+                nullable: true
+              avatar_url:
+                type: string
+                nullable: true
+              contact:
+                $ref: ../components/schemas/UserContact.yaml
+              profile:
+                $ref: ../components/schemas/UserProfile.yaml
+              settings:
+                $ref: ../components/schemas/UserSettings.yaml
+    responses:
+      "200":
+        description: 用户已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/User.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+
+/api/v1/me/password/:
+  post:
+    tags:
+      - me
+    operationId: changeCurrentUserPassword
+    summary: 修改当前用户密码
+    description: 密码修改的唯一入口。旧 `/api/v1/auth/change-password/` 接口已删除。
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - old_password
+              - new_password
+              - new_password_confirm
+            properties:
+              old_password:
+                type: string
+                format: password
+              new_password:
+                type: string
+                format: password
+                minLength: 8
+              new_password_confirm:
+                type: string
+                format: password
+    responses:
+      "200":
+        description: 密码已修改。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+            example:
+              code: 0
+              message: 密码修改成功
+              data: null
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+  put:
+    tags:
+      - me
+    operationId: changeCurrentUserPasswordWithPut
+    summary: 修改当前用户密码
+    description: 后端兼容使用 PUT 提交账号设置更新的客户端。
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - old_password
+              - new_password
+              - new_password_confirm
+            properties:
+              old_password:
+                type: string
+                format: password
+              new_password:
+                type: string
+                format: password
+                minLength: 8
+              new_password_confirm:
+                type: string
+                format: password
+    responses:
+      "200":
+        description: 密码已修改。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml

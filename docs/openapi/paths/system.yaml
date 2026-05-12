@@ -1,0 +1,64 @@
+/api/health/:
+  get:
+    tags:
+      - system
+    operationId: getHealth
+    summary: 健康检查
+    description: 返回轻量级后端健康状态。
+    security: []
+    responses:
+      "200":
+        description: 后端服务可访问。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/HealthResponse.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "500":
+        description: 服务不可用。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ErrorResponse.yaml
+
+/api/schema/:
+  get:
+    tags:
+      - system
+    operationId: getRuntimeOpenApiSchema
+    summary: 运行时 OpenAPI Schema
+    description: 返回后端 drf-spectacular 暴露的运行时 schema。
+    security: []
+    parameters:
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+            - json
+            - yaml
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+    responses:
+      "200":
+        description: 运行时 OpenAPI schema。
+        content:
+          application/vnd.oai.openapi:
+            schema:
+              type: object
+              additionalProperties: true
+          application/vnd.oai.openapi+json:
+            schema:
+              type: object
+              additionalProperties: true
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      "400":
+        $ref: ../components/responses/ValidationError.yaml

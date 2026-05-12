@@ -13,8 +13,6 @@ from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshV
 
 from apps.accounts.api.serializers.auth import (
     ChangePasswordSerializer,
-    GitHubOAuthAuthorizeSerializer,
-    GitHubOAuthCallbackSerializer,
     LoginSerializer,
     LogoutSerializer,
     OAuthAuthorizeSerializer,
@@ -26,7 +24,6 @@ from apps.accounts.api.serializers.auth import (
 from apps.accounts.api.serializers.user import UserSerializer
 from apps.accounts.services.auth_service import (
     authenticate_user,
-    change_password,
     register_user,
 )
 from apps.accounts.services.oauth_service import (
@@ -220,49 +217,6 @@ class OAuthRegisterView(GenericAPIView):
         )
 
 
-class GitHubOAuthAuthorizeView(OAuthAuthorizeView):
-    """兼容旧 GitHub OAuth 授权地址接口。"""
-
-    serializer_class = GitHubOAuthAuthorizeSerializer
-
-    def get(self, request: Request):
-        serializer = self.get_serializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        result = build_oauth_authorization_url(
-            provider="github",
-            redirect=serializer.validated_data.get("redirect", ""),
-        )
-        return success_response(data=result, message="获取 GitHub 授权地址成功")
-
-
-class GitHubOAuthCallbackView(OAuthCallbackView):
-    """兼容旧 GitHub OAuth 回调接口。"""
-
-    serializer_class = GitHubOAuthCallbackSerializer
-
-    def post(self, request: Request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        result = complete_oauth_callback(
-            provider="github",
-            code=serializer.validated_data["code"],
-            state=serializer.validated_data["state"],
-            request=request._request,
-        )
-        if result["status"] == "requires_account_choice":
-            return success_response(data=result, message="请选择 GitHub 账号绑定方式")
-        return success_response(
-            data={
-                "status": result["status"],
-                "user": UserSerializer(result["user"]).data,
-                "access": result["access"],
-                "refresh": result["refresh"],
-                "redirect": result["redirect"],
-            },
-            message="GitHub 登录成功",
-        )
-
-
 class LogoutView(GenericAPIView):
     """用户登出接口。
 
@@ -312,27 +266,3 @@ class TokenRefreshView(SimpleJWTRefreshView):
                 request=request._request,
             )
         return response
-
-
-class ChangePasswordView(GenericAPIView):
-    """修改密码接口。
-
-    POST /api/v1/auth/change-password/
-    需要认证，验证旧密码后设置新密码。
-    """
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = ChangePasswordSerializer
-
-    def post(self, request: Request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        change_password(
-            user=request.user,
-            old_password=serializer.validated_data["old_password"],
-            new_password=serializer.validated_data["new_password"],
-            request=request._request,
-        )
-
-        return success_response(message="密码修改成功")

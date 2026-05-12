@@ -1,0 +1,15 @@
+type: object
+required:
+  - id
+  - code
+  - name
+properties:
+  id:
+    type: string
+    format: uuid
+  code:
+    type: string
+    example: iam.role.view
+  name:
+    type: string
+    example: 查看角色

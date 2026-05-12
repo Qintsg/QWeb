@@ -1,0 +1,54 @@
+type: object
+required:
+  - id
+  - username
+  - login_type
+  - action
+  - device_info
+  - success
+  - created_at
+properties:
+  id:
+    type: integer
+    format: int64
+  username:
+    type: string
+    example: qintsg
+  login_type:
+    type: string
+    enum:
+      - password
+      - oauth
+      - sms
+      - email_code
+      - token
+    example: password
+  provider:
+    type: string
+    nullable: true
+    example: github
+  action:
+    type: string
+    enum:
+      - login
+      - logout
+      - failed
+      - oauth_bind
+      - oauth_register
+  ip_address:
+    type: string
+    nullable: true
+    example: 127.0.0.1
+  user_agent:
+    type: string
+  device_info:
+    type: object
+    additionalProperties: true
+  success:
+    type: boolean
+  failure_reason:
+    type: string
+    nullable: true
+  created_at:
+    type: string
+    format: date-time

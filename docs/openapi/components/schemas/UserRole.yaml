@@ -1,0 +1,14 @@
+type: object
+required:
+  - id
+  - role
+  - created_at
+properties:
+  id:
+    type: string
+    format: uuid
+  role:
+    $ref: ./Role.yaml
+  created_at:
+    type: string
+    format: date-time

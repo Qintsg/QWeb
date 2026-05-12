@@ -1,0 +1,34 @@
+type: object
+required:
+  - id
+  - code
+  - name
+  - module
+  - resource
+  - action
+  - is_active
+properties:
+  id:
+    type: string
+    format: uuid
+  code:
+    type: string
+    example: iam.role.view
+  name:
+    type: string
+    example: 查看角色
+  module:
+    type: string
+    example: iam
+  resource:
+    type: string
+    example: role
+  action:
+    type: string
+    example: view
+  description:
+    type: string
+    example: 查看 IAM 角色
+  is_active:
+    type: boolean
+    example: true

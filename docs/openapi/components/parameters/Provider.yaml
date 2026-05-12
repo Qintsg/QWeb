@@ -1,0 +1,8 @@
+name: provider
+in: path
+required: true
+description: OAuth 第三方平台代码。当前实现支持 GitHub。
+schema:
+  type: string
+  enum:
+    - github

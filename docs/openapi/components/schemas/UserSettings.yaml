@@ -1,0 +1,27 @@
+type: object
+properties:
+  language:
+    type: string
+    example: zh-CN
+  timezone:
+    type: string
+    example: Asia/Shanghai
+  theme:
+    type: string
+    enum:
+      - light
+      - dark
+      - system
+    example: system
+  notification_settings:
+    type: object
+    additionalProperties: true
+    default: {}
+  privacy_settings:
+    type: object
+    additionalProperties: true
+    default: {}
+  preferences:
+    type: object
+    additionalProperties: true
+    default: {}

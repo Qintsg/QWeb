@@ -65,7 +65,7 @@ GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
 GITHUB_OAUTH_STATE_MAX_AGE=600
 ```
 
-GitHub `client_secret` 只允许配置在后端 `.env`，前端通过 `/api/v1/auth/oauth/github/authorize/` 获取授权地址，不直接持有密钥。旧 `/api/v1/auth/github/authorize/` 保留为兼容入口，新代码默认使用 provider 化接口。
+GitHub `client_secret` 只允许配置在后端 `.env`，前端通过 `/api/v1/auth/oauth/github/authorize/` 获取授权地址，不直接持有密钥。旧 `/api/v1/auth/github/authorize/` 已删除，新代码统一使用 provider 化接口。
 
 首次 GitHub 登录未命中既有关联时，前端回调页会进入“绑定已有账号 / 创建新账号”选择流程。即使第三方邮箱与本地邮箱相同，也只作为提示，不自动绑定。
 

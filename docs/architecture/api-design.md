@@ -13,7 +13,7 @@
 | 格式       | JSON                              |
 | 风格       | RESTful                           |
 | 实时       | WebSocket（`/ws/`）               |
-| 文档       | drf-spectacular 自动生成 OpenAPI  |
+| 文档       | `docs/openapi/openapi.yaml` 分文件维护，运行时 `/api/schema/` 由 drf-spectacular 提供 |
 
 ---
 
@@ -100,14 +100,14 @@
 | POST | /api/v1/auth/oauth/{provider}/callback | OAuth 回调；已绑定则返回 Token，未绑定则返回待选择状态 |
 | POST | /api/v1/auth/oauth/{provider}/bind | 登录已有账号并绑定第三方账号 |
 | POST | /api/v1/auth/oauth/{provider}/register | 使用第三方资料创建新账号并绑定 |
-| GET  | /api/v1/auth/github/authorize     | 兼容旧 GitHub OAuth 授权地址 |
-| POST | /api/v1/auth/github/callback      | 兼容旧 GitHub OAuth 回调 |
 | POST | /api/v1/auth/logout               | 登出         |
 | POST | /api/v1/auth/token/refresh        | 刷新 Token   |
 | POST | /api/v1/auth/verify-email         | 邮箱验证     |
 | POST | /api/v1/auth/resend-verification  | 重发验证码   |
 | POST | /api/v1/auth/forgot-password      | 忘记密码     |
 | POST | /api/v1/auth/reset-password       | 重置密码     |
+
+旧 `/api/v1/auth/github/authorize`、`/api/v1/auth/github/callback` 已删除，统一使用 provider 化 OAuth 接口。旧 `/api/v1/auth/change-password` 已删除，统一使用 `/api/v1/me/password`。
 
 ### 5.2 当前用户（Me）
 
@@ -151,7 +151,6 @@
 | 方法 | 路径                         | 说明         |
 | ---- | ---------------------------- | ------------ |
 | GET  | /api/v1/users                | 用户列表     |
-| POST | /api/v1/users                | 创建用户     |
 | GET  | /api/v1/users/{uid}          | 用户详情     |
 | PATCH| /api/v1/users/{uid}          | 更新用户     |
 | POST | /api/v1/users/{uid}/toggle-active | 启用或禁用 |

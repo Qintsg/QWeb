@@ -114,7 +114,7 @@ Role.objects.filter(...)
 
 ### 3.4 API 同步规范
 
-- 所有 API 都要注册到 `drf-spectacular` 生成 OpenAPI 文档
+- 所有 API 都要能被 `drf-spectacular` 暴露到运行时 schema，并同步维护 `docs/openapi/` 分文件 OpenAPI 契约
 - 统一响应格式 `{code, message, data}`
 - 统一分页格式 `{code, message, data: {count, next, previous, results}}`
 - 错误响应统一 `{code, message, errors}`

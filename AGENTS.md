@@ -331,7 +331,7 @@ test(blog): 补充文章发布权限测试
 * `docs/backend/models.md`
 * `docs/frontend/routing.md`
 * `docs/frontend/design-system.md`
-* `docs/api/openapi.yaml`
+* `docs/openapi/openapi.yaml`
 * `docs/decisions/*.md`
 
 ### 6.2 完成工作后必须同步更新文档

@@ -1,0 +1,17 @@
+type: object
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    description: 非零业务错误码。
+    example: 400
+  message:
+    type: string
+    description: 面向用户或调用方的错误消息。
+    example: 参数错误
+  errors:
+    type: object
+    additionalProperties: true
+    description: 可选的字段级或结构化错误详情。

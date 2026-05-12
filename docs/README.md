@@ -50,4 +50,4 @@
 |------|------|
 | [端口说明](本地开发端口说明.md) | 本地开发端口分配 |
 | [数据库初始化](postgresql-init.sql) | PostgreSQL 建库脚本 |
-| [OpenAPI 契约](api/openapi.yaml) | drf-spectacular 生成的机器可读 API 契约 |
+| [OpenAPI 契约](openapi/openapi.yaml) | 分文件维护的机器可读 API 契约入口 |

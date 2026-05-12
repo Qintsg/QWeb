@@ -17,7 +17,7 @@
 |`docs/architecture/`|跨模块架构、权限模型、API 规范、模块边界|`system-overview.md`、`iam-design.md`、`api-design.md`|
 |`docs/backend/`|Django app 结构、数据模型、服务边界、后端实现约束|`django-apps.md`、`user-module-schema.md`|
 |`docs/frontend/`|路由、布局、设计系统、前端交互约定|`routing.md`、`design-system.md`|
-|`docs/api/`|OpenAPI、接口生成物和机器可读契约|`openapi.yaml`|
+|`docs/openapi/`|OpenAPI 入口、paths、components、examples 等机器可读接口契约|`openapi.yaml`、`paths/auth.yaml`、`components/schemas/User.yaml`|
 |`docs/decisions/`|ADR 架构决策记录|`ADR-001-architecture.md`|
 |`docs/workflow/`|开发、协作、文档、发布、验证流程|`development-workflow.md`、`documentation-rules.md`|
 |`docs/` 根目录|项目入口索引、总体架构原始稿、少量全局参考文件|`README.md`、`总体架构.md`、`postgresql-init.sql`|
@@ -32,9 +32,14 @@
 ## 4. API 文档规则
 
 - `docs/architecture/api-design.md` 保存人工维护的接口设计和语义说明。
-- `docs/api/openapi.yaml` 保存 drf-spectacular 生成的机器可读契约。
-- `openapi.yaml` 不手写维护；使用后端命令生成或刷新。
-- 接口字段、路径、认证方式变更时，必须同时检查人工 API 文档和 OpenAPI 生成物。
+- `docs/openapi/openapi.yaml` 是机器可读 OpenAPI 契约入口，只保留全局信息、路径引用、组件引用和安全方案引用。
+- 具体接口按领域保存到 `docs/openapi/paths/*.yaml`，例如 `auth.yaml`、`me.yaml`、`users.yaml`、`iam.yaml`。
+- 复用数据结构保存到 `docs/openapi/components/schemas/*.yaml`；复用参数、响应和安全方案分别保存到 `components/parameters/`、`components/responses/`、`components/securitySchemes.yaml`。
+- 示例保存到 `docs/openapi/examples/`，只使用脱敏、可公开的示例数据。
+- OpenAPI YAML 中 `summary`、`description`、示例说明等面向读者的文本使用中文；`operationId`、schema 名称、字段名和协议关键字保持英文代码标识。
+- 接口字段、路径、认证方式变更时，必须同时检查人工 API 文档和 `docs/openapi/` 契约文件。
+- 契约校验使用 Redocly CLI：`npx @redocly/cli lint docs/openapi/openapi.yaml`。如需兼容 Swagger CLI，可额外执行 `npx swagger-cli validate docs/openapi/openapi.yaml`。
+- `docs/api/openapi.yaml` 旧单文件生成物已废弃，不再维护；运行时 drf-spectacular schema 仍可通过 `/api/schema/` 查看。
 
 ## 5. 后端文档规则
 

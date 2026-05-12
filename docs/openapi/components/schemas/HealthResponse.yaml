@@ -1,0 +1,11 @@
+type: object
+required:
+  - status
+  - service
+properties:
+  status:
+    type: string
+    example: ok
+  service:
+    type: string
+    example: qweb-backend

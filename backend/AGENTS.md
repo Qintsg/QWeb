@@ -281,7 +281,7 @@
 提交前自查：
 
 - 是否影响 `/api/v1/` 契约
-- 是否需要更新 `docs/api/openapi.yaml`
+- 是否需要更新 `docs/openapi/openapi.yaml`
 - 是否需要更新 `docs/architecture/api-design.md`
 - 是否需要更新 `docs/architecture/iam-design.md`
 - 是否需要更新 `docs/backend/django-apps.md`

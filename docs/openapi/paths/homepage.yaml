@@ -1,0 +1,241 @@
+/api/v1/homepage/links/:
+  get:
+    tags:
+      - homepage
+    operationId: listPublicHomepageLinks
+    summary: 获取公开首页服务链接
+    security: []
+    responses:
+      "200":
+        description: 可见服务链接。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 获取成功
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/ServiceLink.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "500":
+        description: 服务不可用。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ErrorResponse.yaml
+
+/api/v1/homepage/admin/links/:
+  get:
+    tags:
+      - homepage
+    operationId: listAdminHomepageLinks
+    summary: 获取全部首页服务链接
+    responses:
+      "200":
+        description: 管理端服务链接列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    $ref: ../components/schemas/ServiceLinkAdmin.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+  post:
+    tags:
+      - homepage
+    operationId: createHomepageLink
+    summary: 创建首页服务链接
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - url
+            properties:
+              title:
+                type: string
+                maxLength: 100
+              url:
+                type: string
+                format: uri
+                maxLength: 500
+              description:
+                type: string
+                maxLength: 300
+              remark:
+                type: string
+                maxLength: 500
+              icon:
+                type: string
+                maxLength: 50
+              color:
+                type: string
+                maxLength: 20
+              category:
+                type: string
+                enum:
+                  - project
+                  - server
+                  - tool
+                  - other
+              sort_order:
+                type: integer
+              is_visible:
+                type: boolean
+    responses:
+      "201":
+        description: 服务链接已创建。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 创建成功
+                data:
+                  $ref: ../components/schemas/ServiceLinkAdmin.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/homepage/admin/links/{id}/:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: 服务链接 UUID。
+      schema:
+        type: string
+        format: uuid
+  get:
+    tags:
+      - homepage
+    operationId: getHomepageLink
+    summary: 获取首页服务链接
+    responses:
+      "200":
+        description: 服务链接详情。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/ServiceLinkAdmin.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+  patch:
+    tags:
+      - homepage
+    operationId: updateHomepageLink
+    summary: 更新首页服务链接
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                maxLength: 100
+              url:
+                type: string
+                format: uri
+                maxLength: 500
+              description:
+                type: string
+                maxLength: 300
+              remark:
+                type: string
+                maxLength: 500
+              icon:
+                type: string
+                maxLength: 50
+              color:
+                type: string
+                maxLength: 20
+              category:
+                type: string
+                enum:
+                  - project
+                  - server
+                  - tool
+                  - other
+              sort_order:
+                type: integer
+              is_visible:
+                type: boolean
+    responses:
+      "200":
+        description: 服务链接已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 更新成功
+                data:
+                  $ref: ../components/schemas/ServiceLinkAdmin.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+  delete:
+    tags:
+      - homepage
+    operationId: deleteHomepageLink
+    summary: 删除首页服务链接
+    description: 对服务链接执行软删除。
+    responses:
+      "200":
+        description: 服务链接已删除。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ApiSuccess.yaml
+            example:
+              code: 0
+              message: 删除成功
+              data: null
+      "404":
+        $ref: ../components/responses/NotFound.yaml

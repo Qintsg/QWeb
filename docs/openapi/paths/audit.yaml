@@ -1,0 +1,101 @@
+/api/v1/logs/:
+  get:
+    tags:
+      - audit
+    operationId: listAuditLogs
+    summary: 获取操作审计日志
+    parameters:
+      - $ref: ../components/parameters/Page.yaml
+      - $ref: ../components/parameters/PageSize.yaml
+    responses:
+      "200":
+        description: 分页操作审计日志。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  type: object
+                  required:
+                    - count
+                    - results
+                  properties:
+                    count:
+                      type: integer
+                    next:
+                      type: string
+                      format: uri
+                      nullable: true
+                    previous:
+                      type: string
+                      format: uri
+                      nullable: true
+                    results:
+                      type: array
+                      items:
+                        $ref: ../components/schemas/AuditLog.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/login-logs/:
+  get:
+    tags:
+      - audit
+    operationId: listLoginLogs
+    summary: 获取登录日志
+    parameters:
+      - $ref: ../components/parameters/Page.yaml
+      - $ref: ../components/parameters/PageSize.yaml
+    responses:
+      "200":
+        description: 分页登录日志。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  type: object
+                  required:
+                    - count
+                    - results
+                  properties:
+                    count:
+                      type: integer
+                    next:
+                      type: string
+                      format: uri
+                      nullable: true
+                    previous:
+                      type: string
+                      format: uri
+                      nullable: true
+                    results:
+                      type: array
+                      items:
+                        $ref: ../components/schemas/LoginLog.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml

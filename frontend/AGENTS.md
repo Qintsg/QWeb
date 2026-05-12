@@ -255,7 +255,7 @@
 - 是否影响关键表单或页面交互
 - 是否需要更新 `docs/frontend/routing.md`
 - 是否需要更新 `docs/frontend/design-system.md`
-- 是否需要更新 `docs/api/openapi.yaml`
+- 是否需要更新 `docs/openapi/openapi.yaml`
 - 是否需要更新 `docs/architecture/api-design.md`
 
 ---

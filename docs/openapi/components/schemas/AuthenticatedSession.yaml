@@ -1,0 +1,23 @@
+type: object
+required:
+  - user
+  - access
+  - refresh
+properties:
+  status:
+    type: string
+    enum:
+      - authenticated
+    example: authenticated
+  user:
+    $ref: ./User.yaml
+  access:
+    type: string
+    description: JWT access token。
+  refresh:
+    type: string
+    description: JWT refresh token。
+  redirect:
+    type: string
+    nullable: true
+    example: /dashboard

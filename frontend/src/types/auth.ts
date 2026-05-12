@@ -132,14 +132,13 @@ export interface ChangePasswordRequest {
 
 export interface Permission {
   id: string
-  codename?: string
   code?: string
   name: string
-  display_name?: string
   description: string
   module: string
-  category?: string
-  is_risk?: boolean
+  resource?: string
+  action?: string
+  is_active?: boolean
 }
 
 export interface Role {
@@ -148,14 +147,23 @@ export interface Role {
   display_name: string
   description: string
   is_system: boolean
+  level?: number
   created_at?: string
-  permissions: Permission[]
+  permissions?: Permission[]
+}
+
+export interface UserRole {
+  id: string
+  role: Role
+  created_at: string
 }
 
 export interface PermissionOverride {
   id: string
   permission: Permission
-  override_type: "allow" | "deny"
+  effect: "allow" | "deny"
+  reason?: string
+  created_at?: string
 }
 
 export interface ResolvedPermissions {
