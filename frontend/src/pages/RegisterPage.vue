@@ -1,46 +1,46 @@
 <!--
-  实现 RegisterPage 页面视图。
+  注册页面视图。
 
   :project: QWeb
   :file: RegisterPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { register } from '@/api/auth'
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
+import { register } from "@/api/auth"
 
 const { t } = useI18n()
 const router = useRouter()
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
+const username = ref("")
+const email = ref("")
+const password = ref("")
+const confirmPassword = ref("")
 const loading = ref(false)
-const errorMsg = ref('')
+const errorMsg = ref("")
 
-const usernameHint = computed(() => t('auth.usernameRule'))
+const usernameHint = computed(() => t("auth.usernameRule"))
 
-function validateForm() {
+function validateForm(): boolean {
   if (!username.value.trim() || !email.value.trim() || !password.value || !confirmPassword.value) {
-    errorMsg.value = t('auth.fillRegisterFields')
+    errorMsg.value = t("auth.fillRegisterFields")
     return false
   }
   if (password.value !== confirmPassword.value) {
-    errorMsg.value = t('auth.passwordMismatch')
+    errorMsg.value = t("auth.passwordMismatch")
     return false
   }
   return true
 }
 
-async function handleRegister() {
+async function handleRegister(): Promise<void> {
   if (!validateForm()) return
 
   loading.value = true
-  errorMsg.value = ''
+  errorMsg.value = ""
   try {
     await register({
       username: username.value.trim(),
@@ -48,9 +48,9 @@ async function handleRegister() {
       password: password.value,
       password_confirm: confirmPassword.value,
     })
-    router.push('/login')
+    router.push("/login")
   } catch (err: unknown) {
-    errorMsg.value = (err as Error).message || t('auth.registerFailed')
+    errorMsg.value = (err as Error).message || t("auth.registerFailed")
   } finally {
     loading.value = false
   }
@@ -60,66 +60,62 @@ async function handleRegister() {
 <template>
   <section class="auth-panel" aria-labelledby="register-title">
     <header class="auth-panel__header">
-      <h1 id="register-title">{{ t('auth.register') }}</h1>
-      <p>{{ t('auth.registerSubtitle') }}</p>
+      <p>New identity</p>
+      <h2 id="register-title">{{ t('auth.register') }}</h2>
+      <span>{{ t('auth.registerSubtitle') }}</span>
     </header>
 
     <form class="auth-form" @submit.prevent="handleRegister">
-      <div v-if="errorMsg" class="auth-alert" role="alert">{{ errorMsg }}</div>
-
-      <div class="auth-field">
-        <label for="register-username">{{ t('auth.username') }}</label>
-        <fluent-text-field
-          id="register-username"
-          :value="username"
-          :placeholder="t('auth.usernamePlaceholder')"
-          autocomplete="username"
-          required
-          @input="username = ($event.target as HTMLInputElement).value"
-        ></fluent-text-field>
-        <span class="auth-help">{{ usernameHint }}</span>
+      <div v-if="errorMsg" id="register-error" class="auth-alert" role="alert">
+        <span class="material-symbols-rounded" aria-hidden="true">error</span>
+        <span>{{ errorMsg }}</span>
       </div>
 
-      <div class="auth-field">
-        <label for="register-email">{{ t('auth.email') }}</label>
-        <fluent-text-field
-          id="register-email"
-          type="email"
-          :value="email"
-          :placeholder="t('auth.email')"
-          autocomplete="email"
-          required
-          @input="email = ($event.target as HTMLInputElement).value"
-        ></fluent-text-field>
-      </div>
+      <md-outlined-text-field
+        id="register-username"
+        :label="t('auth.username')"
+        :value="username"
+        supporting-text=" "
+        autocomplete="username"
+        required
+        @input="username = ($event.target as HTMLInputElement).value"
+      ></md-outlined-text-field>
+      <p class="auth-help">{{ usernameHint }}</p>
 
-      <div class="auth-field">
-        <label for="register-password">{{ t('auth.password') }}</label>
-        <fluent-text-field
-          id="register-password"
-          type="password"
-          :value="password"
-          autocomplete="new-password"
-          required
-          @input="password = ($event.target as HTMLInputElement).value"
-        ></fluent-text-field>
-      </div>
+      <md-outlined-text-field
+        id="register-email"
+        type="email"
+        :label="t('auth.email')"
+        :value="email"
+        autocomplete="email"
+        required
+        @input="email = ($event.target as HTMLInputElement).value"
+      ></md-outlined-text-field>
 
-      <div class="auth-field">
-        <label for="register-confirm">{{ t('auth.confirmPassword') }}</label>
-        <fluent-text-field
-          id="register-confirm"
-          type="password"
-          :value="confirmPassword"
-          autocomplete="new-password"
-          required
-          @input="confirmPassword = ($event.target as HTMLInputElement).value"
-        ></fluent-text-field>
-      </div>
+      <md-outlined-text-field
+        id="register-password"
+        type="password"
+        :label="t('auth.password')"
+        :value="password"
+        autocomplete="new-password"
+        required
+        @input="password = ($event.target as HTMLInputElement).value"
+      ></md-outlined-text-field>
 
-      <fluent-button type="submit" appearance="accent" class="auth-button" :disabled="loading">
+      <md-outlined-text-field
+        id="register-confirm"
+        type="password"
+        :label="t('auth.confirmPassword')"
+        :value="confirmPassword"
+        autocomplete="new-password"
+        required
+        @input="confirmPassword = ($event.target as HTMLInputElement).value"
+      ></md-outlined-text-field>
+
+      <md-filled-button type="submit" class="auth-button" :disabled="loading" :aria-busy="loading">
+        <md-circular-progress v-if="loading" slot="icon" indeterminate></md-circular-progress>
         {{ loading ? t('common.loading') : t('auth.register') }}
-      </fluent-button>
+      </md-filled-button>
 
       <p class="auth-link">
         {{ t('auth.hasAccount') }}
@@ -131,74 +127,76 @@ async function handleRegister() {
 
 <style scoped>
 .auth-panel {
-  width: 100%;
+  inline-size: 100%;
+  display: grid;
+  gap: var(--space-lg);
 }
 
 .auth-panel__header {
-  margin-bottom: var(--q-space-24);
-}
-
-.auth-panel__header h1 {
-  margin: 0;
-  color: var(--q-color-text-primary);
-  font-size: var(--q-font-size-2xl);
-  font-weight: var(--q-font-weight-semibold);
+  display: grid;
+  gap: var(--space-xs);
 }
 
 .auth-panel__header p {
-  margin: var(--q-space-8) 0 0;
-  color: var(--q-color-text-secondary);
-  line-height: var(--q-line-height-base);
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-panel__header h2 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-headline-large-font);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+}
+
+.auth-panel__header span,
+.auth-help,
+.auth-link {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-20);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.auth-form md-outlined-text-field,
+.auth-button {
+  inline-size: 100%;
 }
 
 .auth-alert {
-  padding: var(--q-space-12) var(--q-space-16);
-  border: 1px solid var(--q-color-error, #d13438);
-  border-radius: var(--q-radius-sm);
-  background: var(--q-color-error-light, #fde7e9);
-  color: var(--q-color-error, #d13438);
-  font-size: var(--q-font-size-sm);
-}
-
-.auth-field {
+  min-block-size: 3rem;
   display: flex;
-  flex-direction: column;
-  gap: var(--q-space-8);
-}
-
-.auth-field label {
-  color: var(--q-color-text-primary);
-  font-size: var(--q-font-size-sm);
-  font-weight: var(--q-font-weight-semibold);
-}
-
-.auth-field fluent-text-field,
-.auth-button {
-  width: 100%;
-}
-
-.auth-help {
-  color: var(--q-color-text-tertiary);
-  font-size: var(--q-font-size-xs);
-  line-height: var(--q-line-height-base);
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline: var(--space-md);
+  border: 0.0625rem solid var(--md-sys-color-error);
+  border-radius: var(--md-sys-shape-corner-medium);
+  color: var(--md-sys-color-on-error-container);
+  background: var(--md-sys-color-error-container);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
 .auth-link {
-  margin: 0;
-  color: var(--q-color-text-secondary);
-  font-size: var(--q-font-size-sm);
   text-align: center;
 }
 
 .auth-link a {
-  color: var(--q-color-brand);
-  font-weight: var(--q-font-weight-semibold);
-  text-decoration: none;
+  color: var(--md-sys-color-primary);
+  font-weight: var(--md-sys-typescale-label-large-weight);
 }
 </style>

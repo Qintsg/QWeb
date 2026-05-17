@@ -39,7 +39,7 @@ QWeb 是一个面向个人或小团队的综合型 Web 平台，核心目标：
 | 构建     | Vite                          |
 | 状态管理 | Pinia                         |
 | 路由     | Vue Router                    |
-| 设计系统 | Fluent 2 Design System        |
+| 设计系统 | Material 3 + Material Web      |
 | HTTP     | Axios / ofetch                |
 | 工具库   | VueUse                        |
 | CSS      | UnoCSS / Tailwind（可选）     |

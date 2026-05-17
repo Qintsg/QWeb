@@ -180,7 +180,7 @@ network_tools → frp_manager → ssh_gateway → mc_manager → mail_center →
 ### 4.1 全局基础搭建（一次性）
 
 ```text
-1. 安装 Fluent 2 Token / 组件库
+1. 安装 Material 3 Token / `@material/web` 组件库
 2. 创建 Layout 组件（PublicLayout、DashboardLayout、AdminLayout）
 3. 配置路由结构与守卫
 4. 实现 Auth Store + API Client（JWT 注入、拦截器）

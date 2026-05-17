@@ -1,28 +1,23 @@
 <!--
-  实现 AuditLogsPage 页面视图。
+  操作审计日志页面视图。
 
   :project: QWeb
   :file: AuditLogsPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { getAuditLogs, type AuditLogQuery, type AuditLog } from '@/api/audit'
-
-const { t } = useI18n()
+import { onMounted, ref } from "vue"
+import { getAuditLogs, type AuditLog, type AuditLogQuery } from "@/api/audit"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const loading = ref(false)
 const logs = ref<AuditLog[]>([])
 const totalCount = ref(0)
-const query = ref<AuditLogQuery>({
-  page: 1,
-  page_size: 20,
-  search: '',
-})
+const query = ref<AuditLogQuery>({ page: 1, page_size: 20, search: "" })
 
-async function fetchLogs() {
+async function fetchLogs(): Promise<void> {
   loading.value = true
   try {
     const res = await getAuditLogs(query.value)
@@ -30,66 +25,72 @@ async function fetchLogs() {
     logs.value = data.results || []
     totalCount.value = data.count || 0
   } catch (err) {
-    console.error('Failed to fetch logs', err)
+    console.error("Failed to fetch logs", err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => fetchLogs())
-
-function handleSearch() {
+function handleSearch(): void {
   query.value.page = 1
   fetchLogs()
 }
 
-function parseDate(d: string) {
-  return new Date(d).toLocaleString()
+function parseDate(dateValue: string): string {
+  return new Date(dateValue).toLocaleString()
 }
+
+onMounted(() => fetchLogs())
 </script>
 
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">Operation Audit Logs</h1>
-    </div>
+  <div class="data-page">
+    <PageHeader
+      title="Operation Audit Logs"
+      description="查看高风险动作和管理操作的审计轨迹。"
+      eyebrow="Audit"
+    >
+      <template #actions>
+        <StatusPill :label="`${totalCount} records`" tone="warning" icon="history" />
+      </template>
+    </PageHeader>
 
-    <fluent-card class="table-card">
-      <div class="toolbar">
-        <fluent-text-field
+    <section class="data-surface" aria-labelledby="audit-table-title">
+      <div class="data-toolbar">
+        <h2 id="audit-table-title">操作日志</h2>
+        <md-outlined-text-field
           :value="query.search"
+          label="Search action, module, description"
           @input="query.search = ($event.target as HTMLInputElement).value"
           @keyup.enter="handleSearch"
-          placeholder="Search by action, module, description..."
-          style="width: 300px"
         >
-          <span slot="end" class="search-icon" @click="handleSearch">🔍</span>
-        </fluent-text-field>
+          <span slot="trailing-icon" class="material-symbols-rounded" aria-hidden="true">search</span>
+        </md-outlined-text-field>
       </div>
 
-      <div class="table-responsive">
-        <table class="qweb-table">
+      <div class="table-wrap">
+        <table>
           <thead>
             <tr>
-              <th>Time</th>
-              <th>User</th>
-              <th>Action</th>
-              <th>Module</th>
-              <th>Description</th>
-              <th>IP Address</th>
+              <th scope="col">Time</th>
+              <th scope="col">User</th>
+              <th scope="col">Action</th>
+              <th scope="col">Module</th>
+              <th scope="col">Description</th>
+              <th scope="col">IP Address</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="loading">
-              <td colspan="6" class="text-center">Loading...</td>
+              <td colspan="6" class="table-state">Loading...</td>
             </tr>
             <tr v-else-if="logs.length === 0">
-              <td colspan="6" class="text-center">No logs found.</td>
+              <td colspan="6" class="table-state">No logs found.</td>
             </tr>
-            <tr v-else v-for="log in logs" :key="log.id">
+            <tr v-for="log in logs" v-else :key="log.id">
               <td>{{ parseDate(log.created_at) }}</td>
               <td>{{ log.username || 'System' }}</td>
-              <td><fluent-badge>{{ log.action }}</fluent-badge></td>
+              <td><StatusPill :label="log.action" tone="primary" icon="bolt" /></td>
               <td>{{ log.module }}</td>
               <td>{{ log.description }}</td>
               <td>{{ log.ip_address || '-' }}</td>
@@ -98,32 +99,103 @@ function parseDate(d: string) {
         </table>
       </div>
 
-      <div class="pagination" v-if="totalCount > query.page_size!">
-        <fluent-button 
-          :disabled="query.page === 1" 
-          @click="query.page!--; fetchLogs()"
-        >Prev</fluent-button>
+      <div v-if="totalCount > query.page_size!" class="pagination">
+        <md-outlined-button type="button" :disabled="query.page === 1" @click="query.page!--; fetchLogs()">Prev</md-outlined-button>
         <span>Page {{ query.page }} (Total: {{ totalCount }})</span>
-        <fluent-button 
-          :disabled="(query.page! * query.page_size!) >= totalCount" 
-          @click="query.page!++; fetchLogs()"
-        >Next</fluent-button>
+        <md-outlined-button type="button" :disabled="(query.page! * query.page_size!) >= totalCount" @click="query.page!++; fetchLogs()">Next</md-outlined-button>
       </div>
-    </fluent-card>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.page-container { padding: var(--q-space-32); }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--q-space-24); }
-.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--q-color-text-primary); }
-.table-card { padding: var(--q-space-24); border-radius: var(--q-radius-lg); background: var(--q-color-surface); box-shadow: var(--q-shadow-sm); }
-.toolbar { margin-bottom: var(--q-space-24); display: flex; gap: var(--q-space-16); }
-.search-icon { cursor: pointer; padding: 0 8px; line-height: 32px; }
-.table-responsive { overflow-x: auto; }
-.qweb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.qweb-table th, .qweb-table td { text-align: left; padding: var(--q-space-16); border-bottom: 1px solid var(--q-color-stroke); }
-.qweb-table th { font-weight: 600; color: var(--q-color-text-secondary); background: var(--q-color-surface-alt, #fafafa); }
-.text-center { text-align: center !important; color: var(--q-color-text-secondary); padding: var(--q-space-32) !important; }
-.pagination { margin-top: var(--q-space-24); display: flex; justify-content: center; align-items: center; gap: var(--q-space-16); }
+.data-page,
+.data-surface {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.data-surface {
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-toolbar,
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.data-toolbar {
+  justify-content: space-between;
+}
+
+.data-toolbar h2 {
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+}
+
+.data-toolbar md-outlined-text-field {
+  inline-size: min(100%, 24rem);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding-block: var(--space-md);
+  padding-inline: var(--space-md);
+  border-block-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  text-align: start;
+}
+
+th {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+td,
+.pagination {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+.table-state {
+  padding: var(--space-xxl);
+  color: var(--md-sys-color-on-surface-variant);
+  text-align: center;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+@media (max-width: 839px) {
+  .data-toolbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .data-toolbar md-outlined-text-field {
+    inline-size: 100%;
+  }
+}
 </style>

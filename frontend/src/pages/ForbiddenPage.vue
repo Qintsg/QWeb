@@ -1,79 +1,89 @@
 <!--
-  实现 ForbiddenPage 页面视图。
+  403 无权限页面视图。
 
   :project: QWeb
   :file: ForbiddenPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <div class="forbidden-page">
-    <p class="forbidden-page__code">403</p>
-    <h1 class="forbidden-page__title">{{ t('error.forbidden') }}</h1>
-    <p class="forbidden-page__description">{{ t('error.forbiddenDescription') }}</p>
-    <router-link to="/dashboard" class="forbidden-page__link">
+  <section class="error-page" aria-labelledby="forbidden-title">
+    <span class="error-page__code">403</span>
+    <span class="material-symbols-rounded error-page__icon" aria-hidden="true">lock</span>
+    <h1 id="forbidden-title">{{ t('error.forbidden') }}</h1>
+    <p>{{ t('error.forbiddenDescription') }}</p>
+    <router-link to="/dashboard" class="error-page__link">
       {{ t('common.backDashboard') }}
+      <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
     </router-link>
-  </div>
+  </section>
 </template>
 
 <style scoped>
-.forbidden-page {
-  min-height: calc(100vh - var(--q-header-height));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--q-space-12);
-  padding: var(--q-space-32);
+.error-page {
+  min-block-size: calc(100dvh - 10rem);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
   text-align: center;
 }
 
-.forbidden-page__code {
-  margin: 0;
-  color: var(--q-color-brand);
-  font-size: var(--q-font-size-3xl);
-  font-weight: var(--q-font-weight-bold);
-  line-height: 1;
+.error-page__code {
+  color: var(--md-sys-color-primary);
+  font-family: var(--q-font-mono);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
 }
 
-.forbidden-page__title {
-  margin: 0;
-  color: var(--q-color-text-primary);
-  font-size: var(--q-font-size-xl);
-  font-weight: var(--q-font-weight-semibold);
+.error-page__icon {
+  inline-size: 5rem;
+  block-size: 5rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  color: var(--md-sys-color-on-error-container);
+  background: var(--md-sys-color-error-container);
+  font-size: 2rem;
 }
 
-.forbidden-page__description {
-  max-width: 420px;
-  margin: 0;
-  color: var(--q-color-text-secondary);
-  line-height: var(--q-line-height-base);
+.error-page h1 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-headline-large-font);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
 }
 
-.forbidden-page__link {
-  min-height: 40px;
+.error-page p {
+  max-inline-size: 32rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+}
+
+.error-page__link {
+  min-block-size: 3rem;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  margin-top: var(--q-space-8);
-  padding: 0 var(--q-space-20);
-  border-radius: var(--q-radius-sm);
-  background: var(--q-color-brand);
-  color: var(--q-color-text-on-brand);
-  font-weight: var(--q-font-weight-semibold);
-  text-decoration: none;
-}
-
-.forbidden-page__link:hover,
-.forbidden-page__link:focus-visible {
-  background: var(--q-color-brand-hover);
-  outline: none;
+  gap: var(--space-sm);
+  padding-inline: var(--space-lg);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
 }
 </style>

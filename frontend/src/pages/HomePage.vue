@@ -1,525 +1,647 @@
 <!--
-  实现 HomePage 页面视图。
+  公开首页页面视图。
 
   :project: QWeb
   :file: HomePage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-/**
- * 公开首页
- * 展示个人介绍 Hero 区 + 服务链接卡片网格 + Footer
- */
-import { ref, onMounted, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { getPublicServiceLinks, type ServiceLink } from '@/api/homepage'
-import { useAuthStore } from '@/stores/auth'
+import { computed, onMounted, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { getPublicServiceLinks, type ServiceLink } from "@/api/homepage"
+import { useAuthStore } from "@/stores/auth"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 const authStore = useAuthStore()
 
-// 页面加载时恢复登录状态
-onMounted(() => authStore.initialize())
-
 const serviceLinks = ref<ServiceLink[]>([])
 const loading = ref(true)
-const error = ref('')
+const error = ref("")
 
-const categoryConfig: Record<string, { label: string; color: string; icon: string }> = {
-  project: { label: '项目展示', color: '#0e9aa7', icon: '🎓' },
-  server: { label: '服务器管理', color: '#f28a2e', icon: '🖥️' },
-  tool: { label: '工具', color: '#7b68ee', icon: '🔧' },
-  other: { label: '其他', color: '#6b7280', icon: '🔗' },
-}
-
-function getCategoryStyle(category: string) {
-  const config = categoryConfig[category] || categoryConfig.other
-  return config
-}
-
-function getIconForLink(link: ServiceLink): string {
-  if (link.icon) return link.icon
-  return getCategoryStyle(link.category).icon
-}
-
-function getColorForLink(link: ServiceLink): string {
-  if (link.color) return link.color
-  return getCategoryStyle(link.category).color
+const categoryConfig: Record<string, { label: string; icon: string; tone: "primary" | "success" | "warning" | "neutral" }> = {
+  project: { label: "项目展示", icon: "school", tone: "primary" },
+  server: { label: "服务器管理", icon: "dns", tone: "warning" },
+  tool: { label: "工具", icon: "construction", tone: "success" },
+  other: { label: "其他", icon: "hub", tone: "neutral" },
 }
 
 const currentYear = computed(() => new Date().getFullYear())
+const featuredLinks = computed(() => serviceLinks.value.slice(0, 3))
 
-async function fetchLinks() {
+function getCategoryConfig(category: string): { label: string; icon: string; tone: "primary" | "success" | "warning" | "neutral" } {
+  return categoryConfig[category] ?? categoryConfig.other
+}
+
+function getIconForLink(link: ServiceLink): string {
+  return link.icon || getCategoryConfig(link.category).icon
+}
+
+async function fetchLinks(): Promise<void> {
   loading.value = true
-  error.value = ''
+  error.value = ""
   try {
     const response = await getPublicServiceLinks()
     serviceLinks.value = response.data.data ?? []
   } catch {
-    error.value = '加载服务链接失败'
+    error.value = "加载服务链接失败"
   } finally {
     loading.value = false
   }
 }
 
-onMounted(fetchLinks)
+onMounted(() => {
+  authStore.initialize()
+  fetchLinks()
+})
 </script>
 
 <template>
   <div class="home-page">
-    <!-- Hero -->
     <header class="hero">
-      <div class="hero__bg-orb hero__bg-orb--1"></div>
-      <div class="hero__bg-orb hero__bg-orb--2"></div>
-      <div class="hero__content">
-        <h1 class="hero__title">Qintsg</h1>
-        <p class="hero__subtitle">个人基础设施门户 · Personal Infrastructure Portal</p>
-        <div class="hero__links">
-          <a
-            href="https://github.com/qintsg"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hero__social-link"
-            title="GitHub"
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            <span>GitHub</span>
-          </a>
-          <!-- 已登录：进入管理后台 -->
-          <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="hero__social-link hero__social-link--login">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-            </svg>
-            <span>管理后台</span>
-          </router-link>
-          <!-- 未登录：登录 -->
-          <router-link v-else to="/login" class="hero__social-link hero__social-link--login">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-            </svg>
-            <span>{{ t('auth.login') }}</span>
-          </router-link>
+      <nav class="hero__nav" aria-label="公开导航">
+        <a href="#services" class="hero__brand" aria-label="Qintsg's Web">
+          <span aria-hidden="true">Q</span>
+          <strong>Qintsg</strong>
+        </a>
+        <div class="hero__nav-actions">
+          <a href="https://github.com/qintsg" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <router-link v-if="authStore.isAuthenticated" to="/dashboard">控制台</router-link>
+          <router-link v-else to="/login">{{ t('auth.login') }}</router-link>
         </div>
-      </div>
+      </nav>
+
+      <section class="hero__canvas" aria-labelledby="home-title">
+        <div class="hero__copy">
+          <p class="hero__eyebrow">Personal Infrastructure Portal</p>
+          <h1 id="home-title">Qintsg's Web</h1>
+          <p class="hero__subtitle">把服务入口、身份权限、审计记录和个人项目收束到一个可控的 Material 3 门户。</p>
+          <div class="hero__actions">
+            <router-link v-if="authStore.isAuthenticated" to="/dashboard" class="hero__primary-action">
+              进入控制台
+              <span class="material-symbols-rounded" aria-hidden="true">arrow_forward</span>
+            </router-link>
+            <router-link v-else to="/login" class="hero__primary-action">
+              登录工作区
+              <span class="material-symbols-rounded" aria-hidden="true">login</span>
+            </router-link>
+            <a href="#services" class="hero__secondary-action">查看服务</a>
+          </div>
+        </div>
+
+        <aside class="hero__visual" aria-label="基础设施状态摘要">
+          <div class="hero__orb" aria-hidden="true"></div>
+          <div class="hero__signal">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="hero__terminal">
+            <p>qweb.status</p>
+            <strong>{{ serviceLinks.length }}</strong>
+            <span>visible services</span>
+          </div>
+          <ul class="hero__featured" aria-label="精选服务">
+            <li v-for="link in featuredLinks" :key="link.id">
+              <span class="material-symbols-rounded" aria-hidden="true">{{ getIconForLink(link) }}</span>
+              <span>{{ link.title }}</span>
+            </li>
+            <li v-if="featuredLinks.length === 0">
+              <span class="material-symbols-rounded" aria-hidden="true">pending</span>
+              <span>等待服务链接</span>
+            </li>
+          </ul>
+        </aside>
+      </section>
     </header>
 
-    <!-- Service Links -->
-    <main class="services">
-      <h2 class="services__title">服务与项目</h2>
-      <p class="services__subtitle">以下是部署在此基础设施上的服务和项目</p>
-
-      <div v-if="loading" class="services__loading">
-        <div class="spinner"></div>
-        <span>{{ t('common.loading') }}</span>
-      </div>
-
-      <div v-else-if="error" class="services__error">
-        <p>{{ error }}</p>
-        <fluent-button appearance="accent" @click="fetchLinks">重试</fluent-button>
-      </div>
-
-      <div v-else-if="serviceLinks.length === 0" class="services__empty">
-        <p>暂无服务链接</p>
-      </div>
-
-      <div v-else class="services__grid">
-        <a
-          v-for="(link, index) in serviceLinks"
-          :key="link.id"
-          :href="link.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="service-card"
-          :style="{
-            '--card-color': getColorForLink(link),
-            '--card-delay': `${index * 60}ms`,
-          }"
-        >
-          <div class="service-card__icon">
-            {{ getIconForLink(link) }}
+    <main id="main-content" class="home-page__main" tabindex="-1">
+      <section id="services" class="services" aria-labelledby="services-title">
+        <div class="services__header">
+          <div>
+            <p class="services__eyebrow">Service Directory</p>
+            <h2 id="services-title">服务与项目</h2>
           </div>
-          <div class="service-card__body">
-            <h3 class="service-card__title">{{ link.title }}</h3>
-            <p v-if="link.description" class="service-card__desc">{{ link.description }}</p>
-            <p v-if="link.remark" class="service-card__remark">{{ link.remark }}</p>
-          </div>
-          <div class="service-card__category">
-            <span
-              class="service-card__badge"
-              :style="{ background: `${getColorForLink(link)}18`, color: getColorForLink(link) }"
-            >
-              {{ categoryConfig[link.category]?.label || '其他' }}
-            </span>
-          </div>
-          <div class="service-card__arrow">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 17L17 7M17 7H7M17 7v10"/>
-            </svg>
-          </div>
-        </a>
-      </div>
-    </main>
+          <StatusPill :label="`${serviceLinks.length} 个可见入口`" tone="primary" icon="hub" />
+        </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer__content">
-        <p class="footer__copyright">Copyright &copy; {{ currentYear }} Qintsg. All rights reserved.</p>
-        <p class="footer__icp">
+        <div v-if="loading" class="services__state" role="status" aria-live="polite">
+          <md-circular-progress indeterminate aria-label="正在加载服务链接"></md-circular-progress>
+          <span>{{ t('common.loading') }}</span>
+        </div>
+
+        <div v-else-if="error" class="services__state" role="alert">
+          <span class="material-symbols-rounded" aria-hidden="true">error</span>
+          <p>{{ error }}</p>
+          <md-filled-button type="button" @click="fetchLinks">重试</md-filled-button>
+        </div>
+
+        <div v-else-if="serviceLinks.length === 0" class="services__state">
+          <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
+          <p>暂无服务链接</p>
+        </div>
+
+        <div v-else class="services__grid">
           <a
-            href="https://beian.miit.gov.cn/"
+            v-for="(link, index) in serviceLinks"
+            :key="link.id"
+            :href="link.url"
             target="_blank"
             rel="noopener noreferrer"
-            class="footer__icp-link"
+            class="service-link"
+            :style="{ '--item-index': index }"
           >
-            沪ICP备2026000797号-2
+            <span class="service-link__icon material-symbols-rounded" aria-hidden="true">{{ getIconForLink(link) }}</span>
+            <span class="service-link__body">
+              <strong>{{ link.title }}</strong>
+              <span v-if="link.description">{{ link.description }}</span>
+              <small v-if="link.remark">{{ link.remark }}</small>
+            </span>
+            <StatusPill
+              class="service-link__pill"
+              :label="getCategoryConfig(link.category).label"
+              :tone="getCategoryConfig(link.category).tone"
+              :icon="getCategoryConfig(link.category).icon"
+            />
+            <span class="material-symbols-rounded service-link__arrow" aria-hidden="true">open_in_new</span>
           </a>
-        </p>
-      </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Copyright &copy; {{ currentYear }} Qintsg. All rights reserved.</p>
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">沪ICP备2026000797号-2</a>
     </footer>
   </div>
 </template>
 
 <style scoped>
 .home-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--q-color-canvas);
-  color: var(--q-color-text-primary);
+  min-block-size: 100dvh;
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
 }
 
-/* ── Hero ────────────────────────────────────── */
 .hero {
   position: relative;
+  min-block-size: 100svh;
   overflow: hidden;
-  padding: 80px var(--q-space-32) 60px;
-  text-align: center;
   background:
-    radial-gradient(ellipse at 30% 0%, rgba(14, 154, 167, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 100%, rgba(242, 138, 46, 0.08) 0%, transparent 60%),
-    var(--q-color-canvas);
+    radial-gradient(circle at 78% 18%, color-mix(in srgb, var(--md-sys-color-tertiary) 24%, transparent), transparent 30rem),
+    radial-gradient(circle at 16% 24%, color-mix(in srgb, var(--md-sys-color-primary) 24%, transparent), transparent 34rem),
+    linear-gradient(135deg, var(--md-sys-color-surface), var(--md-sys-color-surface-container-low));
 }
 
-.hero__bg-orb {
+.hero::after {
+  content: "";
   position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.35;
-  animation: float 20s ease-in-out infinite;
+  inset: 12% -20% auto auto;
+  inline-size: 55rem;
+  block-size: 55rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--md-sys-color-primary) 26%, transparent);
+  border-radius: var(--md-sys-shape-corner-full);
   pointer-events: none;
 }
 
-.hero__bg-orb--1 {
-  width: 400px;
-  height: 400px;
-  background: var(--q-color-brand);
-  top: -120px;
-  left: -80px;
+.hero__nav {
+  position: relative;
+  z-index: 2;
+  min-block-size: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-inline: clamp(var(--space-md), 4vw, var(--space-3xl));
 }
 
-.hero__bg-orb--2 {
-  width: 300px;
-  height: 300px;
-  background: var(--q-color-accent);
-  bottom: -80px;
-  right: -60px;
-  animation-delay: -10s;
+.hero__brand,
+.hero__nav-actions,
+.hero__nav-actions a {
+  display: inline-flex;
+  align-items: center;
 }
 
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -20px) scale(1.05); }
-  66% { transform: translate(-20px, 15px) scale(0.95); }
+.hero__brand {
+  min-block-size: 3rem;
+  gap: var(--space-sm);
 }
 
-.hero__content {
+.hero__brand span {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-large);
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+}
+
+.hero__brand strong,
+.hero__nav-actions a {
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+.hero__nav-actions {
+  gap: var(--space-sm);
+}
+
+.hero__nav-actions a {
+  min-block-size: 3rem;
+  padding-inline: var(--space-md);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-surface-variant);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 72%, transparent);
+}
+
+.hero__canvas {
   position: relative;
   z-index: 1;
-  max-width: 600px;
-  margin: 0 auto;
+  min-block-size: calc(100svh - 5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 1fr);
+  align-items: center;
+  gap: clamp(var(--space-xl), 6vw, var(--space-4xl));
+  padding-block: var(--space-xl) var(--space-3xl);
+  padding-inline: clamp(var(--space-md), 6vw, var(--space-4xl));
 }
 
-.hero__title {
-  margin: 0 0 var(--q-space-12);
-  font-size: 3rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--q-color-brand) 0%, var(--q-color-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: fadeInUp 0.6s ease-out;
+.hero__copy {
+  max-inline-size: 44rem;
+  display: grid;
+  gap: var(--space-lg);
+  animation: hero-in var(--md-sys-motion-duration-long) var(--md-sys-motion-easing-emphasized-decelerate) both;
+}
+
+.hero__eyebrow,
+.services__eyebrow {
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-display-large-font);
+  font-size: clamp(var(--md-sys-typescale-display-small-size), 8vw, var(--md-sys-typescale-display-large-size));
+  font-weight: var(--md-sys-typescale-display-large-weight);
+  line-height: var(--md-sys-typescale-display-large-line-height);
+  letter-spacing: -0.04em;
 }
 
 .hero__subtitle {
-  margin: 0 0 var(--q-space-24);
-  font-size: 1.05rem;
-  color: var(--q-color-text-secondary);
-  animation: fadeInUp 0.6s ease-out 0.1s both;
+  max-inline-size: 38rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  line-height: var(--md-sys-typescale-body-large-line-height);
 }
 
-.hero__links {
+.hero__actions {
   display: flex;
-  justify-content: center;
-  gap: var(--q-space-16);
-  animation: fadeInUp 0.6s ease-out 0.2s both;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
-.hero__social-link {
+.hero__primary-action,
+.hero__secondary-action {
+  min-block-size: 3.5rem;
   display: inline-flex;
   align-items: center;
-  gap: var(--q-space-8);
-  padding: 10px 20px;
-  border-radius: var(--q-radius-md);
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all var(--q-duration-normal) var(--q-easing-ease);
-  background: var(--q-color-surface);
-  color: var(--q-color-text-primary);
-  border: 1px solid var(--q-color-stroke);
-  box-shadow: var(--q-shadow-sm);
+  justify-content: center;
+  gap: var(--space-sm);
+  padding-inline: var(--space-lg);
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
 }
 
-.hero__social-link:hover {
-  border-color: var(--q-color-brand);
-  box-shadow: var(--q-shadow-md);
-  transform: translateY(-1px);
+.hero__primary-action {
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
-.hero__social-link--login {
-  background: var(--q-color-brand);
-  color: #fff;
-  border-color: var(--q-color-brand);
+.hero__secondary-action {
+  color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-primary-container);
 }
 
-.hero__social-link--login:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 4px 16px rgba(14, 154, 167, 0.3);
+.hero__visual {
+  position: relative;
+  min-block-size: 30rem;
+  display: grid;
+  align-content: center;
+  gap: var(--space-lg);
+  animation: visual-in var(--md-sys-motion-duration-extra-long) var(--md-sys-motion-easing-emphasized-decelerate) both;
 }
 
-/* ── Services ────────────────────────────────── */
+.hero__orb {
+  position: absolute;
+  inset: 10% 5% auto auto;
+  inline-size: min(36vw, 24rem);
+  aspect-ratio: 1;
+  border-radius: var(--md-sys-shape-corner-full);
+  background:
+    radial-gradient(circle at 35% 35%, var(--md-sys-color-primary-container), transparent 42%),
+    radial-gradient(circle at 65% 70%, var(--md-sys-color-tertiary-container), transparent 45%);
+  filter: blur(0.125rem);
+  opacity: 0.88;
+}
+
+.hero__signal {
+  position: relative;
+  z-index: 1;
+  min-block-size: 16rem;
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 76%, transparent);
+  box-shadow: var(--md-sys-elevation-level3);
+  overflow: hidden;
+}
+
+.hero__signal span {
+  position: absolute;
+  inset-block-start: calc(var(--space-xxl) * var(--item, 1));
+  inset-inline: var(--space-lg);
+  block-size: 0.125rem;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: linear-gradient(90deg, transparent, var(--md-sys-color-primary), transparent);
+  animation: scan 4s var(--md-sys-motion-easing-standard) infinite;
+}
+
+.hero__signal span:nth-child(2) {
+  --item: 2;
+  animation-delay: 700ms;
+}
+
+.hero__signal span:nth-child(3) {
+  --item: 3;
+  animation-delay: 1400ms;
+}
+
+.hero__terminal,
+.hero__featured {
+  position: relative;
+  z-index: 2;
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.hero__terminal {
+  justify-self: start;
+  min-inline-size: 14rem;
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  margin-block-start: -10rem;
+  margin-inline-start: var(--space-lg);
+}
+
+.hero__terminal p,
+.hero__terminal span {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--q-font-mono);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+
+.hero__terminal strong {
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-display-small-font);
+  font-size: var(--md-sys-typescale-display-small-size);
+  font-weight: var(--md-sys-typescale-display-small-weight);
+  line-height: var(--md-sys-typescale-display-small-line-height);
+}
+
+.hero__featured {
+  justify-self: end;
+  min-inline-size: min(100%, 22rem);
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  list-style: none;
+}
+
+.hero__featured li {
+  min-block-size: 3rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline: var(--space-md);
+  border-radius: var(--md-sys-shape-corner-medium);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+.home-page__main {
+  padding-block: var(--space-4xl);
+  padding-inline: clamp(var(--space-md), 5vw, var(--space-4xl));
+}
+
 .services {
-  flex: 1;
-  max-width: var(--q-layout-max-width, 1200px);
-  width: 100%;
-  margin: 0 auto;
-  padding: var(--q-space-40) var(--q-space-32);
+  inline-size: min(100%, var(--q-layout-content-max));
+  display: grid;
+  gap: var(--space-xl);
+  margin-inline: auto;
 }
 
-.services__title {
-  margin: 0 0 var(--q-space-8);
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
-  animation: fadeInUp 0.6s ease-out 0.3s both;
+.services__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-lg);
 }
 
-.services__subtitle {
-  margin: 0 0 var(--q-space-32);
-  text-align: center;
-  color: var(--q-color-text-secondary);
-  font-size: 0.9rem;
-  animation: fadeInUp 0.6s ease-out 0.35s both;
+.services h2 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-headline-large-font);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
 }
 
-.services__loading,
-.services__error,
-.services__empty {
-  text-align: center;
-  padding: var(--q-space-40);
-  color: var(--q-color-text-secondary);
-}
-
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--q-color-stroke);
-  border-top-color: var(--q-color-brand);
-  border-radius: 50%;
-  margin: 0 auto var(--q-space-12);
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.services__state {
+  min-block-size: 16rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  border: 0.0625rem dashed var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  color: var(--md-sys-color-on-surface-variant);
+  background: var(--md-sys-color-surface-container-low);
 }
 
 .services__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--q-space-16);
+  gap: var(--space-md);
 }
 
-/* ── Service Card ────────────────────────────── */
-.service-card {
+.service-link {
+  --item-delay: calc(var(--item-index) * 60ms);
   position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--q-space-24);
-  background: var(--q-color-surface);
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-lg);
-  text-decoration: none;
-  color: var(--q-color-text-primary);
-  transition:
-    border-color var(--q-duration-normal) var(--q-easing-ease),
-    box-shadow var(--q-duration-normal) var(--q-easing-ease),
-    transform var(--q-duration-normal) var(--q-easing-ease);
-  animation: cardIn 0.5s ease-out var(--card-delay, 0ms) both;
-}
-
-.service-card:hover {
-  border-color: var(--card-color, var(--q-color-brand));
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--card-color, var(--q-color-brand)) 15%, transparent);
-  transform: translateY(-3px);
-}
-
-.service-card__icon {
-  font-size: 1.75rem;
-  margin-bottom: var(--q-space-12);
-  width: 48px;
-  height: 48px;
-  display: flex;
+  min-block-size: 6rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: center;
-  border-radius: var(--q-radius-md);
-  background: color-mix(in srgb, var(--card-color, var(--q-color-brand)) 10%, transparent);
-}
-
-.service-card__body {
-  flex: 1;
-}
-
-.service-card__title {
-  margin: 0 0 var(--q-space-8);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.service-card__desc {
-  margin: 0 0 var(--q-space-4);
-  font-size: 0.8125rem;
-  color: var(--q-color-text-secondary);
-  line-height: 1.5;
-}
-
-.service-card__remark {
-  margin: var(--q-space-8) 0 0;
-  font-size: 0.75rem;
-  color: var(--q-color-text-tertiary, #9ca3af);
-  font-style: italic;
-  line-height: 1.4;
-}
-
-.service-card__category {
-  margin-top: var(--q-space-12);
-}
-
-.service-card__badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: var(--q-radius-full);
-  font-size: 0.6875rem;
-  font-weight: 600;
-}
-
-.service-card__arrow {
-  position: absolute;
-  top: var(--q-space-16);
-  right: var(--q-space-16);
-  color: var(--q-color-text-tertiary, #9ca3af);
-  opacity: 0;
-  transform: translate(-4px, 4px);
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-level0);
+  animation: row-in var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized-decelerate) var(--item-delay) both;
   transition:
-    opacity var(--q-duration-normal) var(--q-easing-ease),
-    transform var(--q-duration-normal) var(--q-easing-ease);
+    background var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
-.service-card:hover .service-card__arrow {
-  opacity: 1;
-  transform: translate(0, 0);
+.service-link:hover {
+  border-color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: var(--md-sys-elevation-level2);
+  transform: translateY(calc(var(--space-xs) * -1));
 }
 
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.service-link__icon {
+  inline-size: 3rem;
+  block-size: 3rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-large);
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.service-link__body {
+  display: grid;
+  gap: var(--space-xs);
 }
 
-/* ── Footer ──────────────────────────────────── */
+.service-link__body strong {
+  font-family: var(--md-sys-typescale-title-medium-font);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+}
+
+.service-link__body span,
+.service-link__body small {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+.service-link__body small {
+  font-family: var(--q-font-mono);
+}
+
+.service-link__arrow {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
 .footer {
-  border-top: 1px solid var(--q-color-stroke);
-  padding: var(--q-space-24) var(--q-space-32);
-  text-align: center;
+  display: grid;
+  place-items: center;
+  gap: var(--space-xs);
+  padding-block: var(--space-xl);
+  padding-inline: var(--space-md);
+  border-block-start: 0.0625rem solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
+  background: var(--md-sys-color-surface-container-low);
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-size: var(--md-sys-typescale-body-small-size);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+  line-height: var(--md-sys-typescale-body-small-line-height);
 }
 
-.footer__content {
-  max-width: var(--q-layout-max-width, 1200px);
-  margin: 0 auto;
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(var(--space-lg)); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.footer__copyright {
-  margin: 0 0 var(--q-space-4);
-  font-size: 0.8125rem;
-  color: var(--q-color-text-secondary);
+@keyframes visual-in {
+  from { opacity: 0; transform: translateY(var(--space-xl)) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.footer__icp {
-  margin: 0;
-  font-size: 0.75rem;
+@keyframes scan {
+  0% { transform: translateX(-40%); opacity: 0; }
+  30%, 70% { opacity: 1; }
+  100% { transform: translateX(40%); opacity: 0; }
 }
 
-.footer__icp-link {
-  color: var(--q-color-text-tertiary, #9ca3af);
-  text-decoration: none;
-  transition: color var(--q-duration-fast) var(--q-easing-ease);
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(var(--space-md)); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.footer__icp-link:hover {
-  color: var(--q-color-brand);
-}
-
-/* ── Responsive ──────────────────────────────── */
-@media (max-width: 768px) {
-  .hero {
-    padding: 60px var(--q-space-16) 40px;
-  }
-
-  .hero__title {
-    font-size: 2rem;
-  }
-
-  .services {
-    padding: var(--q-space-24) var(--q-space-16);
-  }
-
-  .services__grid {
+@media (max-width: 839px) {
+  .hero__canvas {
     grid-template-columns: 1fr;
   }
 
-  .hero__links {
+  .hero__visual {
+    min-block-size: 24rem;
+  }
+
+  .services__header {
+    align-items: start;
     flex-direction: column;
-    align-items: center;
+  }
+}
+
+@media (max-width: 599px) {
+  .hero {
+    min-block-size: auto;
+  }
+
+  .hero__nav-actions a:first-child {
+    display: none;
+  }
+
+  .hero__canvas {
+    min-block-size: auto;
+  }
+
+  .hero__visual {
+    min-block-size: 18rem;
+  }
+
+  .hero__terminal {
+    margin-block-start: -8rem;
+    margin-inline-start: 0;
+  }
+
+  .service-link {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .service-link__pill {
+    grid-column: 2 / -1;
+    justify-self: start;
   }
 }
 </style>

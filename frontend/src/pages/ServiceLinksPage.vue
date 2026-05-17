@@ -1,26 +1,24 @@
 <!--
-  实现 ServiceLinksPage 页面视图。
+  服务链接管理页面视图。
 
   :project: QWeb
   :file: ServiceLinksPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-/**
- * 服务链接管理页面
- * 管理后台中对首页服务链接的增删改查
- */
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { onMounted, ref } from "vue"
+import { useI18n } from "vue-i18n"
 import {
-  getAdminServiceLinks,
   createServiceLink,
-  updateServiceLink,
   deleteServiceLink,
+  getAdminServiceLinks,
+  updateServiceLink,
   type ServiceLinkAdmin,
   type ServiceLinkCreatePayload,
-} from '@/api/homepage'
+} from "@/api/homepage"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 
@@ -30,58 +28,58 @@ const showDialog = ref(false)
 const editingLink = ref<ServiceLinkAdmin | null>(null)
 const deleteConfirmId = ref<string | null>(null)
 
-const categoryOptions = [
-  { value: 'project', label: '项目展示' },
-  { value: 'server', label: '服务器管理' },
-  { value: 'tool', label: '工具' },
-  { value: 'other', label: '其他' },
+const categoryOptions: Array<{ value: ServiceLinkCreatePayload["category"]; label: string; icon: string; tone: "primary" | "success" | "warning" | "neutral" }> = [
+  { value: "project", label: "项目展示", icon: "school", tone: "primary" },
+  { value: "server", label: "服务器管理", icon: "dns", tone: "warning" },
+  { value: "tool", label: "工具", icon: "construction", tone: "success" },
+  { value: "other", label: "其他", icon: "hub", tone: "neutral" },
 ]
 
 const form = ref<ServiceLinkCreatePayload>({
-  title: '',
-  url: '',
-  description: '',
-  remark: '',
-  icon: '',
-  color: '',
-  category: 'other',
+  title: "",
+  url: "",
+  description: "",
+  remark: "",
+  icon: "",
+  color: "",
+  category: "other",
   sort_order: 0,
   is_visible: true,
 })
 
-function resetForm() {
+function resetForm(): void {
   form.value = {
-    title: '',
-    url: '',
-    description: '',
-    remark: '',
-    icon: '',
-    color: '',
-    category: 'other',
+    title: "",
+    url: "",
+    description: "",
+    remark: "",
+    icon: "",
+    color: "",
+    category: "other",
     sort_order: 0,
     is_visible: true,
   }
 }
 
-async function fetchLinks() {
+async function fetchLinks(): Promise<void> {
   loading.value = true
   try {
     const response = await getAdminServiceLinks()
     links.value = response.data.data ?? []
-  } catch {
-    // 错误处理：静默
+  } catch (err) {
+    console.error("Fetch service links failed", err)
   } finally {
     loading.value = false
   }
 }
 
-function openCreateDialog() {
+function openCreateDialog(): void {
   editingLink.value = null
   resetForm()
   showDialog.value = true
 }
 
-function openEditDialog(link: ServiceLinkAdmin) {
+function openEditDialog(link: ServiceLinkAdmin): void {
   editingLink.value = link
   form.value = {
     title: link.title,
@@ -97,354 +95,287 @@ function openEditDialog(link: ServiceLinkAdmin) {
   showDialog.value = true
 }
 
-async function handleSave() {
+function closeDialog(): void {
+  showDialog.value = false
+}
+
+async function handleSave(): Promise<void> {
   try {
-    if (editingLink.value) {
-      await updateServiceLink(editingLink.value.id, form.value)
-    } else {
-      await createServiceLink(form.value)
-    }
+    if (editingLink.value) await updateServiceLink(editingLink.value.id, form.value)
+    else await createServiceLink(form.value)
     showDialog.value = false
     await fetchLinks()
-  } catch {
-    // 错误处理：静默
+  } catch (err) {
+    console.error("Save service link failed", err)
   }
 }
 
-async function handleDelete(id: string) {
+async function handleDelete(id: string): Promise<void> {
   try {
     await deleteServiceLink(id)
     deleteConfirmId.value = null
     await fetchLinks()
-  } catch {
-    // 错误处理：静默
+  } catch (err) {
+    console.error("Delete service link failed", err)
   }
 }
 
-async function handleToggleVisibility(link: ServiceLinkAdmin) {
+async function handleToggleVisibility(link: ServiceLinkAdmin): Promise<void> {
   try {
     await updateServiceLink(link.id, { is_visible: !link.is_visible })
     await fetchLinks()
-  } catch {
-    // 错误处理：静默
+  } catch (err) {
+    console.error("Toggle service link visibility failed", err)
   }
 }
 
-function getCategoryLabel(category: string): string {
-  return categoryOptions.find((o) => o.value === category)?.label || '其他'
+function getCategoryOption(category: string): { value: ServiceLinkCreatePayload["category"]; label: string; icon: string; tone: "primary" | "success" | "warning" | "neutral" } {
+  return categoryOptions.find((option) => option.value === category) ?? categoryOptions[3]
+}
+
+function handleCategoryChange(event: Event): void {
+  form.value.category = (event.target as HTMLSelectElement).value as ServiceLinkCreatePayload["category"]
+}
+
+function handleSortOrderInput(event: Event): void {
+  form.value.sort_order = Number((event.target as HTMLInputElement).value || 0)
+}
+
+function handleVisibilityChange(): void {
+  form.value.is_visible = !form.value.is_visible
 }
 
 onMounted(fetchLinks)
 </script>
 
 <template>
-  <div class="page-container">
-    <section class="page-header">
-      <div>
-        <h1 class="page-title">{{ t('serviceLinks.title') }}</h1>
-        <p class="page-subtitle">{{ t('serviceLinks.subtitle') }}</p>
+  <div class="data-page">
+    <PageHeader
+      :title="t('serviceLinks.title')"
+      :description="t('serviceLinks.subtitle')"
+      eyebrow="Homepage"
+    >
+      <template #actions>
+        <StatusPill :label="`${links.length} links`" tone="primary" icon="hub" />
+        <md-filled-button type="button" @click="openCreateDialog">
+          <span slot="icon" class="material-symbols-rounded" aria-hidden="true">add_link</span>
+          {{ t('common.create') }}
+        </md-filled-button>
+      </template>
+    </PageHeader>
+
+    <section class="data-surface" aria-labelledby="links-table-title">
+      <div class="data-toolbar">
+        <h2 id="links-table-title">服务入口</h2>
+        <p>首页公开入口会读取这里标记为可见的记录。</p>
       </div>
-      <fluent-button appearance="accent" @click="openCreateDialog">
-        {{ t('common.create') }}
-      </fluent-button>
+
+      <div v-if="loading" class="state-panel" role="status" aria-live="polite">
+        <md-circular-progress indeterminate aria-label="正在加载服务链接"></md-circular-progress>
+        <span>{{ t('common.loading') }}</span>
+      </div>
+
+      <div v-else-if="links.length === 0" class="state-panel">
+        <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
+        <p>{{ t('common.noData') }}</p>
+      </div>
+
+      <div v-else class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{{ t('serviceLinks.titleField') }}</th>
+              <th scope="col">{{ t('serviceLinks.url') }}</th>
+              <th scope="col">{{ t('serviceLinks.category') }}</th>
+              <th scope="col">{{ t('serviceLinks.sortOrder') }}</th>
+              <th scope="col">{{ t('serviceLinks.visible') }}</th>
+              <th scope="col">{{ t('common.actions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="link in links" :key="link.id">
+              <td>
+                <span class="link-title-cell">
+                  <span class="material-symbols-rounded" aria-hidden="true">{{ getCategoryOption(link.category).icon }}</span>
+                  <span>{{ link.title }}</span>
+                </span>
+              </td>
+              <td>
+                <a :href="link.url" target="_blank" rel="noopener noreferrer" class="link-url">{{ link.url }}</a>
+              </td>
+              <td>
+                <StatusPill
+                  :label="getCategoryOption(link.category).label"
+                  :tone="getCategoryOption(link.category).tone"
+                  :icon="getCategoryOption(link.category).icon"
+                />
+              </td>
+              <td>{{ link.sort_order }}</td>
+              <td>
+                <md-outlined-button type="button" @click="handleToggleVisibility(link)">
+                  {{ link.is_visible ? t('common.enable') : t('common.disable') }}
+                </md-outlined-button>
+              </td>
+              <td>
+                <div class="row-actions">
+                  <md-text-button type="button" @click="openEditDialog(link)">{{ t('common.edit') }}</md-text-button>
+                  <md-text-button v-if="deleteConfirmId !== link.id" type="button" @click="deleteConfirmId = link.id">
+                    {{ t('common.delete') }}
+                  </md-text-button>
+                  <md-filled-button v-else type="button" @click="handleDelete(link.id)">
+                    {{ t('common.confirm') }}?
+                  </md-filled-button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- 列表 -->
-    <div v-if="loading" class="page-loading">
-      <span>{{ t('common.loading') }}</span>
-    </div>
-
-    <div v-else-if="links.length === 0" class="page-empty">
-      <p>{{ t('common.noData') }}</p>
-    </div>
-
-    <div v-else class="links-table-wrap">
-      <table class="links-table">
-        <thead>
-          <tr>
-            <th>{{ t('serviceLinks.titleField') }}</th>
-            <th>{{ t('serviceLinks.url') }}</th>
-            <th>{{ t('serviceLinks.category') }}</th>
-            <th>{{ t('serviceLinks.sortOrder') }}</th>
-            <th>{{ t('serviceLinks.visible') }}</th>
-            <th>{{ t('common.actions') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="link in links" :key="link.id">
-            <td>
-              <div class="link-title-cell">
-                <span v-if="link.icon" class="link-icon">{{ link.icon }}</span>
-                <span>{{ link.title }}</span>
-              </div>
-            </td>
-            <td>
-              <a :href="link.url" target="_blank" rel="noopener noreferrer" class="link-url">
-                {{ link.url }}
-              </a>
-            </td>
-            <td>
-              <span
-                class="category-badge"
-                :style="{ background: link.color ? `${link.color}18` : '#0e9aa718', color: link.color || '#0e9aa7' }"
-              >
-                {{ getCategoryLabel(link.category) }}
-              </span>
-            </td>
-            <td>{{ link.sort_order }}</td>
-            <td>
-              <fluent-button size="small" :appearance="link.is_visible ? 'accent' : 'outline'" @click="handleToggleVisibility(link)">
-                {{ link.is_visible ? t('common.enable') : t('common.disable') }}
-              </fluent-button>
-            </td>
-            <td>
-              <div class="action-buttons">
-                <fluent-button size="small" appearance="outline" @click="openEditDialog(link)">
-                  {{ t('common.edit') }}
-                </fluent-button>
-                <fluent-button
-                  v-if="deleteConfirmId !== link.id"
-                  size="small"
-                  appearance="outline"
-                  @click="deleteConfirmId = link.id"
-                >
-                  {{ t('common.delete') }}
-                </fluent-button>
-                <fluent-button
-                  v-else
-                  size="small"
-                  appearance="accent"
-                  @click="handleDelete(link.id)"
-                >
-                  {{ t('common.confirm') }}?
-                </fluent-button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 创建/编辑弹窗 -->
-    <fluent-dialog :hidden="!showDialog" trap-focus modal @close="showDialog = false">
-      <div class="dialog-content">
-        <h2 class="dialog-title">
-          {{ editingLink ? t('serviceLinks.editLink') : t('serviceLinks.createLink') }}
-        </h2>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label>{{ t('serviceLinks.titleField') }} *</label>
-            <fluent-text-field v-model="form.title" :placeholder="t('serviceLinks.titlePlaceholder')" />
-          </div>
-
-          <div class="form-field">
-            <label>{{ t('serviceLinks.url') }} *</label>
-            <fluent-text-field v-model="form.url" placeholder="https://..." />
-          </div>
-
-          <div class="form-field">
-            <label>{{ t('serviceLinks.description') }}</label>
-            <fluent-text-field v-model="form.description" :placeholder="t('serviceLinks.descPlaceholder')" />
-          </div>
-
-          <div class="form-field">
-            <label>{{ t('serviceLinks.remark') }}</label>
-            <fluent-text-field v-model="form.remark" :placeholder="t('serviceLinks.remarkPlaceholder')" />
-          </div>
-
-          <div class="form-field form-field--half">
-            <label>{{ t('serviceLinks.icon') }}</label>
-            <fluent-text-field v-model="form.icon" placeholder="🎓" />
-          </div>
-
-          <div class="form-field form-field--half">
-            <label>{{ t('serviceLinks.color') }}</label>
-            <fluent-text-field v-model="form.color" placeholder="#0e9aa7" />
-          </div>
-
-          <div class="form-field form-field--half">
-            <label>{{ t('serviceLinks.category') }}</label>
-            <fluent-select v-model="form.category">
-              <fluent-option v-for="opt in categoryOptions" :key="opt.value" :value="opt.value">
-                {{ opt.label }}
-              </fluent-option>
-            </fluent-select>
-          </div>
-
-          <div class="form-field form-field--half">
-            <label>{{ t('serviceLinks.sortOrder') }}</label>
-            <fluent-number-field v-model="form.sort_order" min="0" />
-          </div>
-
-          <div class="form-field">
-            <label class="checkbox-label">
-              <fluent-checkbox :checked="form.is_visible" @change="form.is_visible = !form.is_visible" />
-              {{ t('serviceLinks.visible') }}
-            </label>
-          </div>
-        </div>
-
-        <div class="dialog-actions">
-          <fluent-button appearance="outline" @click="showDialog = false">
-            {{ t('common.cancel') }}
-          </fluent-button>
-          <fluent-button appearance="accent" @click="handleSave">
-            {{ t('common.save') }}
-          </fluent-button>
-        </div>
+    <md-dialog :open="showDialog" @closed="closeDialog">
+      <div slot="headline">{{ editingLink ? t('serviceLinks.editLink') : t('serviceLinks.createLink') }}</div>
+      <form slot="content" class="dialog-form" method="dialog" @submit.prevent="handleSave">
+        <md-outlined-text-field :value="form.title" :label="`${t('serviceLinks.titleField')} *`" required @input="form.title = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="form.url" :label="`${t('serviceLinks.url')} *`" required @input="form.url = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="form.description" :label="t('serviceLinks.description')" @input="form.description = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="form.remark" :label="t('serviceLinks.remark')" @input="form.remark = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="form.icon" :label="t('serviceLinks.icon')" @input="form.icon = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="form.color" :label="t('serviceLinks.color')" @input="form.color = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-select :value="form.category" :label="t('serviceLinks.category')" @change="handleCategoryChange">
+          <md-select-option v-for="option in categoryOptions" :key="option.value" :value="option.value">{{ option.label }}</md-select-option>
+        </md-outlined-select>
+        <md-outlined-text-field :value="String(form.sort_order)" type="number" :label="t('serviceLinks.sortOrder')" @input="handleSortOrderInput"></md-outlined-text-field>
+        <label class="checkbox-label">
+          <md-checkbox :checked="form.is_visible" @change="handleVisibilityChange"></md-checkbox>
+          <span>{{ t('serviceLinks.visible') }}</span>
+        </label>
+      </form>
+      <div slot="actions">
+        <md-text-button type="button" @click="showDialog = false">{{ t('common.cancel') }}</md-text-button>
+        <md-filled-button type="button" @click="handleSave">{{ t('common.save') }}</md-filled-button>
       </div>
-    </fluent-dialog>
+    </md-dialog>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: var(--q-space-32);
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--q-space-24);
-}
-
-.page-title {
-  margin: 0 0 var(--q-space-4);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--q-color-text-primary);
-}
-
-.page-subtitle {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--q-color-text-secondary);
-}
-
-.page-loading,
-.page-empty {
-  text-align: center;
-  padding: var(--q-space-40);
-  color: var(--q-color-text-secondary);
-}
-
-.links-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-md);
-  background: var(--q-color-surface);
-}
-
-.links-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-
-.links-table th,
-.links-table td {
-  padding: var(--q-space-12) var(--q-space-16);
-  text-align: left;
-  border-bottom: 1px solid var(--q-color-stroke);
-}
-
-.links-table th {
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  color: var(--q-color-text-secondary);
-  background: var(--q-color-canvas);
-}
-
-.links-table tr:last-child td {
-  border-bottom: none;
-}
-
-.link-title-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--q-space-8);
-  font-weight: 500;
-}
-
-.link-icon {
-  font-size: 1.25rem;
-}
-
-.link-url {
-  color: var(--q-color-brand);
-  text-decoration: none;
-  font-size: 0.8125rem;
-  word-break: break-all;
-}
-
-.link-url:hover {
-  text-decoration: underline;
-}
-
-.category-badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: var(--q-radius-full);
-  font-size: 0.6875rem;
-  font-weight: 600;
-}
-
-.action-buttons {
-  display: flex;
-  gap: var(--q-space-8);
-}
-
-/* Dialog */
-.dialog-content {
-  padding: var(--q-space-24);
-  min-width: 480px;
-}
-
-.dialog-title {
-  margin: 0 0 var(--q-space-24);
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.form-grid {
+.data-page,
+.data-surface,
+.dialog-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--q-space-16);
+  gap: var(--space-lg);
 }
 
-.form-field {
-  grid-column: 1 / -1;
+.data-surface {
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-toolbar {
   display: flex;
-  flex-direction: column;
-  gap: var(--q-space-4);
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-md);
 }
 
-.form-field--half {
-  grid-column: auto;
+.data-toolbar h2 {
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
 }
 
-.form-field label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--q-color-text-secondary);
+.data-toolbar p,
+td,
+.state-panel,
+.checkbox-label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
+.state-panel {
+  min-block-size: 14rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-md);
+  border: 0.0625rem dashed var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding-block: var(--space-md);
+  padding-inline: var(--space-md);
+  border-block-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  text-align: start;
+}
+
+th {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+.link-title-cell,
+.row-actions,
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: var(--q-space-8);
-  cursor: pointer;
+  gap: var(--space-sm);
 }
 
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--q-space-12);
-  margin-top: var(--q-space-24);
-  padding-top: var(--q-space-16);
-  border-top: 1px solid var(--q-color-stroke);
+.link-title-cell {
+  color: var(--md-sys-color-on-surface);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+}
+
+.link-url {
+  color: var(--md-sys-color-primary);
+  word-break: break-all;
+}
+
+.dialog-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  inline-size: min(100%, 40rem);
+}
+
+.dialog-form md-outlined-text-field,
+.dialog-form md-outlined-select,
+.checkbox-label {
+  inline-size: 100%;
+}
+
+.dialog-form md-outlined-text-field:nth-child(-n + 4),
+.checkbox-label {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .data-toolbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .dialog-form {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

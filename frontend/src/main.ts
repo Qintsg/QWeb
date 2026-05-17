@@ -12,14 +12,14 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
-import { setupFluentDesignSystem } from './styles/fluent-setup'
+import { setupMaterialDesignSystem } from './styles/material-setup'
 
-// 全局样式：设计令牌 + 基础重置
+// 全局样式：Material 3 设计令牌 + 基础重置
 import './styles/tokens.css'
 import './style.css'
 
-// 初始化 Fluent 2 设计系统
-setupFluentDesignSystem()
+// 初始化 Material 3 Web Components
+setupMaterialDesignSystem()
 
 const app = createApp(App)
 

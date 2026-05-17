@@ -1,138 +1,129 @@
 # 前端设计系统
 
-> 基于 Fluent 2 Design System 的前端 UI 规范
+> 基于 Material Design 3 与 `@material/web` 的前端 UI 规范
 
 ---
 
 ## 1. 设计基线
 
-- **设计系统**：Microsoft Fluent 2 Design System
-- **实现方式**：基于 Fluent 2 的 Design Token 自行开发 Vue 组件，或使用社区 Fluent Vue 库
+- **设计系统**：Material Design 3
+- **实现方式**：优先使用 `@material/web` custom elements；缺失组件用语义 HTML + Material 3 token 实现。
+- **规范来源**：根目录 `DESIGN.md` 是当前 UI 的约束源，包含 token、组件、响应式、无障碍和 Definition of Done。
 - **核心文件**：
-  - `src/styles/tokens.css` — Fluent 2 Design Token 定义
-  - `src/styles/theme.css` — 主题配置（浅色/深色）
-  - `src/styles/fluent2.css` — 全局 Fluent 2 基础样式
+  - `src/styles/tokens.css` — Material 3 `--md-sys-*` 设计 token、形状、间距、排版、动效与布局 token。
+  - `src/styles/material-setup.ts` — 注册 `@material/web` custom elements。
+  - `src/style.css` — 最小 reset、全局字体、可访问性辅助类、路由过渡。
+  - `vite.config.ts` — 将 `md-*` 标记为 Vue custom element，避免 Vue 把 Material Web 组件解析为本地组件。
 
-根目录 `index.html` 是独立部署的静态首页，不能消费 Vue 运行时或 `src/styles/tokens.css`。该文件以内联 CSS 复用当前 Fluent 2 视觉基线：青色品牌色、暖橙强调色、暖色中性画布、8px 卡片圆角、清晰焦点态与响应式网格。
+根目录 `index.html` 是独立部署的静态公开首页；`frontend/index.html` 是 Vite SPA 宿主入口，已加载 Material Symbols 与 Roboto 字体族。
 
 ---
 
-## 2. 组件目录结构
+## 2. Token 使用规则
+
+组件和页面样式必须消费语义 token：
+
+- 颜色使用 `--md-sys-color-*`，成对使用背景与 `on-*` 前景。
+- 字体使用 `--md-sys-typescale-*`。
+- 圆角使用 `--md-sys-shape-corner-*`。
+- 间距使用 `--space-*`。
+- 动效使用 `--md-sys-motion-*`。
+- 层级使用 `--md-sys-color-surface-container-*` 和 `--md-sys-elevation-*`。
+
+组件层不得硬编码 hex、rgb、裸 `px` 字号、任意圆角或任意动效时长。允许使用 `rem`、`clamp()`、`min()`、`max()` 等响应式表达式，但内部值仍应来自 token。
+
+---
+
+## 3. 组件组织
 
 ```text
 src/components/
-├─ ui/                # 通用 UI 组件（按钮、输入、卡片、弹窗等）
-├─ business/          # 业务组件（文件卡片、权限选择器等）
-└─ layout/            # 布局组件（导航、侧边栏、面包屑等）
+├─ common/                 # 当前共享组件与布局基础件
+│  ├─ AppHeader.vue
+│  ├─ AppIconButton.vue
+│  ├─ AppSidebar.vue
+│  ├─ PageHeader.vue
+│  └─ StatusPill.vue
 ```
+
+约束：
+
+- 多处复用的 UI 必须抽成共享组件。
+- 所有 Vue SFC 使用 `<script setup lang="ts">` 和 `<style scoped>`。
+- 交互元素必须使用原生交互元素或 Material Web 交互组件，不用 `div/span` 伪装按钮。
+- 图标使用 Material Symbols，不混用图标库。
 
 ---
 
-## 3. 布局系统
+## 4. 布局系统
 
-| Layout | 使用场景 | 特征 |
-|--------|----------|------|
-| `PublicLayout.vue` | 首页、博客列表、公开页面 | 轻量顶栏 + 内容区 |
-| `DashboardLayout.vue` | 用户工作区、业务模块 | 侧边导航 + 顶栏 + 内容区 |
-| `AdminLayout.vue` | 管理后台 | 管理专用侧边导航 + 内容区 |
+| Layout | 使用场景 | 当前实现 |
+|--------|----------|----------|
+| `PublicLayout.vue` | 登录、注册、OAuth 回调 | Material 3 认证壳层、主题/语言切换、一个页面级 `<h1>` |
+| `DashboardLayout.vue` | 登录后的工作区与管理页 | Material 3 App Shell、自适应导航、顶部应用栏、路由过渡 |
+| `AdminLayout.vue` | 管理后台 | 当前复用 `DashboardLayout` |
 
----
+`DashboardLayout` 使用 `useWindowSizeClass()`：
 
-## 4. Token 使用规范
-
-### 4.1 颜色
-
-- 使用 Fluent 2 语义化 Token，不直接使用 hex 值
-- 支持浅色/深色主题切换
-- 品牌色通过 Token 统一定义
-
-### 4.2 间距
-
-- 使用 Fluent 2 标准间距 Token（`--spacingHorizontalS`, `--spacingVerticalM` 等）
-- 不使用魔法数字
-
-### 4.3 排版
-
-- 字体族、字号、行高使用 Fluent 2 排版 Token
-- 标题层级与 Fluent 2 Type Ramp 对齐
-
-### 4.4 圆角与阴影
-
-- 圆角使用 `--borderRadiusMedium` 等 Token
-- 阴影使用 Fluent 2 Elevation Token
+- Compact：底部导航。
+- Medium / Expanded：导航 rail。
+- Large / Extra-large：持久侧边 drawer。
 
 ---
 
-## 5. 页面区域与权限展示
+## 5. 页面结构与可访问性
 
-### 5.1 页面权限控制原则
-
-- **前端不负责安全，只负责体验优化**
-- 真正校验必须以后端为准
-- 前端在登录后拉取用户权限列表，控制：
-  - 菜单项显示/隐藏
-  - 按钮启用/禁用
-  - 路由访问体验
-
-### 5.2 权限数据流
-
-```text
-用户登录 → 获取 JWT → 拉取用户信息 + 权限列表
-→ 存入 Pinia (auth store + permission store)
-→ 路由守卫读取权限 → 组件根据权限条件渲染
-```
-
-### 5.3 权限指令（建议）
-
-```vue
-<!-- 有权限时显示 -->
-<button v-permission="'blog.post.publish'">发布文章</button>
-
-<!-- 无权限时禁用 -->
-<button v-permission:disable="'admin.users.delete'">删除用户</button>
-```
+- 每个路由视图必须保证页面整体只有一个 `<h1>`。
+- `App.vue` 提供 skip link，主要布局中的 `<main id="main-content">` 是跳转目标。
+- 表格数据使用原生 `<table>`、`<thead>`、`<tbody>`、`<th scope="col">`。
+- 空状态、错误状态、加载状态必须有文本；加载超过短暂时间时使用 `md-circular-progress` 或可见状态文案。
+- 所有按钮/链接目标至少满足 48×48 CSS px 可点击目标。
+- 动效必须尊重 `prefers-reduced-motion`，全局 reset 已提供兜底。
 
 ---
 
-## 6. 状态管理
-
-### 6.1 Store 划分
+## 6. 状态管理与 API 层
 
 ```text
-src/stores/
-├─ auth.ts            # 认证状态（token、登录/登出）
-├─ app.ts             # 应用全局状态（主题、语言、侧边栏）
-├─ permission.ts      # 权限缓存（角色、权限列表）
-└─ notification.ts    # 通知状态
+src/api/client.ts          # Axios 实例、JWT 注入、401 refresh
+src/stores/auth.ts         # token、当前用户、登录/登出/OAuth
+src/stores/permission.ts   # IAM 权限缓存
+src/composables/useTheme.ts
+src/composables/useWindowSizeClass.ts
 ```
 
-### 6.2 API 层
+前端权限只做体验优化；真正安全校验以后端 IAM 为准。路由与按钮使用后端一致的 `{module}.{resource}.{action}` 权限码。
 
-```text
-src/api/
-├─ client.ts          # Axios/ofetch 实例（统一拦截器、JWT 注入、错误处理）
-├─ auth.ts            # 认证相关 API
-├─ users.ts           # 用户相关 API
-├─ iam.ts             # IAM 相关 API
-├─ blog.ts            # 博客 API
-├─ wiki.ts            # Wiki API
-├─ storage.ts         # 存储 API
-├─ ssh.ts             # SSH API
-├─ frp.ts             # FRP API
-├─ network.ts         # 网络工具 API
-├─ mc.ts              # MC 管理 API
-├─ mail.ts            # 邮件 API
-├─ dev.ts             # 开发工作区 API
-└─ system.ts          # 系统配置/审计 API
+---
+
+## 7. 当前页面重构范围
+
+已迁移为 Material 3 视觉与交互语言的页面：
+
+- `HomePage.vue`
+- `LoginPage.vue`
+- `RegisterPage.vue`
+- `GitHubCallbackPage.vue`
+- `DashboardPage.vue`
+- `UsersPage.vue`
+- `RolesPage.vue`
+- `PermissionsPage.vue`
+- `AuditLogsPage.vue`
+- `LoginLogsPage.vue`
+- `ServiceLinksPage.vue`
+- `ProfilePage.vue`
+- `ForbiddenPage.vue`
+- `NotFoundPage.vue`
+
+---
+
+## 8. 验证
+
+前端构建验证：
+
+```bash
+cd frontend
+npm run build
 ```
 
-### 6.3 Composables
-
-```text
-src/composables/
-├─ useAuth.ts         # 认证相关组合函数
-├─ usePermission.ts   # 权限判断组合函数
-├─ useTheme.ts        # 主题切换
-├─ usePagination.ts   # 分页逻辑
-└─ useWebSocket.ts    # WebSocket 连接管理
-```
+当前构建会出现 Vite chunk size warning；这是警告不是失败。后续如需优化，可将 Material Web 组件改为更细粒度按路由懒加载，或配置 `build.rollupOptions.output.manualChunks`。

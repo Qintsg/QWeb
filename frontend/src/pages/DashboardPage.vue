@@ -1,148 +1,244 @@
 <!--
-  实现 DashboardPage 页面视图。
+  仪表盘首页视图。
 
   :project: QWeb
   :file: DashboardPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-/**
- * 仪表盘首页
- * 展示欢迎信息、权限感知快速入口与当前可用的系统状态占位
- */
-import { useI18n } from 'vue-i18n'
-import { useAuth } from '@/composables/useAuth'
-import { usePermission } from '@/composables/usePermission'
+import { computed } from "vue"
+import { useI18n } from "vue-i18n"
+import { useAuth } from "@/composables/useAuth"
+import { usePermission } from "@/composables/usePermission"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 const { displayName, userGroup } = useAuth()
 const { hasPermission } = usePermission()
+
+const quickNavItems = computed(() => [
+  { to: "/profile", icon: "person", label: t("nav.profile"), visible: true },
+  { to: "/users", icon: "group", label: t("nav.userManagement"), visible: hasPermission("accounts.user.view") },
+  { to: "/roles", icon: "admin_panel_settings", label: t("nav.roleManagement"), visible: hasPermission("iam.role.view") },
+  { to: "/audit-logs", icon: "assignment", label: t("nav.auditLogs"), visible: hasPermission("audit.log.view") },
+].filter((item) => item.visible))
 </script>
 
 <template>
-  <div class="page-container">
-    <!-- 欢迎区 -->
-    <section class="welcome-section">
-      <h1 class="welcome-title">{{ t('dashboard.welcome', { name: displayName }) }}</h1>
-      <p class="welcome-subtitle">{{ t('dashboard.subtitle') }}</p>
-      <span class="user-group-badge">{{ userGroup }}</span>
+  <div class="dashboard-page">
+    <PageHeader
+      :title="t('dashboard.welcome', { name: displayName })"
+      :description="t('dashboard.subtitle')"
+      eyebrow="Workspace"
+    >
+      <template #actions>
+        <StatusPill :label="userGroup" tone="primary" icon="verified_user" />
+      </template>
+    </PageHeader>
+
+    <section class="dashboard-hero" aria-labelledby="dashboard-overview-title">
+      <div>
+        <p class="dashboard-hero__eyebrow">Control Plane</p>
+        <h2 id="dashboard-overview-title">把身份、权限和审计放在同一个工作面。</h2>
+        <p>当前工作区优先展示可执行入口；没有权限的模块不会出现在导航与快捷操作里。</p>
+      </div>
+      <div class="dashboard-hero__metrics" aria-label="当前状态摘要">
+        <span>
+          <strong>{{ quickNavItems.length }}</strong>
+          <small>available actions</small>
+        </span>
+        <span>
+          <strong>{{ userGroup }}</strong>
+          <small>current group</small>
+        </span>
+      </div>
     </section>
 
-    <!-- 快速入口 -->
-    <section class="quick-nav">
-      <h2 class="section-title">{{ t('dashboard.quickNav') }}</h2>
-      <div class="nav-grid">
-        <router-link to="/profile" class="nav-card">
-          <div class="nav-icon">👤</div>
-          <span>{{ t('nav.profile') }}</span>
-        </router-link>
-
-        <router-link v-if="hasPermission('accounts.user.view')" to="/users" class="nav-card">
-          <div class="nav-icon">👥</div>
-          <span>{{ t('nav.userManagement') }}</span>
-        </router-link>
-
-        <router-link v-if="hasPermission('iam.role.view')" to="/roles" class="nav-card">
-          <div class="nav-icon">🛡️</div>
-          <span>{{ t('nav.roleManagement') }}</span>
-        </router-link>
-
-        <router-link v-if="hasPermission('audit.log.view')" to="/audit-logs" class="nav-card">
-          <div class="nav-icon">📋</div>
-          <span>{{ t('nav.auditLogs') }}</span>
+    <section class="dashboard-section" aria-labelledby="quick-nav-title">
+      <div class="dashboard-section__header">
+        <h2 id="quick-nav-title">{{ t('dashboard.quickNav') }}</h2>
+        <p>按当前 IAM 权限过滤后的高频入口。</p>
+      </div>
+      <div class="quick-nav">
+        <router-link v-for="item in quickNavItems" :key="item.to" :to="item.to" class="quick-nav__item">
+          <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+          <strong>{{ item.label }}</strong>
+          <span class="material-symbols-rounded quick-nav__arrow" aria-hidden="true">arrow_forward</span>
         </router-link>
       </div>
     </section>
 
-    <!-- 系统状态占位 -->
-    <section class="status-section">
-      <h2 class="section-title">{{ t('dashboard.systemStatus') }}</h2>
-      <p class="page-placeholder">{{ t('common.comingSoon') }}</p>
+    <section class="dashboard-section dashboard-section--status" aria-labelledby="status-title">
+      <div class="dashboard-section__header">
+        <h2 id="status-title">{{ t('dashboard.systemStatus') }}</h2>
+        <p>服务健康、任务队列和实时通道将在后续模块接入后显示。</p>
+      </div>
+      <div class="status-grid">
+        <StatusPill label="API online" tone="success" icon="cloud_done" />
+        <StatusPill label="JWT enabled" tone="primary" icon="key" />
+        <StatusPill label="Audit ready" tone="warning" icon="history" />
+      </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: var(--q-space-32);
+.dashboard-page {
+  display: grid;
+  gap: var(--space-xl);
 }
 
-.welcome-section {
-  margin-bottom: var(--q-space-40);
+.dashboard-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-xl);
+  padding: clamp(var(--space-lg), 4vw, var(--space-xxl));
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background:
+    radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent), transparent 18rem),
+    var(--md-sys-color-surface-container-low);
+  overflow: hidden;
 }
 
-.welcome-title {
-  margin: 0 0 var(--q-space-8);
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--q-color-text-primary);
-}
-
-.welcome-subtitle {
-  margin: 0 0 var(--q-space-12);
-  color: var(--q-color-text-secondary);
-  font-size: 0.95rem;
-}
-
-.user-group-badge {
-  display: inline-block;
-  padding: 2px 12px;
-  border-radius: var(--q-radius-full);
-  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
-  color: var(--q-color-brand);
-  font-size: 0.75rem;
-  font-weight: 600;
+.dashboard-hero__eyebrow {
+  margin-block-end: var(--space-sm);
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.section-title {
-  margin: 0 0 var(--q-space-16);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--q-color-text-primary);
+.dashboard-hero h2,
+.dashboard-section__header h2 {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-headline-medium-font);
+  font-size: var(--md-sys-typescale-headline-medium-size);
+  font-weight: var(--md-sys-typescale-headline-medium-weight);
+  line-height: var(--md-sys-typescale-headline-medium-line-height);
+}
+
+.dashboard-hero p:last-child,
+.dashboard-section__header p {
+  max-inline-size: 60ch;
+  margin-block-start: var(--space-sm);
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+.dashboard-hero__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(8rem, 1fr));
+  gap: var(--space-sm);
+}
+
+.dashboard-hero__metrics span {
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container);
+}
+
+.dashboard-hero__metrics strong {
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-headline-small-font);
+  font-size: var(--md-sys-typescale-headline-small-size);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+}
+
+.dashboard-hero__metrics small {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-small-font);
+  font-size: var(--md-sys-typescale-label-small-size);
+  font-weight: var(--md-sys-typescale-label-small-weight);
+  line-height: var(--md-sys-typescale-label-small-line-height);
+}
+
+.dashboard-section {
+  display: grid;
+  gap: var(--space-md);
 }
 
 .quick-nav {
-  margin-bottom: var(--q-space-40);
-}
-
-.nav-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--q-space-16);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-md);
 }
 
-.nav-card {
-  display: flex;
-  flex-direction: column;
+.quick-nav__item {
+  min-block-size: 7rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--q-space-12);
-  padding: var(--q-space-24);
-  background: var(--q-color-surface);
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-md);
-  text-decoration: none;
-  color: var(--q-color-text-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container-low);
+  transition:
+    border-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
-.nav-card:hover {
-  border-color: var(--q-color-brand);
-  box-shadow: 0 2px 8px rgba(14, 154, 167, 0.12);
+.quick-nav__item:hover {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: var(--md-sys-elevation-level2);
+  transform: translateY(calc(var(--space-xs) * -1));
 }
 
-.nav-icon {
-  font-size: 1.5rem;
+.quick-nav__item > .material-symbols-rounded:first-child {
+  inline-size: 3rem;
+  block-size: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-large);
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
 }
 
-.status-section {
-  margin-bottom: var(--q-space-32);
+.quick-nav__item strong {
+  font-family: var(--md-sys-typescale-title-medium-font);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
 }
 
-.page-placeholder {
-  color: var(--q-color-text-secondary);
+.quick-nav__arrow {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.status-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+@media (max-width: 839px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero__metrics {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -19,7 +19,8 @@
 - Vite
 - Vue Router
 - Pinia
-- Fluent 2 Design System
+- Material 3 Design System
+- `@material/web` custom elements
 
 若仓库已有明确约定，优先沿用：
 
@@ -45,7 +46,7 @@
 优先遵循：
 
 1. Vue 3 官方规范
-2. Fluent 2 官方设计规范
+2. Material Design 3 与 Material Web 官方规范
 3. TypeScript 官方规范
 4. 仓库既有约定
 5. 通用工程约定
@@ -63,7 +64,7 @@
 ### 4.3 组件与设计系统
 - 共享视觉元素优先沉淀为设计系统组件
 - 页面层不要反复硬编码颜色、间距、圆角、阴影、状态色
-- 导航、表单、反馈、卡片、表格、列表保持 Fluent 2 风格一致
+- 导航、表单、反馈、卡片、表格、列表保持 Material 3 风格一致
 - 不同模块不要出现多套视觉语言
 
 ### 4.4 组件边界
@@ -125,7 +126,7 @@
 
 前端任务完成时必须满足：
 
-- Fluent 2 风格一致
+- Material 3 风格一致
 - 页面与交互可用
 - 权限展示正确
 - 高风险操作具备必要提示与保护

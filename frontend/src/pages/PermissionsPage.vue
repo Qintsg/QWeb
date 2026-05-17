@@ -1,108 +1,191 @@
 <!--
-  实现 PermissionsPage 页面视图。
+  权限注册表页面视图。
 
   :project: QWeb
   :file: PermissionsPage.vue
   :author: Qintsg
-  :date: 2026-05-12 00:00
+  :date: 2026-05-17 00:00
 -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { getPermissions, type PermissionListQuery } from '@/api/iam'
-import type { Permission } from '@/types/auth'
+import { onMounted, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { getPermissions, type PermissionListQuery } from "@/api/iam"
+import type { Permission } from "@/types/auth"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 
 const loading = ref(false)
 const permissions = ref<Permission[]>([])
-const query = ref<PermissionListQuery>({
-  search: '',
-})
+const query = ref<PermissionListQuery>({ search: "" })
 
-async function fetchPermissions() {
+async function fetchPermissions(): Promise<void> {
   loading.value = true
   try {
     const res = await getPermissions(query.value)
     permissions.value = res.data.data || []
   } catch (err) {
-    console.error('Failed to fetch permissions', err)
+    console.error("Failed to fetch permissions", err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => fetchPermissions())
-
-function handleSearch() {
+function handleSearch(): void {
   fetchPermissions()
 }
+
+onMounted(() => fetchPermissions())
 </script>
 
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">Permissions Registry</h1>
-    </div>
+  <div class="data-page">
+    <PageHeader
+      title="Permissions Registry"
+      description="权限码使用 module.resource.action 结构，是后端安全校验和前端体验过滤的共同语言。"
+      eyebrow="IAM"
+    >
+      <template #actions>
+        <StatusPill :label="`${permissions.length} permissions`" tone="primary" icon="vpn_key" />
+      </template>
+    </PageHeader>
 
-    <fluent-card class="table-card">
-      <div class="toolbar">
-        <fluent-text-field
+    <section class="data-surface" aria-labelledby="permissions-table-title">
+      <div class="data-toolbar">
+        <h2 id="permissions-table-title">权限列表</h2>
+        <md-outlined-text-field
           :value="query.search"
+          label="Search code or name"
           @input="query.search = ($event.target as HTMLInputElement).value"
           @keyup.enter="handleSearch"
-          placeholder="Search code or name..."
         >
-          <span slot="end" class="search-icon" @click="handleSearch">🔍</span>
-        </fluent-text-field>
+          <span slot="trailing-icon" class="material-symbols-rounded" aria-hidden="true">search</span>
+        </md-outlined-text-field>
       </div>
 
-      <div class="table-responsive">
-        <table class="qweb-table">
+      <div class="table-wrap">
+        <table>
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Name</th>
-              <th>Module</th>
-              <th>Category</th>
-              <th>Risk Level</th>
+              <th scope="col">Code</th>
+              <th scope="col">Name</th>
+              <th scope="col">Module</th>
+              <th scope="col">Resource</th>
+              <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="loading">
-              <td colspan="5" class="text-center">Loading...</td>
+              <td colspan="5" class="table-state">Loading...</td>
             </tr>
             <tr v-else-if="permissions.length === 0">
-              <td colspan="5" class="text-center">No permissions found.</td>
+              <td colspan="5" class="table-state">No permissions found.</td>
             </tr>
-            <tr v-else v-for="p in permissions" :key="p.id">
-              <td><fluent-badge>{{ p.code }}</fluent-badge></td>
-              <td>{{ p.name }}</td>
-              <td>{{ p.module }}</td>
-              <td>{{ p.resource }}</td>
+            <tr v-for="permission in permissions" v-else :key="permission.id">
+              <td><code>{{ permission.code }}</code></td>
+              <td>{{ permission.name }}</td>
+              <td>{{ permission.module }}</td>
+              <td>{{ permission.resource || '-' }}</td>
               <td>
-                <fluent-badge :appearance="p.is_active ? 'accent' : 'neutral'">
-                  {{ p.is_active ? 'Active' : 'Inactive' }}
-                </fluent-badge>
+                <StatusPill
+                  :label="permission.is_active ? 'Active' : 'Inactive'"
+                  :tone="permission.is_active ? 'success' : 'neutral'"
+                  :icon="permission.is_active ? 'check_circle' : 'pause_circle'"
+                />
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </fluent-card>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.page-container { padding: var(--q-space-32); }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--q-space-24); }
-.page-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--q-color-text-primary); }
-.table-card { padding: var(--q-space-24); border-radius: var(--q-radius-lg); background: var(--q-color-surface); box-shadow: var(--q-shadow-sm); }
-.toolbar { margin-bottom: var(--q-space-24); display: flex; gap: var(--q-space-16); }
-.search-icon { cursor: pointer; padding: 0 8px; line-height: 32px; }
-.table-responsive { overflow-x: auto; }
-.qweb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.qweb-table th, .qweb-table td { text-align: left; padding: var(--q-space-16); border-bottom: 1px solid var(--q-color-stroke); }
-.qweb-table th { font-weight: 600; color: var(--q-color-text-secondary); background: var(--q-color-surface-alt, #fafafa); }
-.text-center { text-align: center !important; color: var(--q-color-text-secondary); padding: var(--q-space-32) !important; }
+.data-page,
+.data-surface {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.data-surface {
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.data-toolbar h2 {
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+}
+
+.data-toolbar md-outlined-text-field {
+  inline-size: min(100%, 22rem);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding-block: var(--space-md);
+  padding-inline: var(--space-md);
+  border-block-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  text-align: start;
+}
+
+th {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+}
+
+td {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+code {
+  color: var(--md-sys-color-primary);
+  font-family: var(--q-font-mono);
+}
+
+.table-state {
+  padding: var(--space-xxl);
+  color: var(--md-sys-color-on-surface-variant);
+  text-align: center;
+}
+
+@media (max-width: 839px) {
+  .data-toolbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .data-toolbar md-outlined-text-field {
+    inline-size: 100%;
+  }
+}
 </style>

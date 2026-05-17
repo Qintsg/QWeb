@@ -1,129 +1,245 @@
 /**
- * QWeb 设计令牌 — 基于 Fluent 2 视觉语言。
+ * QWeb Material 3 设计令牌。
  *
- * 配色方案：青色主色 + 暖橙强调 + 暖色中性底。
- * 所有颜色、间距、圆角、阴影统一在此定义，页面与组件层禁止硬编码视觉值。
+ * 以 Material Theme Builder 的 Web/CSS 输出结构为基线，并补齐本项目需要的
+ * 间距、排版、形状、层级与动效 token。组件层只能消费这些语义 token。
  *
  * :project: QWeb
  * :file: tokens.css
  * :author: Qintsg
- * :date: 2026-05-12 00:00
+ * :date: 2026-05-17 00:00
  */
 :root {
-  /* ── 品牌色 ─────────────────────────────────── */
-  --q-color-brand: #0e9aa7;
-  --q-color-brand-hover: #0c8a96;
-  --q-color-brand-active: #0a7a85;
-  --q-color-brand-light: rgba(14, 154, 167, 0.12);
-  --q-color-brand-subtle: rgba(14, 154, 167, 0.06);
+  color-scheme: light dark;
 
-  /* ── 强调色（暖橙） ──────────────────────────── */
-  --q-color-accent: #f28a2e;
-  --q-color-accent-hover: #e07820;
-  --q-color-accent-active: #cc6c1a;
-  --q-color-accent-light: rgba(242, 138, 46, 0.12);
-  --q-color-accent-subtle: rgba(242, 138, 46, 0.06);
+  /* ── Material 3 color roles: light ───────────────────────── */
+  --md-sys-color-primary: #4a6fa5;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #d5e3ff;
+  --md-sys-color-on-primary-container: #001c3a;
+  --md-sys-color-secondary: #58616f;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #dce5f6;
+  --md-sys-color-on-secondary-container: #151c29;
+  --md-sys-color-tertiary: #725573;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #fed7fb;
+  --md-sys-color-on-tertiary-container: #2a102d;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+  --md-sys-color-surface: #fbf8ff;
+  --md-sys-color-on-surface: #1a1c20;
+  --md-sys-color-surface-variant: #e1e2ec;
+  --md-sys-color-on-surface-variant: #44474f;
+  --md-sys-color-outline: #747780;
+  --md-sys-color-outline-variant: #c4c6d0;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #2f3035;
+  --md-sys-color-inverse-on-surface: #f1f0f7;
+  --md-sys-color-inverse-primary: #adc7ff;
+  --md-sys-color-surface-dim: #dad9e0;
+  --md-sys-color-surface-bright: #fbf8ff;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f5f2fa;
+  --md-sys-color-surface-container: #eeedf4;
+  --md-sys-color-surface-container-high: #e8e7ee;
+  --md-sys-color-surface-container-highest: #e2e1e9;
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
 
-  /* ── 语义色 ──────────────────────────────────── */
-  --q-color-success: #107c10;
-  --q-color-success-bg: rgba(16, 124, 16, 0.08);
-  --q-color-warning: #f7b93e;
-  --q-color-warning-bg: rgba(247, 185, 62, 0.10);
-  --q-color-error: #d13438;
-  --q-color-error-bg: rgba(209, 52, 56, 0.08);
-  --q-color-info: #0e9aa7;
-  --q-color-info-bg: rgba(14, 154, 167, 0.08);
+  /* ── Reference / brand tokens ────────────────────────────── */
+  --q-ref-color-brand-fixed: #4a6fa5;
+  --q-ref-color-brand-energy: #24c8db;
+  --q-ref-color-warning-fixed: #f28a2e;
 
-  /* ── 中性色（暖色调） ──────────────────────────── */
-  --q-color-canvas: #f8f5f1;
-  --q-color-surface: #ffffff;
-  --q-color-surface-secondary: #faf8f5;
-  --q-color-surface-tertiary: #f3efeb;
-  --q-color-inset: #f5f2ee;
+  /* ── Shape ──────────────────────────────────────────────── */
+  --md-sys-shape-corner-none: 0;
+  --md-sys-shape-corner-extra-small: 0.25rem;
+  --md-sys-shape-corner-small: 0.5rem;
+  --md-sys-shape-corner-medium: 0.75rem;
+  --md-sys-shape-corner-large: 1rem;
+  --md-sys-shape-corner-extra-large: 1.75rem;
+  --md-sys-shape-corner-full: 9999rem;
 
-  --q-color-text-primary: #2d2926;
-  --q-color-text-secondary: #6b6560;
-  --q-color-text-tertiary: #9e9893;
-  --q-color-text-disabled: #bdb8b3;
-  --q-color-text-on-brand: #ffffff;
-  --q-color-text-on-accent: #ffffff;
+  /* ── Spacing ────────────────────────────────────────────── */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
 
-  --q-color-stroke: rgba(45, 41, 38, 0.08);
-  --q-color-stroke-hover: rgba(45, 41, 38, 0.14);
-  --q-color-stroke-focus: var(--q-color-brand);
-  --q-color-divider: rgba(45, 41, 38, 0.06);
+  /* ── Typography ─────────────────────────────────────────── */
+  --md-ref-typeface-brand: "Roboto Flex", "Roboto", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Roboto", system-ui, sans-serif;
+  --q-font-mono: "Roboto Mono", "Cascadia Code", monospace;
 
-  /* ── 排版 ──────────────────────────────────── */
-  --q-font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --q-font-mono: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  --md-sys-typescale-display-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-large-size: 3.5625rem;
+  --md-sys-typescale-display-large-line-height: 4rem;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-medium-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-medium-size: 2.8125rem;
+  --md-sys-typescale-display-medium-line-height: 3.25rem;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-small-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-small-size: 2.25rem;
+  --md-sys-typescale-display-small-line-height: 2.75rem;
+  --md-sys-typescale-display-small-weight: 400;
 
-  --q-font-size-xs: 0.6875rem;   /* 11px */
-  --q-font-size-sm: 0.75rem;     /* 12px */
-  --q-font-size-base: 0.875rem;  /* 14px */
-  --q-font-size-md: 1rem;        /* 16px */
-  --q-font-size-lg: 1.25rem;     /* 20px */
-  --q-font-size-xl: 1.5rem;      /* 24px */
-  --q-font-size-2xl: 1.75rem;    /* 28px */
-  --q-font-size-3xl: 2rem;       /* 32px */
+  --md-sys-typescale-headline-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-large-size: 2rem;
+  --md-sys-typescale-headline-large-line-height: 2.5rem;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-medium-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-medium-size: 1.75rem;
+  --md-sys-typescale-headline-medium-line-height: 2.25rem;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-small-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-small-size: 1.5rem;
+  --md-sys-typescale-headline-small-line-height: 2rem;
+  --md-sys-typescale-headline-small-weight: 400;
 
-  --q-font-weight-regular: 400;
-  --q-font-weight-medium: 500;
-  --q-font-weight-semibold: 600;
-  --q-font-weight-bold: 700;
+  --md-sys-typescale-title-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-title-large-size: 1.375rem;
+  --md-sys-typescale-title-large-line-height: 1.75rem;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-medium-size: 1rem;
+  --md-sys-typescale-title-medium-line-height: 1.5rem;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-small-size: 0.875rem;
+  --md-sys-typescale-title-small-line-height: 1.25rem;
+  --md-sys-typescale-title-small-weight: 500;
 
-  --q-line-height-tight: 1.2;
-  --q-line-height-base: 1.5;
-  --q-line-height-relaxed: 1.75;
+  --md-sys-typescale-body-large-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-large-size: 1rem;
+  --md-sys-typescale-body-large-line-height: 1.5rem;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-medium-size: 0.875rem;
+  --md-sys-typescale-body-medium-line-height: 1.25rem;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-small-size: 0.75rem;
+  --md-sys-typescale-body-small-line-height: 1rem;
+  --md-sys-typescale-body-small-weight: 400;
 
-  /* ── 间距 ──────────────────────────────────── */
-  --q-space-2: 2px;
-  --q-space-4: 4px;
-  --q-space-6: 6px;
-  --q-space-8: 8px;
-  --q-space-10: 10px;
-  --q-space-12: 12px;
-  --q-space-16: 16px;
-  --q-space-20: 20px;
-  --q-space-24: 24px;
-  --q-space-32: 32px;
-  --q-space-40: 40px;
-  --q-space-48: 48px;
-  --q-space-64: 64px;
+  --md-sys-typescale-label-large-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-large-size: 0.875rem;
+  --md-sys-typescale-label-large-line-height: 1.25rem;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-medium-size: 0.75rem;
+  --md-sys-typescale-label-medium-line-height: 1rem;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-small-size: 0.6875rem;
+  --md-sys-typescale-label-small-line-height: 1rem;
+  --md-sys-typescale-label-small-weight: 500;
 
-  /* ── 圆角 ──────────────────────────────────── */
-  --q-radius-sm: 4px;
-  --q-radius-md: 8px;
-  --q-radius-lg: 12px;
-  --q-radius-xl: 16px;
-  --q-radius-2xl: 20px;
-  --q-radius-full: 9999px;
+  /* ── Elevation ──────────────────────────────────────────── */
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0 0.0625rem 0.1875rem color-mix(in srgb, var(--md-sys-color-scrim) 10%, transparent);
+  --md-sys-elevation-level2: 0 0.1875rem 0.5rem color-mix(in srgb, var(--md-sys-color-scrim) 12%, transparent);
+  --md-sys-elevation-level3: 0 0.375rem 1rem color-mix(in srgb, var(--md-sys-color-scrim) 14%, transparent);
+  --md-sys-elevation-level4: 0 0.5rem 1.5rem color-mix(in srgb, var(--md-sys-color-scrim) 16%, transparent);
+  --md-sys-elevation-level5: 0 0.75rem 2rem color-mix(in srgb, var(--md-sys-color-scrim) 18%, transparent);
 
-  /* ── 阴影 ──────────────────────────────────── */
-  --q-shadow-sm: 0 1px 2px rgba(45, 41, 38, 0.06);
-  --q-shadow-md: 0 4px 12px rgba(45, 41, 38, 0.08);
-  --q-shadow-lg: 0 8px 24px rgba(45, 41, 38, 0.10);
-  --q-shadow-xl: 0 16px 48px rgba(14, 154, 167, 0.08);
-  --q-shadow-brand: 0 8px 24px rgba(14, 154, 167, 0.16);
-  --q-shadow-accent: 0 8px 24px rgba(242, 138, 46, 0.14);
+  /* ── Motion ─────────────────────────────────────────────── */
+  --md-sys-motion-duration-short: 150ms;
+  --md-sys-motion-duration-medium: 300ms;
+  --md-sys-motion-duration-long: 500ms;
+  --md-sys-motion-duration-extra-long: 800ms;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
 
-  /* ── 动效 ──────────────────────────────────── */
-  --q-duration-fast: 120ms;
-  --q-duration-normal: 200ms;
-  --q-duration-slow: 300ms;
-  --q-easing-default: cubic-bezier(0.33, 0, 0.67, 1);
-  --q-easing-entrance: cubic-bezier(0, 0, 0, 1);
-  --q-easing-exit: cubic-bezier(1, 0, 1, 1);
+  /* ── Layout ─────────────────────────────────────────────── */
+  --q-layout-rail-width: 5rem;
+  --q-layout-drawer-width: 18rem;
+  --q-layout-bottom-nav-height: 5rem;
+  --q-layout-content-max: 80rem;
+  --q-layout-form-max: 40rem;
+}
 
-  /* ── 布局 ──────────────────────────────────── */
-  --q-sidebar-width: 260px;
-  --q-sidebar-collapsed-width: 56px;
-  --q-header-height: 48px;
-  --q-content-max-width: 1200px;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --md-sys-color-primary: #adc7ff;
+    --md-sys-color-on-primary: #13395f;
+    --md-sys-color-primary-container: #2f5687;
+    --md-sys-color-on-primary-container: #d5e3ff;
+    --md-sys-color-secondary: #c0c9d9;
+    --md-sys-color-on-secondary: #2a303b;
+    --md-sys-color-secondary-container: #404754;
+    --md-sys-color-on-secondary-container: #dce5f6;
+    --md-sys-color-tertiary: #e1bbdf;
+    --md-sys-color-on-tertiary: #402843;
+    --md-sys-color-tertiary-container: #593e5b;
+    --md-sys-color-on-tertiary-container: #fed7fb;
+    --md-sys-color-error: #ffb4ab;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000a;
+    --md-sys-color-on-error-container: #ffdad6;
+    --md-sys-color-surface: #111318;
+    --md-sys-color-on-surface: #e2e1e9;
+    --md-sys-color-surface-variant: #44474f;
+    --md-sys-color-on-surface-variant: #c4c6d0;
+    --md-sys-color-outline: #8e9099;
+    --md-sys-color-outline-variant: #44474f;
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-inverse-surface: #e2e1e9;
+    --md-sys-color-inverse-on-surface: #2f3035;
+    --md-sys-color-inverse-primary: #4a6fa5;
+    --md-sys-color-surface-dim: #111318;
+    --md-sys-color-surface-bright: #37393e;
+    --md-sys-color-surface-container-lowest: #0c0e13;
+    --md-sys-color-surface-container-low: #1a1c20;
+    --md-sys-color-surface-container: #1e2025;
+    --md-sys-color-surface-container-high: #282a2f;
+    --md-sys-color-surface-container-highest: #33353a;
+    --md-sys-color-surface-tint: var(--md-sys-color-primary);
+  }
+}
 
-  /* ── z-index ───────────────────────────────── */
-  --q-z-dropdown: 1000;
-  --q-z-sticky: 1100;
-  --q-z-overlay: 1200;
-  --q-z-modal: 1300;
-  --q-z-toast: 1400;
+:root[data-theme="dark"] {
+  --md-sys-color-primary: #adc7ff;
+  --md-sys-color-on-primary: #13395f;
+  --md-sys-color-primary-container: #2f5687;
+  --md-sys-color-on-primary-container: #d5e3ff;
+  --md-sys-color-secondary: #c0c9d9;
+  --md-sys-color-on-secondary: #2a303b;
+  --md-sys-color-secondary-container: #404754;
+  --md-sys-color-on-secondary-container: #dce5f6;
+  --md-sys-color-tertiary: #e1bbdf;
+  --md-sys-color-on-tertiary: #402843;
+  --md-sys-color-tertiary-container: #593e5b;
+  --md-sys-color-on-tertiary-container: #fed7fb;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+  --md-sys-color-surface: #111318;
+  --md-sys-color-on-surface: #e2e1e9;
+  --md-sys-color-surface-variant: #44474f;
+  --md-sys-color-on-surface-variant: #c4c6d0;
+  --md-sys-color-outline: #8e9099;
+  --md-sys-color-outline-variant: #44474f;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #e2e1e9;
+  --md-sys-color-inverse-on-surface: #2f3035;
+  --md-sys-color-inverse-primary: #4a6fa5;
+  --md-sys-color-surface-dim: #111318;
+  --md-sys-color-surface-bright: #37393e;
+  --md-sys-color-surface-container-lowest: #0c0e13;
+  --md-sys-color-surface-container-low: #1a1c20;
+  --md-sys-color-surface-container: #1e2025;
+  --md-sys-color-surface-container-high: #282a2f;
+  --md-sys-color-surface-container-highest: #33353a;
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
 }

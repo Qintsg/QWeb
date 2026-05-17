@@ -8,7 +8,7 @@
 - 数据库：PostgreSQL
 - 缓存与队列：Redis
 - 前端：Vue 3 + TypeScript + Vite + Pinia + Vue Router
-- UI：Fluent 2 Design System
+- UI：Material 3 Design System + Material Web
 - 业务方向：个人网站 / 个人基础设施门户 / 内容平台 / 工具中台
 - 主要模块：
   - accounts
@@ -253,9 +253,9 @@ test(blog): 补充文章发布权限测试
 4. 结果必须回到仓库实际代码与验证结论
 5. 同类能力避免重复调用
 
-### 7.2 Fluent 2 专项要求
+### 7.2 Material 3 专项要求
 
-涉及以下内容时，必须优先查阅 Fluent 2 官方文档：
+涉及以下内容时，必须优先查阅 Material Design 3 与 Material Web 官方文档：
 
 * 布局、导航、表单、排版、状态、Token、可访问性、反馈组件、密集型后台界面规范
 

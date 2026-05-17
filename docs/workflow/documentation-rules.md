@@ -51,7 +51,7 @@
 ## 6. 前端文档规则
 
 - 路由、新页面、布局切换、权限展示入口更新 `docs/frontend/routing.md`。
-- 设计系统、Fluent 2 组件使用方式、交互状态和响应式规则更新 `docs/frontend/design-system.md`。
+- 设计系统、Material Web 组件使用方式、交互状态和响应式规则更新 `docs/frontend/design-system.md`。
 - 前端只做权限体验优化，不把隐藏按钮描述成安全边界。
 
 ## 7. 工作流文档规则

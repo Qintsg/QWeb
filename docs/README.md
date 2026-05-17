@@ -26,7 +26,7 @@
 | 文档 | 说明 |
 |------|------|
 | [路由设计](frontend/routing.md) | 路由分区、守卫、懒加载 |
-| [设计系统](frontend/design-system.md) | Fluent 2 基线、Token 体系、主题 |
+| [设计系统](frontend/design-system.md) | Material 3、Material Web、Token 体系、主题 |
 
 ## 工作流
 
