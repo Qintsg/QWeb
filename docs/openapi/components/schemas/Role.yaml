@@ -1,0 +1,30 @@
+type: object
+required:
+  - id
+  - name
+  - display_name
+  - is_system
+  - level
+properties:
+  id:
+    type: string
+    format: uuid
+  name:
+    type: string
+    example: admin
+  display_name:
+    type: string
+    example: 管理员
+  description:
+    type: string
+    example: 系统管理员角色
+  is_system:
+    type: boolean
+    example: true
+  level:
+    type: integer
+    example: 10
+  permissions:
+    type: array
+    items:
+      $ref: ./PermissionBrief.yaml

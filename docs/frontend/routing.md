@@ -13,6 +13,15 @@
 | 用户工作区 | `DashboardLayout` | 登录 | 仪表盘、个人设置、业务模块 |
 | 管理后台 | `AdminLayout` | 登录 + 管理员权限 | 系统配置、审计日志、用户管理 |
 
+### 1.1 静态公开首页
+
+仓库根目录 `index.html` 是面向 `qintsg.cn` 与 `www.qintsg.cn` 的静态公开首页。
+
+- 不依赖 Vue Router、登录态、后台管理或后端 API。
+- 服务入口数据由当前数据库 `homepage_service_link` 可见记录固化生成。
+- 卡片跳转使用普通 `<a>` 外链，打开对应服务域名。
+- `frontend/index.html` 仍是 Vite 应用入口，二者部署职责分离。
+
 ---
 
 ## 2. 路由树
@@ -29,6 +38,7 @@
 /auth/register              # 注册
 /auth/forgot-password       # 忘记密码
 /auth/reset-password        # 重置密码
+/auth/github/callback       # GitHub OAuth 回调与首次绑定/注册选择
 
 /dashboard                  # 仪表盘首页
 /dashboard/profile          # 个人资料
@@ -65,6 +75,14 @@
 
 ---
 
+### 2.1 认证路由约定
+
+- GitHub 回调页统一承载三种状态：已绑定登录成功、未绑定时选择绑定已有账号、未绑定时创建新账号。
+- 前端统一调用 provider 化接口 `/api/v1/auth/oauth/{provider}/...`，当前仅接线 `github`；旧 `/api/v1/auth/github/...` 后端入口已删除。
+- 第三方邮箱相同只能用于提示用户，不作为自动绑定依据；绑定已有账号必须完成本地账号认证。
+
+---
+
 ## 3. 路由守卫
 
 ### 3.1 全局前置守卫
@@ -74,8 +92,8 @@ router.beforeEach:
 1. 检查目标路由 meta.requiresAuth
 2. 未登录 → 重定向 /auth/login?redirect=目标路径
 3. 已登录访问 /auth/* → 重定向 /dashboard
-4. 检查目标路由 meta.requiredPermission
-5. 权限不足 → 重定向 /403
+4. 检查目标路由 meta.permission，权限码使用 `{module}.{resource}.{action}` 格式，与后端 IAM 保持一致
+5. 权限不足 → 重定向 /403，并保留来源路径
 6. 检查目标路由 meta.requiredModule
 7. 模块已关闭 → 重定向 /module-disabled
 ```
@@ -85,7 +103,7 @@ router.beforeEach:
 ```typescript
 interface RouteMeta {
   requiresAuth?: boolean        // 是否需要登录
-  requiredPermission?: string   // 所需权限码
+  permission?: string           // 所需权限码
   requiredModule?: string       // 所需模块开关
   layout?: string               // 使用的 Layout
   title?: string                // 页面标题

@@ -1,189 +1,256 @@
 <!--
-  顶部头栏
-  显示面包屑/页面标题、用户菜单、语言切换
+  顶部应用栏。
+
+  :project: QWeb
+  :file: AppHeader.vue
+  :author: Qintsg
+  :date: 2026-05-17 00:00
 -->
 <template>
-  <header class="header">
-    <!-- 移动端菜单按钮 -->
-    <button class="header__menu-btn" @click="$emit('toggleSidebar')">
-      ☰
-    </button>
-
-    <div class="header__spacer" />
-
-    <!-- 语言切换 -->
-    <button class="header__action" @click="toggleLocale" :title="t('common.switchLang')">
-      {{ locale === 'zh-CN' ? 'EN' : '中' }}
-    </button>
-
-    <!-- 用户菜单 -->
-    <div class="header__user" @click="userMenuOpen = !userMenuOpen">
-      <span class="header__avatar">
-        {{ displayName.charAt(0).toUpperCase() }}
+  <header class="app-header">
+    <div class="app-header__context">
+      <p class="app-header__kicker">QWeb Console</p>
+      <span class="app-header__status" aria-label="运行状态：在线">
+        <span aria-hidden="true"></span>
+        Online
       </span>
-      <span class="header__username">{{ displayName }}</span>
+    </div>
 
-      <!-- 下拉菜单 -->
-      <div v-if="userMenuOpen" class="header__dropdown">
-        <router-link to="/profile" class="header__dropdown-item" @click="userMenuOpen = false">
-          {{ t('nav.profile') }}
-        </router-link>
-        <button class="header__dropdown-item header__dropdown-item--danger" @click="handleLogout">
-          {{ t('auth.logout') }}
+    <div class="app-header__actions">
+      <AppIconButton
+        :label="t('common.switchLang')"
+        icon="translate"
+        @click="toggleLocale"
+      />
+      <AppIconButton
+        :label="themeLabel"
+        :icon="themeIcon"
+        @click="toggleTheme"
+      />
+      <div class="app-header__user">
+        <button
+          type="button"
+          class="app-header__user-button"
+          :aria-expanded="userMenuOpen"
+          aria-haspopup="menu"
+          @click="userMenuOpen = !userMenuOpen"
+        >
+          <span class="app-header__avatar" aria-hidden="true">{{ displayInitial }}</span>
+          <span class="app-header__user-copy">
+            <span>{{ displayName || 'QWeb User' }}</span>
+            <small>{{ userGroup }}</small>
+          </span>
+          <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
         </button>
+        <div v-if="userMenuOpen" id="app-header-user-panel" class="app-header__menu">
+          <router-link to="/profile" @click="userMenuOpen = false">
+            <span class="material-symbols-rounded" aria-hidden="true">person</span>
+            {{ t('nav.profile') }}
+          </router-link>
+          <button type="button" @click="handleLogout">
+            <span class="material-symbols-rounded" aria-hidden="true">logout</span>
+            {{ t('auth.logout') }}
+          </button>
+        </div>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useAuth } from '@/composables/useAuth'
-
-defineEmits<{
-  toggleSidebar: []
-}>()
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
+import { useAuth } from "@/composables/useAuth"
+import { useTheme, type ThemeMode } from "@/composables/useTheme"
+import AppIconButton from "@/components/common/AppIconButton.vue"
 
 const router = useRouter()
 const { t, locale } = useI18n()
-const { displayName, logout } = useAuth()
+const { displayName, userGroup, logout } = useAuth()
+const { mode } = useTheme()
 
 const userMenuOpen = ref(false)
 
-function toggleLocale() {
-  locale.value = locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'
+const displayInitial = computed(() => (displayName.value || "Q").charAt(0).toUpperCase())
+const themeIcon = computed(() => {
+  if (mode.value === "dark") return "dark_mode"
+  if (mode.value === "light") return "light_mode"
+  return "contrast"
+})
+const themeLabel = computed(() => `切换主题，当前：${mode.value}`)
+
+function toggleLocale(): void {
+  locale.value = locale.value === "zh-CN" ? "en-US" : "zh-CN"
 }
 
-async function handleLogout() {
+function toggleTheme(): void {
+  const modes: ThemeMode[] = ["system", "light", "dark"]
+  const nextIndex = (modes.indexOf(mode.value) + 1) % modes.length
+  mode.value = modes[nextIndex]
+}
+
+async function handleLogout(): Promise<void> {
   userMenuOpen.value = false
   await logout()
-  router.push('/login')
+  router.push("/login")
 }
 </script>
 
 <style scoped>
-.header {
+.app-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  min-block-size: 4.5rem;
   display: flex;
   align-items: center;
-  height: 56px;
-  padding: 0 var(--q-space-24);
-  background: var(--q-color-surface);
-  border-bottom: 1px solid var(--q-color-stroke);
-  gap: var(--q-space-12);
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: var(--space-sm);
+  padding-inline: clamp(var(--space-md), 2vw, var(--space-xl));
+  border-block-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 88%, transparent);
+  backdrop-filter: blur(1.25rem);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
-.header__menu-btn {
-  display: none;
-  background: transparent;
-  border: none;
-  font-size: var(--q-font-size-xl);
-  cursor: pointer;
-  color: var(--q-color-text-secondary);
-  padding: var(--q-space-8);
+.app-header__context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
-.header__spacer {
-  flex: 1;
+.app-header__kicker {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.header__action {
-  background: transparent;
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-sm);
-  padding: var(--q-space-8) var(--q-space-12);
-  color: var(--q-color-text-secondary);
-  cursor: pointer;
-  font-size: var(--q-font-size-sm);
-  transition: all 0.15s ease;
+.app-header__status {
+  min-block-size: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-inline: var(--space-sm);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
 }
 
-.header__action:hover {
-  border-color: var(--q-color-brand);
-  color: var(--q-color-brand);
+.app-header__status span {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary);
 }
 
-.header__user {
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.app-header__user {
   position: relative;
-  display: flex;
+}
+
+.app-header__user-button {
+  min-block-size: 3rem;
+  display: inline-flex;
   align-items: center;
-  gap: var(--q-space-8);
-  cursor: pointer;
-  padding: var(--q-space-8) var(--q-space-12);
-  border-radius: var(--q-radius-md);
-  transition: background 0.15s ease;
-}
-
-.header__user:hover {
-  background: var(--q-color-canvas);
-}
-
-.header__avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--q-color-brand);
-  color: white;
-  font-weight: 600;
-  font-size: var(--q-font-size-sm);
-}
-
-.header__username {
-  font-size: var(--q-font-size-sm);
-  color: var(--q-color-text-primary);
-  font-weight: 500;
-}
-
-.header__dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: var(--q-space-8);
-  min-width: 160px;
-  background: var(--q-color-surface);
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-md);
-  box-shadow: var(--q-shadow-lg);
-  z-index: var(--q-z-dropdown);
-  overflow: hidden;
-}
-
-.header__dropdown-item {
-  display: block;
-  width: 100%;
-  padding: var(--q-space-12) var(--q-space-16);
-  background: transparent;
+  gap: var(--space-sm);
+  padding-inline: var(--space-sm);
   border: none;
-  text-align: left;
-  text-decoration: none;
-  color: var(--q-color-text-primary);
-  font-size: var(--q-font-size-sm);
-  cursor: pointer;
-  transition: background 0.15s ease;
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
 }
 
-.header__dropdown-item:hover {
-  background: var(--q-color-canvas);
+.app-header__avatar {
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
 }
 
-.header__dropdown-item--danger {
-  color: var(--q-color-error);
+.app-header__user-copy {
+  display: grid;
+  text-align: start;
 }
 
-.header__dropdown-item--danger:hover {
-  background: #fef2f2;
+.app-header__user-copy span {
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
 }
 
-@media (max-width: 768px) {
-  .header__menu-btn {
-    display: block;
+.app-header__user-copy small {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-small-font);
+  font-size: var(--md-sys-typescale-label-small-size);
+  font-weight: var(--md-sys-typescale-label-small-weight);
+  line-height: var(--md-sys-typescale-label-small-line-height);
+}
+
+.app-header__menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-sm));
+  inset-inline-end: 0;
+  min-inline-size: 12rem;
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.app-header__menu a,
+.app-header__menu button {
+  min-block-size: 3rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline: var(--space-md);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-medium);
+  color: var(--md-sys-color-on-surface);
+  background: transparent;
+  text-align: start;
+}
+
+.app-header__menu a:hover,
+.app-header__menu button:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+@media (max-width: 599px) {
+  .app-header {
+    min-block-size: 4rem;
   }
 
-  .header__username {
+  .app-header__context,
+  .app-header__user-copy,
+  .app-header__user-button > .material-symbols-rounded {
     display: none;
   }
 }

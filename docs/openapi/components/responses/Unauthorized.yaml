@@ -1,0 +1,8 @@
+description: 未提供认证凭据，或认证凭据无效。
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/ErrorResponse.yaml
+    example:
+      code: 401
+      message: 未认证

@@ -1,0 +1,51 @@
+type: object
+required:
+  - id
+  - username
+  - action
+  - module
+  - resource
+  - resource_id
+  - detail
+  - created_at
+properties:
+  id:
+    type: string
+    format: uuid
+  username:
+    type: string
+    example: qintsg
+  action:
+    type: string
+    enum:
+      - create
+      - update
+      - delete
+      - export
+      - import
+      - assign
+      - revoke
+      - approve
+      - reject
+      - other
+  module:
+    type: string
+    example: iam
+  resource:
+    type: string
+    example: role
+  resource_id:
+    type: string
+    example: 31ed2b49-4ca1-4c75-b444-a49b85de27a5
+  detail:
+    type: object
+    additionalProperties: true
+  ip_address:
+    type: string
+    nullable: true
+    example: 127.0.0.1
+  user_agent:
+    type: string
+  created_at:
+    type: string
+    format: date-time

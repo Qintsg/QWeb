@@ -1,8 +1,18 @@
-﻿<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { getUsers, createUser, updateUser, deleteUser, type UserListQuery, type CreateUserRequest } from '@/api/users'
-import type { UserInfo, UserGroup } from '@/types/auth'
+<!--
+  用户管理页面视图。
+
+  :project: QWeb
+  :file: UsersPage.vue
+  :author: Qintsg
+  :date: 2026-05-17 00:00
+-->
+<script setup lang="ts">
+import { onMounted, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { getUsers, toggleUserActive, updateUser, type UserListQuery } from "@/api/users"
+import type { UserGroup, UserInfo } from "@/types/auth"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 
@@ -12,167 +22,149 @@ const totalCount = ref(0)
 const query = ref<UserListQuery>({
   page: 1,
   page_size: 10,
-  search: '',
+  search: "",
 })
 
 const isDialogOpen = ref(false)
-const dialogMode = ref<'create'|'edit'>('create')
-const editId = ref('')
-const dialogForm = ref<CreateUserRequest>({
-  username: '',
-  email: '',
-  password: '',
-  display_name: '',
-  user_group: 'user',
+const editId = ref("")
+const dialogForm = ref({
+  username: "",
+  email: "",
+  nickname: "",
+  user_group: "user",
 })
 
-const userGroups: UserGroup[] = ['owner', 'admin', 'trusted', 'user', 'guest']
+const userGroups: UserGroup[] = ["owner", "admin", "trusted", "user", "guest"]
 
-async function fetchUsers() {
+async function fetchUsers(): Promise<void> {
   loading.value = true
   try {
     const res = await getUsers(query.value)
-    // res.data 遵循 ApiResponse<PaginatedResponse<UserInfo>>
     const data = res.data.data
     users.value = data.results || []
     totalCount.value = data.count || 0
   } catch (err) {
-    console.error('Failed to fetch users', err)
+    console.error("Failed to fetch users", err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => {
-  fetchUsers()
-})
-
-function handleSearch() {
+function handleSearch(): void {
   query.value.page = 1
   fetchUsers()
 }
 
-function openCreate() {
-  dialogMode.value = 'create'
-  dialogForm.value = {
-    username: '',
-    email: '',
-    password: '',
-    display_name: '',
-    user_group: 'user',
-  }
-  isDialogOpen.value = true
-}
-
-function openEdit(user: UserInfo) {
-  dialogMode.value = 'edit'
-  editId.value = user.id
+function openEdit(user: UserInfo): void {
+  editId.value = String(user.uid)
   dialogForm.value = {
     username: user.username,
-    email: user.email,
-    password: '', // Leave blank, only fill if changing
-    display_name: user.display_name || '',
-    user_group: user.user_group,
+    email: user.contact?.email || "",
+    nickname: user.nickname || "",
+    user_group: user.user_type === "admin" ? "admin" : "user",
   }
   isDialogOpen.value = true
 }
 
-function closeDialog() {
+function closeDialog(): void {
   isDialogOpen.value = false
 }
 
-async function handleSave() {
+async function handleSave(): Promise<void> {
   try {
-    if (dialogMode.value === 'create') {
-      await createUser(dialogForm.value)
-    } else {
-      const payload: Partial<UserInfo> = {
-        email: dialogForm.value.email,
-        display_name: dialogForm.value.display_name,
-        user_group: dialogForm.value.user_group,
-      }
-      if (dialogForm.value.password) {
-        // Assume API takes password in patch if we want to reset it, or we handle it separately.
-        (payload as any).password = dialogForm.value.password
-      }
-      await updateUser(editId.value, payload)
+    const payload: Partial<UserInfo> = {
+      nickname: dialogForm.value.nickname,
+      contact: { email: dialogForm.value.email } as UserInfo["contact"],
     }
+    await updateUser(editId.value, payload)
     isDialogOpen.value = false
     fetchUsers()
   } catch (err) {
-    console.error('Save user failed', err)
-    alert('Save failed. See console for details.')
+    console.error("Save user failed", err)
+    window.alert("Save failed. See console for details.")
   }
 }
 
-async function handleDelete(user: UserInfo) {
-  if (confirm(`Are you sure you want to delete user ${user.username}?`)) {
+async function handleToggleActive(user: UserInfo): Promise<void> {
+  const action = user.is_active ? "disable" : "enable"
+  if (window.confirm(`Are you sure you want to ${action} user ${user.username}?`)) {
     try {
-      await deleteUser(user.id)
+      await toggleUserActive(user.uid)
       fetchUsers()
     } catch (err) {
-      console.error('Delete failed', err)
-      alert('Delete failed. See console for details.')
+      console.error("Toggle active failed", err)
+      window.alert("Operation failed. See console for details.")
     }
   }
 }
+
+function userTone(user: UserInfo): "primary" | "success" | "error" {
+  if (!user.is_active) return "error"
+  if (user.user_type === "admin") return "primary"
+  return "success"
+}
+
+onMounted(() => {
+  fetchUsers()
+})
 </script>
 
 <template>
-  <div class="page-container">
-    <div class="page-header">
-      <h1 class="page-title">{{ t('nav.users', 'User Management') }}</h1>
-      <fluent-button appearance="accent" @click="openCreate">Add User</fluent-button>
-    </div>
+  <div class="data-page">
+    <PageHeader
+      :title="t('nav.users', 'User Management')"
+      description="管理账号状态、联系方式与后台可见身份信息。"
+      eyebrow="Accounts"
+    >
+      <template #actions>
+        <StatusPill :label="`${totalCount} users`" tone="primary" icon="group" />
+      </template>
+    </PageHeader>
 
-    <fluent-card class="table-card">
-      <div class="toolbar">
-        <fluent-text-field
+    <section class="data-surface" aria-labelledby="users-table-title">
+      <div class="data-toolbar">
+        <h2 id="users-table-title">用户列表</h2>
+        <md-outlined-text-field
           :value="query.search"
+          label="Search username or email"
           @input="query.search = ($event.target as HTMLInputElement).value"
           @keyup.enter="handleSearch"
-          placeholder="Search username or email..."
         >
-          <span slot="end" class="search-icon" @click="handleSearch">🔍</span>
-        </fluent-text-field>
+          <span slot="trailing-icon" class="material-symbols-rounded" aria-hidden="true">search</span>
+        </md-outlined-text-field>
       </div>
 
-      <div class="table-responsive">
-        <table class="qweb-table">
+      <div class="table-wrap">
+        <table>
           <thead>
             <tr>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Display Name</th>
-              <th>Group</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Display Name</th>
+              <th scope="col">Group</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="loading">
-              <td colspan="6" class="text-center">Loading...</td>
+              <td colspan="6" class="table-state">Loading...</td>
             </tr>
             <tr v-else-if="users.length === 0">
-              <td colspan="6" class="text-center">No users found.</td>
+              <td colspan="6" class="table-state">No users found.</td>
             </tr>
-            <tr v-else v-for="user in users" :key="user.id">
+            <tr v-for="user in users" v-else :key="user.uid">
               <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.display_name || '-' }}</td>
+              <td>{{ user.contact?.email || '-' }}</td>
+              <td>{{ user.nickname || '-' }}</td>
+              <td><StatusPill :label="user.user_type" :tone="userTone(user)" icon="badge" /></td>
+              <td><StatusPill :label="user.is_active ? 'Active' : 'Inactive'" :tone="user.is_active ? 'success' : 'error'" :icon="user.is_active ? 'check_circle' : 'block'" /></td>
               <td>
-                <fluent-badge :appearance="user.user_group === 'admin' || user.user_group === 'owner' ? 'accent' : 'neutral'">
-                  {{ user.user_group }}
-                </fluent-badge>
-              </td>
-              <td>
-                <span :class="['status-dot', user.is_active ? 'active' : 'inactive']"></span>
-                {{ user.is_active ? 'Active' : 'Inactive' }}
-              </td>
-              <td>
-                <div class="action-buttons">
-                  <fluent-button appearance="stealth" @click="openEdit(user)">Edit</fluent-button>
-                  <fluent-button appearance="stealth" style="color: var(--q-color-error)" @click="handleDelete(user)">Delete</fluent-button>
+                <div class="row-actions">
+                  <md-text-button type="button" @click="openEdit(user)">Edit</md-text-button>
+                  <md-text-button type="button" @click="handleToggleActive(user)">
+                    {{ user.is_active ? 'Disable' : 'Enable' }}
+                  </md-text-button>
                 </div>
               </td>
             </tr>
@@ -180,209 +172,129 @@ async function handleDelete(user: UserInfo) {
         </table>
       </div>
 
-      <div class="pagination" v-if="totalCount > query.page_size!">
-        <fluent-button 
-          :disabled="query.page === 1" 
-          @click="query.page!--; fetchUsers()"
-        >Prev</fluent-button>
+      <div v-if="totalCount > query.page_size!" class="pagination">
+        <md-outlined-button type="button" :disabled="query.page === 1" @click="query.page!--; fetchUsers()">Prev</md-outlined-button>
         <span>Page {{ query.page }}</span>
-        <fluent-button 
-          :disabled="(query.page! * query.page_size!) >= totalCount" 
-          @click="query.page!++; fetchUsers()"
-        >Next</fluent-button>
+        <md-outlined-button type="button" :disabled="(query.page! * query.page_size!) >= totalCount" @click="query.page!++; fetchUsers()">Next</md-outlined-button>
       </div>
-    </fluent-card>
+    </section>
 
-    <!-- Dialog -->
-    <fluent-dialog :hidden="!isDialogOpen" id="user-dialog" trap-focus modal>
-      <div class="dialog-content">
-        <h2 slot="header">{{ dialogMode === 'create' ? 'Create User' : 'Edit User' }}</h2>
-        <div class="dialog-body">
-          <div class="form-field">
-            <label>Username</label>
-            <fluent-text-field
-              :value="dialogForm.username"
-              @input="dialogForm.username = ($event.target as HTMLInputElement).value"
-              :disabled="dialogMode === 'edit'"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-          <div class="form-field">
-            <label>Email</label>
-            <fluent-text-field
-              type="email"
-              :value="dialogForm.email"
-              @input="dialogForm.email = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-          <div class="form-field">
-            <label>Display Name</label>
-            <fluent-text-field
-              :value="dialogForm.display_name"
-              @input="dialogForm.display_name = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-          <div class="form-field">
-            <label>Password {{ dialogMode === 'edit' ? '(Leave blank to keep)' : '' }}</label>
-            <fluent-text-field
-              type="password"
-              :value="dialogForm.password"
-              @input="dialogForm.password = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-          <div class="form-field">
-            <label>User Group</label>
-            <select class="native-select" v-model="dialogForm.user_group" style="width: 100%">
-              <option v-for="g in userGroups" :key="g" :value="g">{{ g }}</option>
-            </select>
-          </div>
-        </div>
-        <div class="dialog-footer" slot="footer">
-          <fluent-button appearance="outline" @click="closeDialog">Cancel</fluent-button>
-          <fluent-button appearance="accent" @click="handleSave">Save</fluent-button>
-        </div>
+    <md-dialog :open="isDialogOpen" @closed="closeDialog">
+      <div slot="headline">Edit User</div>
+      <form slot="content" class="dialog-form" method="dialog" @submit.prevent="handleSave">
+        <md-outlined-text-field :value="dialogForm.username" label="Username" disabled></md-outlined-text-field>
+        <md-outlined-text-field type="email" :value="dialogForm.email" label="Email" @input="dialogForm.email = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-text-field :value="dialogForm.nickname" label="Nickname" @input="dialogForm.nickname = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+        <md-outlined-select :value="dialogForm.user_group" label="User Group" disabled>
+          <md-select-option v-for="group in userGroups" :key="group" :value="group">{{ group }}</md-select-option>
+        </md-outlined-select>
+      </form>
+      <div slot="actions">
+        <md-text-button type="button" @click="closeDialog">Cancel</md-text-button>
+        <md-filled-button type="button" @click="handleSave">Save</md-filled-button>
       </div>
-    </fluent-dialog>
+    </md-dialog>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: var(--q-space-32);
+.data-page,
+.data-surface,
+.dialog-form {
+  display: grid;
+  gap: var(--space-lg);
 }
 
-.page-header {
+.data-surface {
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.data-toolbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--q-space-24);
+  justify-content: space-between;
+  gap: var(--space-md);
 }
 
-.page-title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--q-color-text-primary);
+.data-toolbar h2 {
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
 }
 
-.table-card {
-  padding: var(--q-space-24);
-  border-radius: var(--q-radius-lg);
-  background: var(--q-color-surface);
-  box-shadow: var(--q-shadow-sm);
+.data-toolbar md-outlined-text-field {
+  inline-size: min(100%, 22rem);
 }
 
-.toolbar {
-  margin-bottom: var(--q-space-24);
-  display: flex;
-  gap: var(--q-space-16);
-}
-
-.search-icon {
-  cursor: pointer;
-  padding: 0 8px;
-  line-height: 32px;
-}
-
-.table-responsive {
+.table-wrap {
   overflow-x: auto;
 }
 
-.qweb-table {
-  width: 100%;
+table {
+  inline-size: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
 }
 
-.qweb-table th,
-.qweb-table td {
-  text-align: left;
-  padding: var(--q-space-16);
-  border-bottom: 1px solid var(--q-color-stroke);
+th,
+td {
+  padding-block: var(--space-md);
+  padding-inline: var(--space-md);
+  border-block-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  text-align: start;
+  vertical-align: middle;
 }
 
-.qweb-table th {
-  font-weight: 600;
-  color: var(--q-color-text-secondary);
-  background: var(--q-color-surface-alt, #fafafa);
+th {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
 }
 
-.text-center {
-  text-align: center !important;
-  color: var(--q-color-text-secondary);
-  padding: var(--q-space-32) !important;
+td,
+.pagination {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-}
-.status-dot.active {
-  background: #107c10;
-}
-.status-dot.inactive {
-  background: var(--q-color-error, #d32f2f);
+.table-state {
+  padding: var(--space-xxl);
+  color: var(--md-sys-color-on-surface-variant);
+  text-align: center;
 }
 
-.action-buttons {
+.row-actions,
+.pagination {
   display: flex;
-  gap: var(--q-space-12);
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 .pagination {
-  margin-top: var(--q-space-24);
-  display: flex;
   justify-content: center;
-  align-items: center;
-  gap: var(--q-space-16);
 }
 
-.dialog-content {
-  padding: var(--q-space-24) var(--q-space-32);
-  min-width: 400px;
+.dialog-form md-outlined-text-field,
+.dialog-form md-outlined-select {
+  inline-size: min(100%, 28rem);
 }
 
-.dialog-content h2 {
-  margin-top: 0;
-  margin-bottom: var(--q-space-16);
-}
+@media (max-width: 839px) {
+  .data-toolbar {
+    align-items: start;
+    flex-direction: column;
+  }
 
-.dialog-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-16);
-  margin-bottom: var(--q-space-32);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-8);
-}
-
-.form-field label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--q-color-text-secondary);
-}
-
-.native-select {
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--q-color-stroke);
-  background: var(--q-color-surface);
-  font-size: 0.875rem;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--q-space-16);
+  .data-toolbar md-outlined-text-field {
+    inline-size: 100%;
+  }
 }
 </style>

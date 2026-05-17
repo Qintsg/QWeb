@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+注册当前模块的 URL 路由。
+@Project : QWeb
+@File : urls.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView

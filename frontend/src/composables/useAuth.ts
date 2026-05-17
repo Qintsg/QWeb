@@ -1,7 +1,10 @@
 /**
- * 认证组合式函数
+ * 认证组合式函数。
  *
- * 封装认证 store 的常用操作，提供便捷的模板层调用接口
+ * :project: QWeb
+ * :file: useAuth.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import { computed } from "vue"
 import { useAuthStore } from "@/stores/auth"

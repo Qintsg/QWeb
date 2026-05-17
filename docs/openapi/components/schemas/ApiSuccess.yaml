@@ -1,0 +1,17 @@
+type: object
+required:
+  - code
+  - message
+  - data
+properties:
+  code:
+    type: integer
+    example: 0
+  message:
+    type: string
+    example: 操作成功
+  data:
+    type: object
+    nullable: true
+    additionalProperties: true
+    description: 具体接口定义的响应数据。

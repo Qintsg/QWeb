@@ -1,8 +1,12 @@
-"""统一业务异常定义。
-
-所有业务层异常应继承 BusinessException，在 exception_handler 中统一捕获并格式化输出。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+统一业务异常定义。
+@Project : QWeb
+@File : exceptions.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from rest_framework import status as http_status
@@ -23,6 +27,7 @@ class BusinessException(Exception):
         code: int = 1,
         status_code: int = http_status.HTTP_400_BAD_REQUEST,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         self.message = message
         self.code = code
         self.status_code = status_code
@@ -37,6 +42,7 @@ class PermissionDeniedException(BusinessException):
         message: str = "权限不足，拒绝访问",
         code: int = 4030,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         super().__init__(message=message, code=code, status_code=http_status.HTTP_403_FORBIDDEN)
 
 
@@ -48,6 +54,7 @@ class AuthenticationFailedException(BusinessException):
         message: str = "认证失败，请重新登录",
         code: int = 4010,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         super().__init__(message=message, code=code, status_code=http_status.HTTP_401_UNAUTHORIZED)
 
 
@@ -59,6 +66,7 @@ class ResourceNotFoundException(BusinessException):
         message: str = "请求的资源不存在",
         code: int = 4040,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         super().__init__(message=message, code=code, status_code=http_status.HTTP_404_NOT_FOUND)
 
 
@@ -71,6 +79,7 @@ class ValidationException(BusinessException):
         code: int = 4220,
         errors: dict | list | None = None,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         self.errors = errors
         super().__init__(
             message=message,
@@ -87,4 +96,5 @@ class ConflictException(BusinessException):
         message: str = "资源已存在或状态冲突",
         code: int = 4090,
     ) -> None:
+        """初始化当前对象的业务状态。"""
         super().__init__(message=message, code=code, status_code=http_status.HTTP_409_CONFLICT)

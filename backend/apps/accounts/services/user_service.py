@@ -1,8 +1,12 @@
-"""用户信息服务层。
-
-包含用户资料更新等业务逻辑。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户信息服务层。
+@Project : QWeb
+@File : user_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from typing import Any
@@ -14,19 +18,18 @@ User = get_user_model()
 
 def update_profile(
     *,
-    user,
+    user: Any,
     data: dict[str, Any],
 ) -> None:
     """更新用户资料。
 
-    支持同时更新 User 上的 display_name 和 UserProfile 上的字段。
+    支持同时更新 User 上的 nickname/avatar_url 和 UserProfile 上的字段。
 
-    Args:
-        user: 用户实例
-        data: 包含待更新字段的字典
+    :param user: 用户实例
+    :param data: 包含待更新字段的字典
     """
     # User 模型上可更新的字段
-    user_fields = {"display_name"}
+    user_fields = {"nickname", "avatar_url"}
     user_update = {}
     profile_update = {}
 
@@ -39,7 +42,7 @@ def update_profile(
     if user_update:
         for attr, value in user_update.items():
             setattr(user, attr, value)
-        user.save(update_fields=list(user_update.keys()))
+        user.save(update_fields=[*user_update.keys(), "updated_at"])
 
     if profile_update:
         profile = user.profile

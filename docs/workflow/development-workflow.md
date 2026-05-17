@@ -26,29 +26,48 @@ psql -U postgres -f docs/postgresql-init.sql
 
 # 3. 后端环境
 cd backend
-python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+uv sync
 cp .env.example .env           # 修改 .env 中的数据库与 Redis 配置
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver 0.0.0.0:8001
+uv run python manage.py migrate
+uv run python manage.py createsuperuser
+uv run python manage.py runserver 0.0.0.0:8000
 
 # 4. 前端环境
 cd ../frontend
 npm install
 cp .env.example .env           # 修改 API 代理地址
-npm run dev                    # 启动在 http://localhost:3001
+npm run dev                    # 启动在 http://localhost:3000
 ```
 
 ### 1.3 端口规划
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| Django 后端 | 8001 | API 服务 |
-| Vite 前端 | 3001 | 开发服务器 |
+| Django 后端 | 8000 | API 服务 |
+| Vite 前端 | 3000 | 开发服务器 |
 | PostgreSQL | 5432 | 数据库 |
 | Redis | 6379 | 缓存/队列 |
+
+### 1.4 GitHub OAuth 登录
+
+本地 GitHub OAuth App 的回调地址应配置为：
+
+```text
+http://127.0.0.1:3000/auth/github/callback
+```
+
+后端使用以下环境变量读取 GitHub OAuth 配置：
+
+```env
+GITHUB_OAUTH_CLIENT_ID=your-client-id
+GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
+GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
+GITHUB_OAUTH_STATE_MAX_AGE=600
+```
+
+GitHub `client_secret` 只允许配置在后端 `.env`，前端通过 `/api/v1/auth/oauth/github/authorize/` 获取授权地址，不直接持有密钥。旧 `/api/v1/auth/github/authorize/` 已删除，新代码统一使用 provider 化接口。
+
+首次 GitHub 登录未命中既有关联时，前端回调页会进入“绑定已有账号 / 创建新账号”选择流程。即使第三方邮箱与本地邮箱相同，也只作为提示，不自动绑定。
 
 ---
 
@@ -161,7 +180,7 @@ network_tools → frp_manager → ssh_gateway → mc_manager → mail_center →
 ### 4.1 全局基础搭建（一次性）
 
 ```text
-1. 安装 Fluent 2 Token / 组件库
+1. 安装 Material 3 Token / `@material/web` 组件库
 2. 创建 Layout 组件（PublicLayout、DashboardLayout、AdminLayout）
 3. 配置路由结构与守卫
 4. 实现 Auth Store + API Client（JWT 注入、拦截器）
@@ -188,7 +207,7 @@ network_tools → frp_manager → ssh_gateway → mc_manager → mail_center →
 ```text
 1. 后端完成 API → 在 /api/docs/ (Swagger) 中验证
 2. 前端根据 Swagger 文档编写 API 层
-3. Vite 开发服务器代理 /api/* → localhost:8001
+3. Vite 开发服务器代理 /api/* → localhost:8000
 4. 联调验证：
    a. 正常流程测试
    b. 权限拒绝场景

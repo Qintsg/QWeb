@@ -1,0 +1,18 @@
+type: object
+required:
+  - roles
+  - permissions
+properties:
+  roles:
+    type: array
+    items:
+      type: string
+    example:
+      - admin
+  permissions:
+    type: array
+    items:
+      type: string
+    example:
+      - iam.role.view
+      - homepage.service_link.manage

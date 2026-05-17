@@ -1,201 +1,226 @@
 <!--
-  侧边导航栏
-  支持折叠/展开，根据权限动态渲染导航项
+  自适应侧边导航栏。
+
+  :project: QWeb
+  :file: AppSidebar.vue
+  :author: Qintsg
+  :date: 2026-05-17 00:00
 -->
 <template>
-  <aside class="sidebar" :class="{ 'sidebar--collapsed': collapsed }">
-    <!-- 品牌标识 -->
-    <div class="sidebar__brand" @click="$emit('toggle')">
-      <span class="sidebar__logo">Q</span>
-      <span v-if="!collapsed" class="sidebar__brand-text">Qintsg's Web</span>
-    </div>
+  <nav class="app-nav" aria-label="主导航">
+    <router-link to="/dashboard" class="app-nav__brand" aria-label="返回仪表盘">
+      <span class="app-nav__logo" aria-hidden="true">Q</span>
+      <span class="app-nav__brand-copy">
+        <strong>Qintsg</strong>
+        <small>Infrastructure OS</small>
+      </span>
+    </router-link>
 
-    <!-- 导航列表 -->
-    <nav class="sidebar__nav">
-      <router-link
-        v-for="item in visibleNavItems"
-        :key="item.path"
-        :to="item.path"
-        class="sidebar__item"
-        active-class="sidebar__item--active"
-      >
-        <span class="sidebar__icon">{{ item.icon }}</span>
-        <span v-if="!collapsed" class="sidebar__label">{{ t(item.labelKey) }}</span>
-      </router-link>
-    </nav>
-
-    <!-- 底部折叠按钮 -->
-    <div class="sidebar__footer">
-      <button class="sidebar__toggle" @click="$emit('toggle')">
-        {{ collapsed ? '→' : '←' }}
-      </button>
-    </div>
-  </aside>
+    <ul class="app-nav__list">
+      <li v-for="item in visibleNavItems" :key="item.path">
+        <router-link :to="item.path" class="app-nav__item" :aria-label="t(item.labelKey)">
+          <span class="material-symbols-rounded" aria-hidden="true">{{ item.icon }}</span>
+          <span>{{ t(item.labelKey) }}</span>
+        </router-link>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { usePermission } from '@/composables/usePermission'
-
-defineProps<{
-  collapsed: boolean
-}>()
-
-defineEmits<{
-  toggle: []
-}>()
+import { computed } from "vue"
+import { useI18n } from "vue-i18n"
+import { usePermission } from "@/composables/usePermission"
 
 const { t } = useI18n()
 const { hasPermission } = usePermission()
 
-/** 导航项定义 */
 interface NavItem {
   path: string
   labelKey: string
   icon: string
-  /** 所需权限码，为空表示所有已认证用户可见 */
   permission?: string
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', labelKey: 'nav.dashboard', icon: '📊' },
-  { path: '/users', labelKey: 'nav.users', icon: '👥', permission: 'accounts.view_user' },
-  { path: '/roles', labelKey: 'nav.roles', icon: '🛡️', permission: 'iam.view_role' },
-  { path: '/permissions', labelKey: 'nav.permissions', icon: '🔑', permission: 'iam.view_permission' },
-  { path: '/service-links', labelKey: 'nav.serviceLinks', icon: '🔗', permission: 'homepage.service_link.manage' },
-  { path: '/audit-logs', labelKey: 'nav.auditLogs', icon: '📋', permission: 'audit.view_auditlog' },
-  { path: '/login-logs', labelKey: 'nav.loginLogs', icon: '🔒', permission: 'audit.view_loginlog' },
-  { path: '/profile', labelKey: 'nav.profile', icon: '👤' },
+  { path: "/dashboard", labelKey: "nav.dashboard", icon: "dashboard" },
+  { path: "/users", labelKey: "nav.userManagement", icon: "group", permission: "accounts.user.view" },
+  { path: "/roles", labelKey: "nav.roleManagement", icon: "admin_panel_settings", permission: "iam.role.view" },
+  { path: "/permissions", labelKey: "nav.permissionManagement", icon: "vpn_key", permission: "iam.permission.view" },
+  { path: "/service-links", labelKey: "nav.serviceLinks", icon: "hub", permission: "homepage.service_link.manage" },
+  { path: "/audit-logs", labelKey: "nav.auditLogs", icon: "assignment", permission: "audit.log.view" },
+  { path: "/login-logs", labelKey: "nav.loginLogs", icon: "shield_lock", permission: "audit.log.view" },
+  { path: "/profile", labelKey: "nav.profile", icon: "person" },
 ]
 
-/** 根据权限过滤可见导航项 */
 const visibleNavItems = computed(() =>
   navItems.filter((item) => !item.permission || hasPermission(item.permission))
 )
 </script>
 
 <style scoped>
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 260px;
-  background: var(--q-color-surface);
-  border-right: 1px solid var(--q-color-stroke);
+.app-nav {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100dvh;
   display: flex;
   flex-direction: column;
-  z-index: var(--q-z-sticky);
-  transition: width 0.2s ease;
-  overflow: hidden;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+  border-inline-end: 0.0625rem solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-low);
 }
 
-.sidebar--collapsed {
-  width: 64px;
-}
-
-.sidebar__brand {
+.app-nav__brand {
+  min-block-size: 4rem;
   display: flex;
   align-items: center;
-  gap: var(--q-space-12);
-  padding: var(--q-space-16) var(--q-space-16);
-  border-bottom: 1px solid var(--q-color-stroke);
-  cursor: pointer;
-  min-height: 56px;
+  gap: var(--space-sm);
+  padding-inline: var(--space-sm);
+  border-radius: var(--md-sys-shape-corner-extra-large);
 }
 
-.sidebar__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--q-radius-sm);
-  background: var(--q-color-brand);
-  color: white;
-  font-weight: 700;
-  font-size: var(--q-font-size-base);
-  flex-shrink: 0;
+.app-nav__logo {
+  inline-size: 3rem;
+  block-size: 3rem;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: var(--md-sys-shape-corner-large);
+  color: var(--md-sys-color-on-primary);
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+  box-shadow: var(--md-sys-elevation-level2);
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
 }
 
-.sidebar__brand-text {
-  font-weight: 600;
-  font-size: var(--q-font-size-lg);
-  color: var(--q-color-text-primary);
-  white-space: nowrap;
+.app-nav__brand-copy {
+  display: grid;
+  gap: var(--space-xs);
 }
 
-.sidebar__nav {
-  flex: 1;
-  padding: var(--q-space-12) 0;
+.app-nav__brand-copy strong {
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-title-medium-font);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+}
+
+.app-nav__brand-copy small {
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-small-font);
+  font-size: var(--md-sys-typescale-label-small-size);
+  font-weight: var(--md-sys-typescale-label-small-weight);
+  line-height: var(--md-sys-typescale-label-small-line-height);
+}
+
+.app-nav__list {
+  display: grid;
+  gap: var(--space-xs);
+  list-style: none;
   overflow-y: auto;
 }
 
-.sidebar__item {
+.app-nav__item {
+  min-block-size: 3.5rem;
   display: flex;
   align-items: center;
-  gap: var(--q-space-12);
-  padding: var(--q-space-12) var(--q-space-16);
-  margin: 2px var(--q-space-8);
-  border-radius: var(--q-radius-md);
-  color: var(--q-color-text-secondary);
-  text-decoration: none;
-  font-size: var(--q-font-size-sm);
-  white-space: nowrap;
-  transition: all 0.15s ease;
+  gap: var(--space-md);
+  padding-inline: var(--space-md);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  transition:
+    color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    background var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
-.sidebar__item:hover {
-  background: var(--q-color-canvas);
-  color: var(--q-color-text-primary);
+.app-nav__item:hover {
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  transform: translateX(var(--space-xs));
 }
 
-.sidebar__item--active {
-  background: var(--q-color-brand-light);
-  color: var(--q-color-brand);
-  font-weight: 500;
+.app-nav__item.router-link-active {
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
 }
 
-.sidebar__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  flex-shrink: 0;
-  font-size: var(--q-font-size-base);
+@media (min-width: 600px) and (max-width: 1199px) {
+  .app-nav {
+    inline-size: var(--q-layout-rail-width);
+    padding-inline: var(--space-sm);
+  }
+
+  .app-nav__brand-copy,
+  .app-nav__item span:last-child {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .app-nav__brand,
+  .app-nav__item {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .app-nav__item:hover {
+    transform: translateY(calc(var(--space-xs) * -1));
+  }
 }
 
-.sidebar__label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+@media (max-width: 599px) {
+  .app-nav {
+    position: fixed;
+    inset-block: auto 0;
+    inset-inline: 0;
+    z-index: 40;
+    block-size: var(--q-layout-bottom-nav-height);
+    flex-direction: row;
+    align-items: center;
+    padding-block: var(--space-xs) max(var(--space-xs), env(safe-area-inset-bottom));
+    padding-inline: var(--space-sm);
+    border-block-start: 0.0625rem solid var(--md-sys-color-outline-variant);
+    border-inline-end: none;
+    box-shadow: var(--md-sys-elevation-level3);
+  }
 
-.sidebar__footer {
-  border-top: 1px solid var(--q-color-stroke);
-  padding: var(--q-space-12) var(--q-space-16);
-}
+  .app-nav__brand {
+    display: none;
+  }
 
-.sidebar__toggle {
-  width: 100%;
-  padding: var(--q-space-8);
-  background: transparent;
-  border: 1px solid var(--q-color-stroke);
-  border-radius: var(--q-radius-sm);
-  cursor: pointer;
-  color: var(--q-color-text-secondary);
-  font-size: var(--q-font-size-sm);
-  transition: all 0.15s ease;
-}
+  .app-nav__list {
+    inline-size: 100%;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    overflow-x: auto;
+  }
 
-.sidebar__toggle:hover {
-  border-color: var(--q-color-brand);
-  color: var(--q-color-brand);
-}
+  .app-nav__item {
+    min-block-size: 4rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding-inline: var(--space-xs);
+    border-radius: var(--md-sys-shape-corner-large);
+    font-size: var(--md-sys-typescale-label-small-size);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+  }
 
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
+  .app-nav__item:hover {
+    transform: none;
   }
 }
 </style>

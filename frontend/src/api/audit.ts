@@ -1,8 +1,10 @@
 /**
- * 审计日志 API
+ * 审计日志 API。
  *
- * 对应后端 apps/audit/api/views.py
- * 路由前缀：/api/v1/
+ * :project: QWeb
+ * :file: audit.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from "./client"
 import type { ApiResponse, PaginatedResponse, ListParams } from "@/types/api"

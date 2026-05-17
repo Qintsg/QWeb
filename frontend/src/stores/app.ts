@@ -1,3 +1,11 @@
+/**
+ * 定义 app Pinia 状态模块。
+ *
+ * :project: QWeb
+ * :file: app.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
+ */
 import { defineStore } from "pinia"
 
 type ModuleCard = {

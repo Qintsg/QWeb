@@ -1,5 +1,10 @@
 /**
- * 中文语言包（默认）
+ * 中文语言包（默认）。
+ *
+ * :project: QWeb
+ * :file: zh-CN.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 export default {
   common: {
@@ -7,6 +12,7 @@ export default {
     confirm: "确认",
     cancel: "取消",
     save: "保存",
+    switchLang: "切换语言",
     delete: "删除",
     edit: "编辑",
     create: "新建",
@@ -27,6 +33,7 @@ export default {
     createdAt: "创建时间",
     updatedAt: "更新时间",
     comingSoon: "即将推出",
+    backDashboard: "返回仪表盘",
   },
 
   auth: {
@@ -38,6 +45,13 @@ export default {
     confirmPassword: "确认密码",
     email: "邮箱",
     displayName: "显示名称",
+    nickname: "昵称",
+    accountIdentifier: "账号",
+    accountIdentifierPlaceholder: "用户名、邮箱或手机号",
+    usernamePlaceholder: "例如 qintsg.dev",
+    usernameRule: "3-32 位；可用字母、数字、短横线、下划线和点号；首尾必须是字母或数字。",
+    loginSubtitle: "使用用户名、邮箱、手机号或已绑定的第三方账号进入控制台。",
+    registerSubtitle: "创建本地账号后，可继续绑定第三方登录方式。",
     rememberMe: "记住我",
     forgotPassword: "忘记密码？",
     loginSuccess: "登录成功",
@@ -49,6 +63,30 @@ export default {
     confirmNewPassword: "确认新密码",
     passwordChanged: "密码已修改",
     sessionExpired: "登录已过期，请重新登录",
+    githubLogin: "使用 GitHub 登录",
+    githubLoginFailed: "GitHub 登录失败",
+    githubCallbackProcessing: "正在完成 GitHub 登录",
+    githubCallbackHint: "正在验证 GitHub 授权并创建本地会话。",
+    githubCallbackMissing: "GitHub 回调缺少必要参数，请重新发起登录。",
+    oauthAccountChoiceTitle: "完成第三方登录",
+    oauthAccountChoiceSubtitle: "这个 GitHub 账号尚未绑定本地账号。请选择绑定已有账号，或创建一个新账号。",
+    oauthEmailMatched: "第三方邮箱与已有账号相同，仅作为提示；仍需要登录已有账号确认绑定。",
+    bindExistingAccount: "绑定已有账号",
+    createOAuthAccount: "创建新账号",
+    bindAndLogin: "绑定并登录",
+    createAndLogin: "创建并登录",
+    oauthBindFailed: "第三方账号绑定失败",
+    oauthRegisterFailed: "第三方账号注册失败",
+    usernameRequired: "请填写用户名",
+    orLoginWith: "或",
+    backToLogin: "返回登录",
+    fillAllFields: "请填写用户名和密码",
+    fillRegisterFields: "请填写用户名、邮箱和密码",
+    loginFailed: "登录失败，请检查账号或密码",
+    registerFailed: "注册失败，请检查输入内容",
+    passwordMismatch: "两次密码输入不一致",
+    noAccount: "还没有账号？",
+    hasAccount: "已有账号？",
   },
 
   dashboard: {
@@ -145,6 +183,7 @@ export default {
   error: {
     unauthorized: "未授权，请先登录",
     forbidden: "没有权限执行此操作",
+    forbiddenDescription: "当前账号缺少访问此页面所需的权限。如需访问，请联系站点管理员调整角色或用户权限覆盖。",
     notFound: "请求的资源不存在",
     serverError: "服务器内部错误",
     networkError: "网络连接异常，请检查网络",

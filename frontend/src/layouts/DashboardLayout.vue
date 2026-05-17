@@ -1,58 +1,67 @@
 <!--
-  仪表盘布局 - 用于已认证的管理页面
-  左侧导航栏 + 顶部头栏 + 内容区域
+  仪表盘布局 - Material 3 自适应 App Shell。
+
+  :project: QWeb
+  :file: DashboardLayout.vue
+  :author: Qintsg
+  :date: 2026-05-17 00:00
 -->
 <template>
-  <div class="dashboard-layout">
-    <AppSidebar
-      :collapsed="sidebarCollapsed"
-      @toggle="sidebarCollapsed = !sidebarCollapsed"
-    />
-    <div class="dashboard-layout__main" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
-      <AppHeader @toggle-sidebar="sidebarCollapsed = !sidebarCollapsed" />
-      <main class="dashboard-layout__content">
-        <router-view />
+  <div class="dashboard-layout" :data-size="sizeClass">
+    <AppSidebar />
+    <div class="dashboard-layout__main">
+      <AppHeader />
+      <main id="main-content" class="dashboard-layout__content" tabindex="-1">
+        <router-view v-slot="{ Component }">
+          <Transition name="page-fade" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </router-view>
       </main>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import AppSidebar from '@/components/common/AppSidebar.vue'
-import AppHeader from '@/components/common/AppHeader.vue'
+import AppSidebar from "@/components/common/AppSidebar.vue"
+import AppHeader from "@/components/common/AppHeader.vue"
+import { useWindowSizeClass } from "@/composables/useWindowSizeClass"
 
-const sidebarCollapsed = ref(false)
+const { sizeClass } = useWindowSizeClass()
 </script>
 
 <style scoped>
 .dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-  background: var(--q-color-canvas);
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-columns: var(--q-layout-drawer-width) minmax(0, 1fr);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
+}
+
+.dashboard-layout[data-size="medium"],
+.dashboard-layout[data-size="expanded"] {
+  grid-template-columns: var(--q-layout-rail-width) minmax(0, 1fr);
+}
+
+.dashboard-layout[data-size="compact"] {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .dashboard-layout__main {
-  flex: 1;
+  min-inline-size: 0;
   display: flex;
   flex-direction: column;
-  margin-left: 260px;
-  transition: margin-left 0.2s ease;
-}
-
-.dashboard-layout__main.sidebar-collapsed {
-  margin-left: 64px;
 }
 
 .dashboard-layout__content {
-  flex: 1;
-  padding: var(--q-space-24);
-  overflow-y: auto;
+  inline-size: min(100%, var(--q-layout-content-max));
+  margin-inline: auto;
+  padding-block: 0 calc(var(--space-xxl) + env(safe-area-inset-bottom));
+  padding-inline: clamp(var(--space-md), 3vw, var(--space-xxl));
 }
 
-@media (max-width: 768px) {
-  .dashboard-layout__main {
-    margin-left: 0;
-  }
+.dashboard-layout[data-size="compact"] .dashboard-layout__content {
+  padding-block-end: calc(var(--q-layout-bottom-nav-height) + var(--space-xl));
 }
 </style>

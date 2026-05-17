@@ -1,0 +1,22 @@
+type: object
+required:
+  - id
+  - permission
+  - effect
+  - created_at
+properties:
+  id:
+    type: string
+    format: uuid
+  permission:
+    $ref: ./PermissionBrief.yaml
+  effect:
+    type: string
+    enum:
+      - allow
+      - deny
+  reason:
+    type: string
+  created_at:
+    type: string
+    format: date-time

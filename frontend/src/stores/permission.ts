@@ -1,8 +1,10 @@
 /**
- * 权限状态管理
+ * 权限状态管理。
  *
- * 管理当前用户的解析后权限集合，提供权限检查方法
- * 权限以后端为准，前端仅做 UX 层面优化
+ * :project: QWeb
+ * :file: permission.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import { ref, computed } from "vue"
 import { defineStore } from "pinia"

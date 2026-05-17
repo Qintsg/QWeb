@@ -1,13 +1,20 @@
-"""认证相关序列化器。
-
-包含注册、登录、Token 刷新、修改密码等接口的数据校验。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+认证相关序列化器。
+@Project : QWeb
+@File : auth.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+from apps.accounts.models import UserContact
+from apps.accounts.services.username_policy import validate_username_policy
 
 User = get_user_model()
 
@@ -16,7 +23,7 @@ class RegisterSerializer(serializers.Serializer):
     """用户注册请求。
 
     校验规则：
-    - username: 3~64 字符
+    - username: 3~32 字符，大小写不敏感唯一
     - email: 合法邮箱且未被注册
     - password: 至少 8 位，需通过 Django 密码验证器
     - password_confirm: 必须与 password 一致
@@ -24,8 +31,8 @@ class RegisterSerializer(serializers.Serializer):
 
     username = serializers.CharField(
         min_length=3,
-        max_length=64,
-        help_text="用户名，3~64 个字符。",
+        max_length=32,
+        help_text="用户名，3~32 个字符。",
     )
     email = serializers.EmailField(
         help_text="邮箱地址，需唯一。",
@@ -41,16 +48,17 @@ class RegisterSerializer(serializers.Serializer):
     )
 
     def validate_username(self, value: str) -> str:
-        """检查用户名唯一性。"""
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("该用户名已被注册")
-        return value
+        """检查用户名规则和唯一性。"""
+        try:
+            return validate_username_policy(value)
+        except Exception as exc:
+            raise serializers.ValidationError(getattr(exc, "message", "用户名不可用")) from exc
 
     def validate_email(self, value: str) -> str:
         """检查邮箱唯一性。"""
-        if User.objects.filter(email=value).exists():
+        if UserContact.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("该邮箱已被注册")
-        return value
+        return value.strip()
 
     def validate_password(self, value: str) -> str:
         """使用 Django 内置密码验证器校验密码强度。"""
@@ -77,6 +85,52 @@ class LoginSerializer(serializers.Serializer):
         write_only=True,
         help_text="密码。",
     )
+
+
+class OAuthAuthorizeSerializer(serializers.Serializer):
+    """第三方 OAuth 授权地址请求。"""
+
+    redirect = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="登录成功后回到前端的相对路径。",
+    )
+
+
+class OAuthCallbackSerializer(serializers.Serializer):
+    """第三方 OAuth 回调请求。"""
+
+    code = serializers.CharField(help_text="第三方平台回调返回的授权码。")
+    state = serializers.CharField(help_text="后端签名生成的 OAuth state。")
+
+
+class OAuthBindSerializer(serializers.Serializer):
+    """绑定第三方账号到已有账号。"""
+
+    pending_token = serializers.CharField(help_text="待绑定 OAuth 状态令牌。")
+    login = serializers.CharField(help_text="已有账号用户名、邮箱或手机号。")
+    password = serializers.CharField(write_only=True, help_text="已有账号密码。")
+
+
+class OAuthRegisterSerializer(serializers.Serializer):
+    """第三方账号自动注册请求。"""
+
+    pending_token = serializers.CharField(help_text="待注册 OAuth 状态令牌。")
+    username = serializers.CharField(min_length=3, max_length=32)
+    nickname = serializers.CharField(required=False, allow_blank=True, max_length=64)
+
+    def validate_username(self, value: str) -> str:
+        """校验当前字段是否满足业务规则。"""
+        try:
+            return validate_username_policy(value)
+        except Exception as exc:
+            raise serializers.ValidationError(getattr(exc, "message", "用户名不可用")) from exc
+
+
+class LogoutSerializer(serializers.Serializer):
+    """登出请求。"""
+
+    refresh = serializers.CharField(help_text="需要吊销的 refresh token。")
 
 
 class ChangePasswordSerializer(serializers.Serializer):

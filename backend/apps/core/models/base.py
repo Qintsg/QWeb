@@ -1,8 +1,12 @@
-"""基础抽象模型。
-
-所有业务模型应继承 BaseModel，获得统一的主键、时间戳、软删除和操作人追踪能力。
-"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+基础抽象模型。
+@Project : QWeb
+@File : base.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import uuid
@@ -27,6 +31,7 @@ class BaseManager(models.Manager):
     """默认管理器，查询时自动排除软删除记录。"""
 
     def get_queryset(self) -> BaseQuerySet:
+        """构造当前请求使用的查询集。"""
         return BaseQuerySet(self.model, using=self._db).active()
 
     def all_with_deleted(self) -> BaseQuerySet:
@@ -87,6 +92,7 @@ class BaseModel(models.Model):
     objects = BaseManager()
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         abstract = True
         ordering = ["-created_at"]
 

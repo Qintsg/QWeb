@@ -1,0 +1,9 @@
+name: page_size
+in: query
+required: false
+description: 每页条目数，后端最大限制为 100。
+schema:
+  type: integer
+  minimum: 1
+  maximum: 100
+  default: 20

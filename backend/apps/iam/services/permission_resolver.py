@@ -1,4 +1,7 @@
-"""权限解析器。
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+权限解析器。
 
 实现 IAM 设计文档中的 7 步权限检查流程：
 1. owner 角色 → 放行
@@ -8,8 +11,11 @@
 5. 角色权限包含 → 放行
 6. 资源级策略命中 → 按策略决定
 7. 默认拒绝
-"""
-
+@Project : QWeb
+@File : permission_resolver.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -40,14 +46,12 @@ class PermissionResolver:
 
         严格按照 7 步检查流程执行，任意一步命中即返回结果。
 
-        Args:
-            user: 待检查的用户
-            permission_code: 权限码，如 blog.post.create
-            resource_type: 资源类型（用于资源级策略），可选
-            resource_id: 资源 ID（用于资源级策略），可选
+        :param user: 待检查的用户
+        :param permission_code: 权限码，如 blog.post.create
+        :param resource_type: 资源类型（用于资源级策略），可选
+        :param resource_id: 资源 ID（用于资源级策略），可选
 
-        Returns:
-            是否拥有权限
+        :return: 是否拥有权限
         """
         # 未认证用户一律拒绝
         if not user or not user.is_authenticated:
@@ -90,8 +94,7 @@ class PermissionResolver:
 
         注意：此方法不考虑资源级策略（资源级策略需要具体资源上下文）。
 
-        Returns:
-            权限码集合
+        :return: 权限码集合
         """
         if not user or not user.is_authenticated:
             return set()
@@ -183,8 +186,7 @@ class PermissionResolver:
     ) -> bool | None:
         """检查资源级策略。
 
-        Returns:
-            True=放行, False=拒绝, None=无匹配策略
+        :return: True=放行, False=拒绝, None=无匹配策略
         """
         # 收集用户角色 ID
         role_ids = list(
@@ -200,8 +202,11 @@ class PermissionResolver:
             permission__code=permission_code,
             permission__is_active=True,
         ).filter(
-            Q(subject_type=ResourcePolicy.SubjectType.USER, subject_id=user.pk)
-            | Q(subject_type=ResourcePolicy.SubjectType.ROLE, subject_id__in=role_ids)
+            Q(subject_type=ResourcePolicy.SubjectType.USER, subject_id=str(user.pk))
+            | Q(
+                subject_type=ResourcePolicy.SubjectType.ROLE,
+                subject_id__in=[str(role_id) for role_id in role_ids],
+            )
         )
 
         if not policies.exists():

@@ -1,0 +1,10 @@
+allOf:
+  - $ref: ./User.yaml
+  - type: object
+    properties:
+      is_staff:
+        type: boolean
+        example: false
+      is_superuser:
+        type: boolean
+        example: false

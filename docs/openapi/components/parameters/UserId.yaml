@@ -1,0 +1,8 @@
+name: user_id
+in: path
+required: true
+description: IAM 接口使用的用户内部自增主键。
+schema:
+  type: integer
+  format: int64
+  minimum: 1

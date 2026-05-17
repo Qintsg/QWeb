@@ -1,0 +1,37 @@
+summary: 用户示例
+description: 脱敏后的用户响应示例。
+value:
+  uid: 1
+  username: qintsg
+  nickname: Qintsg
+  avatar_url: https://example.com/avatar.png
+  status: active
+  user_type: normal
+  is_active: true
+  created_at: "2026-05-12T10:00:00Z"
+  updated_at: "2026-05-12T10:00:00Z"
+  deleted_at: null
+  last_login: "2026-05-12T10:30:00Z"
+  contact:
+    email: qintsg@example.com
+    phone: null
+    email_verified_at: "2026-05-12T10:05:00Z"
+    phone_verified_at: null
+  profile:
+    real_name: null
+    gender: unknown
+    birthday: null
+    bio: 个人基础设施门户管理员
+    country: CN
+    province: null
+    city: null
+    website: https://qintsg.cn
+    github: https://github.com/qintsg
+    extra: {}
+  settings:
+    language: zh-CN
+    timezone: Asia/Shanghai
+    theme: system
+    notification_settings: {}
+    privacy_settings: {}
+    preferences: {}

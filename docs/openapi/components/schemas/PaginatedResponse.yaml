@@ -1,0 +1,34 @@
+type: object
+required:
+  - code
+  - message
+  - data
+properties:
+  code:
+    type: integer
+    example: 0
+  message:
+    type: string
+    example: 操作成功
+  data:
+    type: object
+    required:
+      - count
+      - results
+    properties:
+      count:
+        type: integer
+        example: 100
+      next:
+        type: string
+        format: uri
+        nullable: true
+        example: http://127.0.0.1:8000/api/v1/users/?page=2
+      previous:
+        type: string
+        format: uri
+        nullable: true
+        example: null
+      results:
+        type: array
+        items: {}

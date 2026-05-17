@@ -1,5 +1,12 @@
-"""首页服务链接模型。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+首页服务链接模型。
+@Project : QWeb
+@File : service_link.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from django.db import models
@@ -11,6 +18,7 @@ class ServiceLink(BaseModel):
     """首页展示的服务链接卡片。"""
 
     class Category(models.TextChoices):
+        """定义当前字段的可选枚举值。"""
         PROJECT = "project", "项目展示"
         SERVER = "server", "服务器管理"
         TOOL = "tool", "工具"
@@ -32,10 +40,12 @@ class ServiceLink(BaseModel):
     is_visible = models.BooleanField(default=True, db_index=True, verbose_name="是否可见")
 
     class Meta:
+        """定义当前对象的 Django 元数据。"""
         db_table = "homepage_service_link"
         ordering = ["sort_order", "created_at"]
         verbose_name = "服务链接"
         verbose_name_plural = "服务链接"
 
     def __str__(self) -> str:
+        """返回对象的可读显示名称。"""
         return self.title

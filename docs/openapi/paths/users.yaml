@@ -1,0 +1,194 @@
+/api/v1/users/:
+  get:
+    tags:
+      - users
+    operationId: listUsers
+    summary: 获取用户列表
+    description: 管理端用户列表，支持搜索和启用状态过滤。
+    parameters:
+      - $ref: ../components/parameters/Page.yaml
+      - $ref: ../components/parameters/PageSize.yaml
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: is_active
+        in: query
+        required: false
+        schema:
+          type: boolean
+    responses:
+      "200":
+        description: 分页用户列表。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 操作成功
+                data:
+                  type: object
+                  required:
+                    - count
+                    - results
+                  properties:
+                    count:
+                      type: integer
+                    next:
+                      type: string
+                      format: uri
+                      nullable: true
+                    previous:
+                      type: string
+                      format: uri
+                      nullable: true
+                    results:
+                      type: array
+                      items:
+                        $ref: ../components/schemas/User.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
+/api/v1/users/{uid}/:
+  parameters:
+    - $ref: ../components/parameters/Uid.yaml
+  get:
+    tags:
+      - users
+    operationId: getUser
+    summary: 获取用户详情
+    responses:
+      "200":
+        description: 用户详情。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/UserAdmin.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+  patch:
+    tags:
+      - users
+    operationId: updateUser
+    summary: 更新用户详情
+    description: 管理端局部更新用户核心字段和扩展字段。
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nickname:
+                type: string
+                nullable: true
+              avatar_url:
+                type: string
+                nullable: true
+              status:
+                type: string
+                enum:
+                  - active
+                  - inactive
+                  - banned
+                  - deleted
+                  - pending
+              user_type:
+                type: string
+                enum:
+                  - normal
+                  - admin
+                  - system
+              is_active:
+                type: boolean
+              is_staff:
+                type: boolean
+              is_superuser:
+                type: boolean
+              contact:
+                $ref: ../components/schemas/UserContact.yaml
+              profile:
+                $ref: ../components/schemas/UserProfile.yaml
+              settings:
+                $ref: ../components/schemas/UserSettings.yaml
+    responses:
+      "200":
+        description: 用户已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 用户信息已更新
+                data:
+                  $ref: ../components/schemas/UserAdmin.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml
+
+/api/v1/users/{uid}/toggle-active/:
+  parameters:
+    - $ref: ../components/parameters/Uid.yaml
+  post:
+    tags:
+      - users
+    operationId: toggleUserActive
+    summary: 切换用户启用状态
+    responses:
+      "200":
+        description: 用户启用状态已切换。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/UserAdmin.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+      "404":
+        $ref: ../components/responses/NotFound.yaml

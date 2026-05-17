@@ -1,27 +1,19 @@
 /**
- * 用户管理 API（管理员使用）
+ * 用户管理 API（管理员使用）。
  *
- * 对应后端 apps/accounts/api/views/user_views.py (UserViewSet)
- * 路由前缀：/api/v1/users/
+ * :project: QWeb
+ * :file: users.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import apiClient from "./client"
 import type { ApiResponse, PaginatedResponse, ListParams } from "@/types/api"
-import type { UserInfo, UserGroup } from "@/types/auth"
+import type { UserInfo } from "@/types/auth"
 
 /** 用户列表查询参数 */
 export interface UserListQuery extends ListParams {
   search?: string
-  user_group?: UserGroup
   is_active?: boolean
-}
-
-/** 创建用户请求 */
-export interface CreateUserRequest {
-  username: string
-  email: string
-  password: string
-  display_name?: string
-  user_group?: UserGroup
 }
 
 /** 获取用户列表（分页） */
@@ -30,21 +22,16 @@ export function getUsers(params?: UserListQuery) {
 }
 
 /** 获取单个用户详情 */
-export function getUser(userId: string) {
+export function getUser(userId: number | string) {
   return apiClient.get<ApiResponse<UserInfo>>(`/users/${userId}/`)
 }
 
-/** 创建用户 */
-export function createUser(payload: CreateUserRequest) {
-  return apiClient.post<ApiResponse<UserInfo>>("/users/", payload)
-}
-
 /** 更新用户信息 */
-export function updateUser(userId: string, payload: Partial<UserInfo>) {
+export function updateUser(userId: number | string, payload: Partial<UserInfo>) {
   return apiClient.patch<ApiResponse<UserInfo>>(`/users/${userId}/`, payload)
 }
 
-/** 删除用户（软删除） */
-export function deleteUser(userId: string) {
-  return apiClient.delete<ApiResponse<null>>(`/users/${userId}/`)
+/** 启用或禁用用户 */
+export function toggleUserActive(userId: number | string) {
+  return apiClient.post<ApiResponse<UserInfo>>(`/users/${userId}/toggle-active/`)
 }

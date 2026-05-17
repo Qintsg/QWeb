@@ -1,5 +1,10 @@
 /**
- * English language pack
+ * English language pack。
+ *
+ * :project: QWeb
+ * :file: en-US.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 export default {
   common: {
@@ -7,6 +12,7 @@ export default {
     confirm: "Confirm",
     cancel: "Cancel",
     save: "Save",
+    switchLang: "Switch language",
     delete: "Delete",
     edit: "Edit",
     create: "Create",
@@ -27,6 +33,7 @@ export default {
     createdAt: "Created At",
     updatedAt: "Updated At",
     comingSoon: "Coming soon",
+    backDashboard: "Back to Dashboard",
   },
 
   auth: {
@@ -38,6 +45,13 @@ export default {
     confirmPassword: "Confirm Password",
     email: "Email",
     displayName: "Display Name",
+    nickname: "Nickname",
+    accountIdentifier: "Account",
+    accountIdentifierPlaceholder: "Username, email, or phone",
+    usernamePlaceholder: "For example qintsg.dev",
+    usernameRule: "3-32 characters; letters, numbers, hyphen, underscore, and dot; must start and end with a letter or number.",
+    loginSubtitle: "Use a username, email, phone, or linked third-party account to enter the console.",
+    registerSubtitle: "Create a local account first, then link third-party sign-in providers.",
     rememberMe: "Remember me",
     forgotPassword: "Forgot password?",
     loginSuccess: "Login successful",
@@ -49,6 +63,30 @@ export default {
     confirmNewPassword: "Confirm New Password",
     passwordChanged: "Password changed",
     sessionExpired: "Session expired, please login again",
+    githubLogin: "Continue with GitHub",
+    githubLoginFailed: "GitHub login failed",
+    githubCallbackProcessing: "Completing GitHub login",
+    githubCallbackHint: "Verifying GitHub authorization and creating a local session.",
+    githubCallbackMissing: "GitHub callback is missing required parameters. Please start login again.",
+    oauthAccountChoiceTitle: "Complete third-party login",
+    oauthAccountChoiceSubtitle: "This GitHub account is not linked to a local account yet. Choose whether to bind an existing account or create a new one.",
+    oauthEmailMatched: "The third-party email matches an existing account. This is only a hint; sign in to the existing account to confirm binding.",
+    bindExistingAccount: "Bind existing account",
+    createOAuthAccount: "Create new account",
+    bindAndLogin: "Bind and login",
+    createAndLogin: "Create and login",
+    oauthBindFailed: "Third-party account binding failed",
+    oauthRegisterFailed: "Third-party account registration failed",
+    usernameRequired: "Please enter a username",
+    orLoginWith: "or",
+    backToLogin: "Back to Login",
+    fillAllFields: "Please fill in username and password",
+    fillRegisterFields: "Please fill in username, email, and password",
+    loginFailed: "Login failed. Please check your account or password",
+    registerFailed: "Registration failed. Please check your input",
+    passwordMismatch: "Passwords do not match",
+    noAccount: "No account yet?",
+    hasAccount: "Already have an account?",
   },
 
   dashboard: {
@@ -145,6 +183,7 @@ export default {
   error: {
     unauthorized: "Unauthorized, please login",
     forbidden: "No permission to perform this action",
+    forbiddenDescription: "Your account does not have the permission required to access this page. Contact the site administrator to adjust your role or user overrides.",
     notFound: "Resource not found",
     serverError: "Internal server error",
     networkError: "Network error, please check your connection",

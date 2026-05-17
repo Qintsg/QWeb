@@ -1,8 +1,15 @@
-"""用户权限覆盖管理服务。"""
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+用户权限覆盖管理服务。
+@Project : QWeb
+@File : override_service.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from uuid import UUID
 
 from apps.audit.services.audit_service import log_action
@@ -10,6 +17,8 @@ from apps.core.exceptions import ConflictException, ResourceNotFoundException
 from apps.iam.models import Permission, UserPermissionOverride
 
 if TYPE_CHECKING:
+    from django.http import HttpRequest
+
     from apps.accounts.models import User
 
 
@@ -20,16 +29,15 @@ def add_override(
     effect: str,
     reason: str = "",
     operator: User | None = None,
-    request=None,
+    request: HttpRequest | None = None,
 ) -> UserPermissionOverride:
     """为用户添加权限覆盖。
 
-    Args:
-        user: 目标用户
-        permission_code: 权限码
-        effect: allow 或 deny
-        reason: 覆盖原因
-        operator: 操作人
+    :param user: 目标用户
+    :param permission_code: 权限码
+    :param effect: allow 或 deny
+    :param reason: 覆盖原因
+    :param operator: 操作人
     """
     try:
         permission = Permission.objects.get(code=permission_code, is_active=True)
@@ -59,7 +67,7 @@ def add_override(
     return override
 
 
-def remove_override(*, user: User, permission_code: str, request=None) -> None:
+def remove_override(*, user: User, permission_code: str, request: HttpRequest | None = None) -> None:
     """移除用户的权限覆盖。"""
     deleted_count, _ = UserPermissionOverride.objects.filter(
         user=user,
@@ -82,8 +90,8 @@ def update_override(
     *,
     override_id: UUID,
     operator: User | None = None,
-    request=None,
-    **fields,
+    request: HttpRequest | None = None,
+    **fields: Any,
 ) -> UserPermissionOverride:
     """更新权限覆盖（如修改 effect 或 reason）。"""
     try:

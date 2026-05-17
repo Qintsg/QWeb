@@ -1,0 +1,67 @@
+type: object
+required:
+  - uid
+  - username
+  - status
+  - user_type
+  - is_active
+  - created_at
+  - updated_at
+properties:
+  uid:
+    type: integer
+    format: int64
+    example: 1
+  username:
+    type: string
+    minLength: 3
+    maxLength: 32
+    pattern: "^[A-Za-z0-9](?!.*[._-]{2})[A-Za-z0-9._-]*[A-Za-z0-9]$"
+    example: qintsg
+  nickname:
+    type: string
+    nullable: true
+    example: Qintsg
+  avatar_url:
+    type: string
+    nullable: true
+    example: https://example.com/avatar.png
+  status:
+    type: string
+    enum:
+      - active
+      - inactive
+      - banned
+      - deleted
+      - pending
+    example: active
+  user_type:
+    type: string
+    enum:
+      - normal
+      - admin
+      - system
+    example: normal
+  is_active:
+    type: boolean
+    example: true
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  deleted_at:
+    type: string
+    format: date-time
+    nullable: true
+  last_login:
+    type: string
+    format: date-time
+    nullable: true
+  contact:
+    $ref: ./UserContact.yaml
+  profile:
+    $ref: ./UserProfile.yaml
+  settings:
+    $ref: ./UserSettings.yaml

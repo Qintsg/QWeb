@@ -1,11 +1,17 @@
-"""DRF 统一异常处理器。
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+DRF 统一异常处理器。
 
 拦截所有异常并转换为统一格式：
 {"code": <int>, "message": <str>, "errors": <可选>}
 
 在 settings.py 的 REST_FRAMEWORK.EXCEPTION_HANDLER 中注册。
-"""
-
+@Project : QWeb
+@File : exception_handler.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import logging

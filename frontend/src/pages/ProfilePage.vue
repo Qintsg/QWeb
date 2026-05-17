@@ -1,85 +1,77 @@
-﻿<script setup lang="ts">
-/**
- * 个人资料页面
- */
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useAuth } from '@/composables/useAuth'
-import { useAuthStore } from '@/stores/auth'
-import { updateMe, changePassword } from '@/api/auth'
+<!--
+  个人资料页面视图。
+
+  :project: QWeb
+  :file: ProfilePage.vue
+  :author: Qintsg
+  :date: 2026-05-17 00:00
+-->
+<script setup lang="ts">
+import { onMounted, ref } from "vue"
+import { useI18n } from "vue-i18n"
+import { changePassword, updateMe } from "@/api/auth"
+import { useAuth } from "@/composables/useAuth"
+import { useAuthStore } from "@/stores/auth"
+import PageHeader from "@/components/common/PageHeader.vue"
+import StatusPill from "@/components/common/StatusPill.vue"
 
 const { t } = useI18n()
 const { user, displayName, userGroup } = useAuth()
 const authStore = useAuthStore()
 
-// Profile Form
 const profileLoading = ref(false)
-const profileMsg = ref({ type: '', text: '' })
-const profileForm = ref({
-  display_name: '',
-  phone: '',
-  website: '',
-  bio: '',
-})
+const profileMsg = ref({ type: "", text: "" })
+const profileForm = ref({ nickname: "", phone: "", website: "", bio: "" })
 
-// Password Form
 const pwdLoading = ref(false)
-const pwdMsg = ref({ type: '', text: '' })
-const pwdForm = ref({
-  old_password: '',
-  new_password: '',
-  confirm_password: '',
-})
+const pwdMsg = ref({ type: "", text: "" })
+const pwdForm = ref({ old_password: "", new_password: "", confirm_password: "" })
 
 onMounted(() => {
   if (user.value) {
-    profileForm.value.display_name = user.value.display_name || ''
-    profileForm.value.phone = user.value.profile?.phone || ''
-    profileForm.value.website = user.value.profile?.website || ''
-    profileForm.value.bio = user.value.profile?.bio || ''
+    profileForm.value.nickname = user.value.nickname || ""
+    profileForm.value.phone = user.value.contact?.phone || ""
+    profileForm.value.website = user.value.profile?.website || ""
+    profileForm.value.bio = user.value.profile?.bio || ""
   }
 })
 
-async function handleUpdateProfile() {
+async function handleUpdateProfile(): Promise<void> {
   profileLoading.value = true
-  profileMsg.value = { type: '', text: '' }
+  profileMsg.value = { type: "", text: "" }
   try {
     const payload = {
-      display_name: profileForm.value.display_name,
-      profile: {
-        phone: profileForm.value.phone,
-        website: profileForm.value.website,
-        bio: profileForm.value.bio,
-      }
+      nickname: profileForm.value.nickname,
+      contact: { phone: profileForm.value.phone },
+      profile: { website: profileForm.value.website, bio: profileForm.value.bio },
     }
-    const res = await updateMe(payload as any)
-    // 更新本地 state
+    const res = await updateMe(payload as never)
     authStore.user = res.data.data
-    profileMsg.value = { type: 'success', text: 'Profile updated successfully!' }
-  } catch (err: any) {
-    profileMsg.value = { type: 'error', text: err.message || 'Update failed' }
+    profileMsg.value = { type: "success", text: "Profile updated successfully!" }
+  } catch (err: unknown) {
+    profileMsg.value = { type: "error", text: (err as Error).message || "Update failed" }
   } finally {
     profileLoading.value = false
   }
 }
 
-async function handleChangePassword() {
+async function handleChangePassword(): Promise<void> {
   if (pwdForm.value.new_password !== pwdForm.value.confirm_password) {
-    pwdMsg.value = { type: 'error', text: 'Passwords do not match' }
+    pwdMsg.value = { type: "error", text: "Passwords do not match" }
     return
   }
   pwdLoading.value = true
-  pwdMsg.value = { type: '', text: '' }
+  pwdMsg.value = { type: "", text: "" }
   try {
     await changePassword({
       old_password: pwdForm.value.old_password,
       new_password: pwdForm.value.new_password,
       new_password_confirm: pwdForm.value.confirm_password,
     })
-    pwdMsg.value = { type: 'success', text: 'Password changed successfully!' }
-    pwdForm.value = { old_password: '', new_password: '', confirm_password: '' } // reset
-  } catch (err: any) {
-    pwdMsg.value = { type: 'error', text: err.message || 'Change password failed' }
+    pwdMsg.value = { type: "success", text: "Password changed successfully!" }
+    pwdForm.value = { old_password: "", new_password: "", confirm_password: "" }
+  } catch (err: unknown) {
+    pwdMsg.value = { type: "error", text: (err as Error).message || "Change password failed" }
   } finally {
     pwdLoading.value = false
   }
@@ -87,240 +79,155 @@ async function handleChangePassword() {
 </script>
 
 <template>
-  <div class="page-container">
-    <h1 class="page-title">{{ t('nav.profile') }}</h1>
+  <div class="profile-page">
+    <PageHeader :title="t('nav.profile')" description="管理个人资料、联系信息和本地密码。" eyebrow="Identity">
+      <template #actions>
+        <StatusPill :label="userGroup" tone="primary" icon="verified_user" />
+      </template>
+    </PageHeader>
 
-    <div class="grid-layout" v-if="user">
-      <!-- Profile Header / Ident -->
-      <fluent-card class="profile-card ident-card">
-        <div class="profile-avatar">{{ displayName.charAt(0).toUpperCase() }}</div>
+    <div v-if="user" class="profile-grid">
+      <section class="profile-card ident-card" aria-labelledby="identity-title">
+        <div class="profile-avatar" aria-hidden="true">{{ displayName.charAt(0).toUpperCase() }}</div>
         <div class="profile-info">
-          <h2>{{ displayName }}</h2>
-          <p>{{ user.username }} ({{ user.email }})</p>
-          <span class="profile-group">{{ userGroup }}</span>
+          <h2 id="identity-title">{{ displayName }}</h2>
+          <p>{{ user.username }} · {{ user.contact?.email || '-' }}</p>
+          <StatusPill :label="userGroup" tone="primary" icon="badge" />
         </div>
-      </fluent-card>
+      </section>
 
-      <!-- Edit Profile -->
-      <fluent-card class="profile-card">
-        <h3>Edit Profile</h3>
-        <form class="fluent-form" @submit.prevent="handleUpdateProfile">
-          <div v-if="profileMsg.text" :class="['alert', 'alert-' + profileMsg.type]">
-            {{ profileMsg.text }}
+      <section class="profile-card" aria-labelledby="edit-profile-title">
+        <h2 id="edit-profile-title">Edit Profile</h2>
+        <form class="profile-form" @submit.prevent="handleUpdateProfile">
+          <div v-if="profileMsg.text" :class="['alert', `alert--${profileMsg.type}`]" role="status">
+            <span class="material-symbols-rounded" aria-hidden="true">{{ profileMsg.type === 'success' ? 'check_circle' : 'error' }}</span>
+            <span>{{ profileMsg.text }}</span>
           </div>
-
-          <div class="form-field">
-            <label>Display Name</label>
-            <fluent-text-field
-              :value="profileForm.display_name"
-              @input="profileForm.display_name = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <div class="form-field">
-            <label>Phone</label>
-            <fluent-text-field
-              :value="profileForm.phone"
-              @input="profileForm.phone = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <div class="form-field">
-            <label>Website</label>
-            <fluent-text-field
-              :value="profileForm.website"
-              @input="profileForm.website = ($event.target as HTMLInputElement).value"
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <div class="form-field">
-            <label>Bio</label>
-            <fluent-text-area
-              :value="profileForm.bio"
-              @input="profileForm.bio = ($event.target as HTMLInputElement).value"
-              rows="3"
-              style="width: 100%"
-            ></fluent-text-area>
-          </div>
-
-          <fluent-button
-            type="submit"
-            appearance="accent"
-            :disabled="profileLoading"
-            @click="handleUpdateProfile"
-          >
+          <md-outlined-text-field :value="profileForm.nickname" :label="t('auth.nickname')" @input="profileForm.nickname = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-outlined-text-field :value="profileForm.phone" label="Phone" @input="profileForm.phone = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-outlined-text-field :value="profileForm.website" label="Website" @input="profileForm.website = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-outlined-text-field :value="profileForm.bio" label="Bio" type="textarea" rows="3" @input="profileForm.bio = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-filled-button type="submit" :disabled="profileLoading" :aria-busy="profileLoading">
             {{ profileLoading ? t('common.loading') : 'Save Changes' }}
-          </fluent-button>
+          </md-filled-button>
         </form>
-      </fluent-card>
+      </section>
 
-      <!-- Change Password -->
-      <fluent-card class="profile-card">
-        <h3>Change Password</h3>
-        <form class="fluent-form" @submit.prevent="handleChangePassword">
-          <div v-if="pwdMsg.text" :class="['alert', 'alert-' + pwdMsg.type]">
-            {{ pwdMsg.text }}
+      <section class="profile-card" aria-labelledby="password-title">
+        <h2 id="password-title">Change Password</h2>
+        <form class="profile-form" @submit.prevent="handleChangePassword">
+          <div v-if="pwdMsg.text" :class="['alert', `alert--${pwdMsg.type}`]" role="status">
+            <span class="material-symbols-rounded" aria-hidden="true">{{ pwdMsg.type === 'success' ? 'check_circle' : 'error' }}</span>
+            <span>{{ pwdMsg.text }}</span>
           </div>
-
-          <div class="form-field">
-            <label>Current Password</label>
-            <fluent-text-field
-              type="password"
-              :value="pwdForm.old_password"
-              @input="pwdForm.old_password = ($event.target as HTMLInputElement).value"
-              required
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <div class="form-field">
-            <label>New Password</label>
-            <fluent-text-field
-              type="password"
-              :value="pwdForm.new_password"
-              @input="pwdForm.new_password = ($event.target as HTMLInputElement).value"
-              required
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <div class="form-field">
-            <label>Confirm New Password</label>
-            <fluent-text-field
-              type="password"
-              :value="pwdForm.confirm_password"
-              @input="pwdForm.confirm_password = ($event.target as HTMLInputElement).value"
-              required
-              style="width: 100%"
-            ></fluent-text-field>
-          </div>
-
-          <fluent-button
-            type="submit"
-            appearance="accent"
-            :disabled="pwdLoading"
-            @click="handleChangePassword"
-          >
+          <md-outlined-text-field type="password" :value="pwdForm.old_password" label="Current Password" required @input="pwdForm.old_password = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-outlined-text-field type="password" :value="pwdForm.new_password" label="New Password" required @input="pwdForm.new_password = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-outlined-text-field type="password" :value="pwdForm.confirm_password" label="Confirm New Password" required @input="pwdForm.confirm_password = ($event.target as HTMLInputElement).value"></md-outlined-text-field>
+          <md-filled-button type="submit" :disabled="pwdLoading" :aria-busy="pwdLoading">
             {{ pwdLoading ? t('common.loading') : 'Change Password' }}
-          </fluent-button>
+          </md-filled-button>
         </form>
-      </fluent-card>
+      </section>
     </div>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: var(--q-space-32);
+.profile-page,
+.profile-grid,
+.profile-card,
+.profile-form {
+  display: grid;
+  gap: var(--space-lg);
 }
 
-.page-title {
-  margin: 0 0 var(--q-space-24);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--q-color-text-primary);
-}
-
-.grid-layout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-24);
-  max-width: 600px;
+.profile-grid {
+  grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+  align-items: start;
 }
 
 .profile-card {
-  padding: var(--q-space-32);
-  border-radius: var(--q-radius-lg);
-  background: var(--q-color-surface);
-  box-shadow: var(--q-shadow-sm);
+  padding: var(--space-lg);
+  border: 0.0625rem solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background: var(--md-sys-color-surface-container-low);
 }
 
 .ident-card {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--q-space-24);
-}
-
-h3 {
-  margin-top: 0;
-  margin-bottom: var(--q-space-24);
-  font-size: 1.25rem;
-  color: var(--q-color-text-primary);
+  position: sticky;
+  inset-block-start: 5.5rem;
 }
 
 .profile-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--q-color-brand);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 600;
-  flex-shrink: 0;
+  inline-size: 5rem;
+  block-size: 5rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  color: var(--md-sys-color-on-primary);
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+  font-family: var(--md-sys-typescale-headline-large-font);
+  font-size: var(--md-sys-typescale-headline-large-size);
+  font-weight: var(--md-sys-typescale-headline-large-weight);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
 }
 
+.profile-info,
+.alert {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.profile-card h2,
 .profile-info h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: var(--q-color-text-primary);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
 }
 
 .profile-info p {
-  margin: var(--q-space-8) 0 0;
-  color: var(--q-color-text-secondary);
-  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
-.profile-group {
-  display: inline-block;
-  margin-top: var(--q-space-12);
-  padding: 2px 10px;
-  border-radius: var(--q-radius-full);
-  background: var(--q-color-brand-light, rgba(14, 154, 167, 0.1));
-  color: var(--q-color-brand);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.fluent-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-24);
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--q-space-8);
-}
-
-.form-field label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--q-color-text-secondary);
+.profile-form md-outlined-text-field,
+.profile-form md-filled-button {
+  inline-size: 100%;
 }
 
 .alert {
-  padding: var(--q-space-12) var(--q-space-16);
-  border-radius: var(--q-radius-sm);
-  font-size: 0.875rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  padding: var(--space-md);
+  border-radius: var(--md-sys-shape-corner-large);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
 }
-.alert-error {
-  background: var(--q-color-error-light, #fde7e7);
-  color: var(--q-color-error, #d32f2f);
+
+.alert--success {
+  color: var(--md-sys-color-on-secondary-container);
+  background: var(--md-sys-color-secondary-container);
 }
-.alert-success {
-  background: rgba(16, 124, 16, 0.1);
-  color: #107c10;
+
+.alert--error {
+  color: var(--md-sys-color-on-error-container);
+  background: var(--md-sys-color-error-container);
+}
+
+@media (max-width: 839px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ident-card {
+    position: static;
+  }
 }
 </style>
-
-
-

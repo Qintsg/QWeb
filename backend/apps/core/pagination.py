@@ -1,4 +1,7 @@
-"""统一分页器。
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+统一分页器。
 
 输出格式：
 {
@@ -11,8 +14,11 @@
         "results": [...]
     }
 }
-"""
-
+@Project : QWeb
+@File : pagination.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 from collections import OrderedDict

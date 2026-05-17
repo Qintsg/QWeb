@@ -39,7 +39,7 @@ QWeb 是一个面向个人或小团队的综合型 Web 平台，核心目标：
 | 构建     | Vite                          |
 | 状态管理 | Pinia                         |
 | 路由     | Vue Router                    |
-| 设计系统 | Fluent 2 Design System        |
+| 设计系统 | Material 3 + Material Web      |
 | HTTP     | Axios / ofetch                |
 | 工具库   | VueUse                        |
 | CSS      | UnoCSS / Tailwind（可选）     |
@@ -154,8 +154,8 @@ app/
 
 | 服务   | 端口 | 地址                           |
 | ------ | ---- | ------------------------------ |
-| 后端   | 8001 | http://127.0.0.1:8001          |
-| 前端   | 3001 | http://127.0.0.1:3001          |
-| API    | 8001 | http://127.0.0.1:8001/api/v1/  |
-| Swagger| 8001 | http://127.0.0.1:8001/api/docs/|
-| 健康   | 8001 | http://127.0.0.1:8001/api/health/|
+| 后端   | 8000 | http://127.0.0.1:8000          |
+| 前端   | 3000 | http://127.0.0.1:3000          |
+| API    | 8000 | http://127.0.0.1:8000/api/v1/  |
+| Swagger| 8000 | http://127.0.0.1:8000/api/docs/|
+| 健康   | 8000 | http://127.0.0.1:8000/api/health/|

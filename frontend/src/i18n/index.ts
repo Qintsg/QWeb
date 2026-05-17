@@ -1,8 +1,10 @@
 /**
- * Vue I18n 配置
+ * Vue I18n 配置。
  *
- * 默认语言：zh-CN
- * 使用 Composition API 模式（legacy: false）
+ * :project: QWeb
+ * :file: index.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import { createI18n } from "vue-i18n"
 import zhCN from "./zh-CN"

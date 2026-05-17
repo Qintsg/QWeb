@@ -1,0 +1,8 @@
+name: page
+in: query
+required: false
+description: 分页列表页码。
+schema:
+  type: integer
+  minimum: 1
+  default: 1

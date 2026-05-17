@@ -1,28 +1,57 @@
-﻿/**
- * 认证与用户相关类型定义
+/**
+ * 认证与用户相关类型定义。
+ *
+ * :project: QWeb
+ * :file: auth.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
-
-export interface UserInfo {
-  id: string
-  username: string
-  email: string
-  display_name: string
-  user_group: UserGroup
-  is_active: boolean
-  date_joined: string
-  last_login: string | null
-  profile?: UserProfile
+export interface UserContact {
+  email: string | null
+  phone: string | null
+  email_verified_at: string | null
+  phone_verified_at: string | null
 }
 
 export interface UserProfile {
-  avatar: string | null
-  bio: string
-  phone: string
-  timezone: string
+  real_name: string | null
+  gender: "male" | "female" | "other" | "unknown" | null
+  birthday: string | null
+  bio: string | null
+  country: string | null
+  province: string | null
+  city: string | null
+  website: string | null
+  github: string | null
+  extra: Record<string, unknown>
+}
+
+export interface UserSettings {
   language: string
-  theme_preference: string
-  website?: string
-  location?: string
+  timezone: string
+  theme: "light" | "dark" | "system"
+  notification_settings: Record<string, unknown>
+  privacy_settings: Record<string, unknown>
+  preferences: Record<string, unknown>
+}
+
+export interface UserInfo {
+  uid: number
+  username: string
+  nickname: string | null
+  avatar_url: string | null
+  status: "active" | "inactive" | "banned" | "deleted" | "pending"
+  user_type: "normal" | "admin" | "system"
+  is_active: boolean
+  is_staff?: boolean
+  is_superuser?: boolean
+  created_at: string
+  updated_at: string
+  deleted_at?: string | null
+  last_login: string | null
+  contact?: UserContact
+  profile?: UserProfile
+  settings?: UserSettings
 }
 
 export type UserGroup = "owner" | "admin" | "trusted" | "user" | "guest"
@@ -40,10 +69,50 @@ export interface RegisterRequest {
 }
 
 export interface LoginResponse {
+  status?: "authenticated"
   user: UserInfo
   access: string
   refresh: string
+  redirect?: string
 }
+
+export interface OAuthAuthorizeResponse {
+  authorization_url: string
+  state: string
+  provider: string
+}
+
+export interface OAuthCallbackRequest {
+  code: string
+  state: string
+}
+
+export interface OAuthChoiceResponse {
+  status: "requires_account_choice"
+  provider: string
+  pending_token: string
+  suggested_username: string
+  suggested_nickname: string
+  provider_email: string
+  provider_email_verified: boolean | null
+  provider_avatar_url: string
+  email_matches_existing_account: boolean
+  redirect: string
+}
+
+export interface OAuthBindRequest {
+  pending_token: string
+  login: string
+  password: string
+}
+
+export interface OAuthRegisterRequest {
+  pending_token: string
+  username: string
+  nickname?: string
+}
+
+export type OAuthCallbackResponse = LoginResponse | OAuthChoiceResponse
 
 export interface TokenPair {
   access: string
@@ -67,14 +136,13 @@ export interface ChangePasswordRequest {
 
 export interface Permission {
   id: string
-  codename: string
+  code?: string
   name: string
-  display_name?: string
   description: string
   module: string
-  category: string
-  is_risk?: boolean
-  code?: string
+  resource?: string
+  action?: string
+  is_active?: boolean
 }
 
 export interface Role {
@@ -83,18 +151,27 @@ export interface Role {
   display_name: string
   description: string
   is_system: boolean
+  level?: number
   created_at?: string
-  permissions: Permission[]
+  permissions?: Permission[]
+}
+
+export interface UserRole {
+  id: string
+  role: Role
+  created_at: string
 }
 
 export interface PermissionOverride {
   id: string
   permission: Permission
-  override_type: "allow" | "deny"
+  effect: "allow" | "deny"
+  reason?: string
+  created_at?: string
 }
 
 export interface ResolvedPermissions {
   permissions: string[]
   roles: string[]
-  user_group: UserGroup
+  user_group?: UserGroup
 }

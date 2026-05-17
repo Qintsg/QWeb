@@ -1,9 +1,14 @@
 /**
- * Axios 全局实例
+ * Axios 全局实例。
  *
- * - 自动从 Pinia auth store 读取 access token 附加到请求头
- * - 401 时尝试用 refresh token 续签，续签失败则跳转登录
- * - 统一返回后端 ApiResponse.data，抛出 ApiErrorResponse
+ * - 自动从本地持久化读取 access token 附加到请求头
+ * - 401 时尝试用 refresh token 续签，续签失败则清理令牌并跳转登录
+ * - 保持后端 ApiResponse envelope，由调用方读取业务 data
+ *
+ * :project: QWeb
+ * :file: client.ts
+ * :author: Qintsg
+ * :date: 2026-05-12 00:00
  */
 import axios, {
   type AxiosError,

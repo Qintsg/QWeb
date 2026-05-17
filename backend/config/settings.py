@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+'''
+定义 QWeb 后端 Django 运行配置。
+@Project : QWeb
+@File : settings.py
+@Author : Qintsg
+@Date : 2026-05-12 00:00
+'''
 from __future__ import annotations
 
 import os
@@ -86,8 +95,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "qweb"),
-        "USER": os.getenv("POSTGRES_USER", "qintsg"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "Ss201803"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "123456"),
         "HOST": os.getenv("POSTGRES_HOST", "127.0.0.1"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
@@ -150,7 +159,17 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "uid",
+    "USER_ID_CLAIM": "user_id",
 }
+
+GITHUB_OAUTH_CLIENT_ID = os.getenv("GITHUB_OAUTH_CLIENT_ID", "")
+GITHUB_OAUTH_CLIENT_SECRET = os.getenv("GITHUB_OAUTH_CLIENT_SECRET", "")
+GITHUB_OAUTH_CALLBACK_URL = os.getenv(
+    "GITHUB_OAUTH_CALLBACK_URL",
+    "http://127.0.0.1:3000/auth/github/callback",
+)
+GITHUB_OAUTH_STATE_MAX_AGE = int(os.getenv("GITHUB_OAUTH_STATE_MAX_AGE", "600"))
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "QWeb API",
