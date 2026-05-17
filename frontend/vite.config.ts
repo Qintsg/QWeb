@@ -35,4 +35,16 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/@material/web")) return "material-web"
+          if (id.includes("node_modules/@lit") || id.includes("node_modules/lit")) return "material-web"
+          if (id.includes("node_modules/vue") || id.includes("node_modules/pinia")) return "vue-vendor"
+          if (id.includes("node_modules/vue-router") || id.includes("node_modules/vue-i18n")) return "vue-vendor"
+        },
+      },
+    },
+  },
 })

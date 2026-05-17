@@ -166,6 +166,11 @@
   --q-layout-bottom-nav-height: 5rem;
   --q-layout-content-max: 80rem;
   --q-layout-form-max: 40rem;
+
+  /* ── Icon sizes ───────────────────────────────────────────── */
+  --q-icon-size-sm: 1rem;
+  --q-icon-size-md: 1.5rem;
+  --q-icon-size-lg: 2rem;
 }
 
 @media (prefers-color-scheme: dark) {

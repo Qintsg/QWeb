@@ -42,12 +42,12 @@
           </span>
           <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
         </button>
-        <div v-if="userMenuOpen" class="app-header__menu" role="menu">
-          <router-link to="/profile" role="menuitem" @click="userMenuOpen = false">
+        <div v-if="userMenuOpen" id="app-header-user-panel" class="app-header__menu">
+          <router-link to="/profile" @click="userMenuOpen = false">
             <span class="material-symbols-rounded" aria-hidden="true">person</span>
             {{ t('nav.profile') }}
           </router-link>
-          <button type="button" role="menuitem" @click="handleLogout">
+          <button type="button" @click="handleLogout">
             <span class="material-symbols-rounded" aria-hidden="true">logout</span>
             {{ t('auth.logout') }}
           </button>

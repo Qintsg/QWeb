@@ -44,9 +44,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: "/dashboard", labelKey: "nav.dashboard", icon: "dashboard" },
-  { path: "/users", labelKey: "nav.users", icon: "group", permission: "accounts.user.view" },
-  { path: "/roles", labelKey: "nav.roles", icon: "admin_panel_settings", permission: "iam.role.view" },
-  { path: "/permissions", labelKey: "nav.permissions", icon: "vpn_key", permission: "iam.permission.view" },
+  { path: "/users", labelKey: "nav.userManagement", icon: "group", permission: "accounts.user.view" },
+  { path: "/roles", labelKey: "nav.roleManagement", icon: "admin_panel_settings", permission: "iam.role.view" },
+  { path: "/permissions", labelKey: "nav.permissionManagement", icon: "vpn_key", permission: "iam.permission.view" },
   { path: "/service-links", labelKey: "nav.serviceLinks", icon: "hub", permission: "homepage.service_link.manage" },
   { path: "/audit-logs", labelKey: "nav.auditLogs", icon: "assignment", permission: "audit.log.view" },
   { path: "/login-logs", labelKey: "nav.loginLogs", icon: "shield_lock", permission: "audit.log.view" },

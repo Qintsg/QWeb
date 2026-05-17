@@ -45,7 +45,7 @@ withDefaults(
 }
 
 .status-pill__icon {
-  font-size: 1rem;
+  font-size: var(--q-icon-size-sm);
 }
 
 .status-pill--primary {
