@@ -31,7 +31,7 @@ const quickNavItems = computed(() => [
     <PageHeader
       :title="t('dashboard.welcome', { name: displayName })"
       :description="t('dashboard.subtitle')"
-      eyebrow="Workspace"
+      eyebrow="工作区"
     >
       <template #actions>
         <StatusPill :label="userGroup" tone="primary" icon="verified_user" />
@@ -40,18 +40,18 @@ const quickNavItems = computed(() => [
 
     <section class="dashboard-hero" aria-labelledby="dashboard-overview-title">
       <div>
-        <p class="dashboard-hero__eyebrow">Control Plane</p>
+        <p class="dashboard-hero__eyebrow">控制面板</p>
         <h2 id="dashboard-overview-title">把身份、权限和审计放在同一个工作面。</h2>
         <p>当前工作区优先展示可执行入口；没有权限的模块不会出现在导航与快捷操作里。</p>
       </div>
       <div class="dashboard-hero__metrics" aria-label="当前状态摘要">
         <span>
           <strong>{{ quickNavItems.length }}</strong>
-          <small>available actions</small>
+          <small>可用入口</small>
         </span>
         <span>
           <strong>{{ userGroup }}</strong>
-          <small>current group</small>
+          <small>当前角色</small>
         </span>
       </div>
     </section>
@@ -67,18 +67,6 @@ const quickNavItems = computed(() => [
           <strong>{{ item.label }}</strong>
           <span class="material-symbols-rounded quick-nav__arrow" aria-hidden="true">arrow_forward</span>
         </router-link>
-      </div>
-    </section>
-
-    <section class="dashboard-section dashboard-section--status" aria-labelledby="status-title">
-      <div class="dashboard-section__header">
-        <h2 id="status-title">{{ t('dashboard.systemStatus') }}</h2>
-        <p>服务健康、任务队列和实时通道将在后续模块接入后显示。</p>
-      </div>
-      <div class="status-grid">
-        <StatusPill label="API online" tone="success" icon="cloud_done" />
-        <StatusPill label="JWT enabled" tone="primary" icon="key" />
-        <StatusPill label="Audit ready" tone="warning" icon="history" />
       </div>
     </section>
   </div>
@@ -220,16 +208,6 @@ const quickNavItems = computed(() => [
 
 .quick-nav__arrow {
   color: var(--md-sys-color-on-surface-variant);
-}
-
-.status-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  padding: var(--space-lg);
-  border: 0.0625rem solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-extra-large);
-  background: var(--md-sys-color-surface-container-low);
 }
 
 @media (max-width: 839px) {

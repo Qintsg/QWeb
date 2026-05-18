@@ -314,6 +314,9 @@
 
 | 方法  | 路径                            | 说明         |
 | ----- | ------------------------------- | ------------ |
+| GET   | /api/v1/homepage/metadata       | 获取公开站点名称、Logo 与 favicon |
+| GET   | /api/v1/homepage/admin/metadata | 管理端查看站点元数据 |
+| PATCH | /api/v1/homepage/admin/metadata | 更新站点名称、Logo 与 favicon |
 | GET   | /api/v1/system/config           | 获取配置     |
 | PATCH | /api/v1/system/config           | 更新配置     |
 | GET   | /api/v1/system/modules          | 模块列表     |

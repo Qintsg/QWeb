@@ -9,6 +9,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissionStore } from '@/stores/permission'
+import { useSiteStore } from '@/stores/site'
 
 /**
  * 路由配置
@@ -78,6 +79,12 @@ const authenticatedRoutes: RouteRecordRaw[] = [
     name: 'permissions',
     component: () => import('@/pages/PermissionsPage.vue'),
     meta: { title: '权限管理', permission: 'iam.permission.view' },
+  },
+  {
+    path: '/site-settings',
+    name: 'site-settings',
+    component: () => import('@/pages/SiteSettingsPage.vue'),
+    meta: { title: '站点设置', permission: 'system_config.config.update' },
   },
   {
     path: '/audit-logs',
@@ -197,7 +204,7 @@ router.beforeEach(async (to, _from, next) => {
 /** 路由后置守卫：更新页面标题 */
 router.afterEach((to) => {
   const title = to.meta.title as string | undefined
-  document.title = title ? `${title} - Qintsg's Web` : "Qintsg's Web"
+  useSiteStore().applyBrowserMetadata(title)
 })
 
 export default router

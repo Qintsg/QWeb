@@ -70,7 +70,7 @@
 /admin/roles                # 角色管理
 /admin/permissions          # 权限管理
 /admin/audit                # 审计日志
-/admin/config               # 系统配置
+/admin/config               # 站点设置、系统配置与模块开关
 /admin/notifications        # 通知管理
 ```
 

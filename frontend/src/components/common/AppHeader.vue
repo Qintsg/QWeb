@@ -9,19 +9,15 @@
 <template>
   <header class="app-header">
     <div class="app-header__context">
-      <p class="app-header__kicker">QWeb Console</p>
+      <p class="app-header__kicker">{{ siteStore.siteName }} 控制台</p>
       <span class="app-header__status" aria-label="运行状态：在线">
         <span aria-hidden="true"></span>
-        Online
+        运行中
       </span>
     </div>
 
     <div class="app-header__actions">
-      <AppIconButton
-        :label="t('common.switchLang')"
-        icon="translate"
-        @click="toggleLocale"
-      />
+      <LanguageSelect />
       <AppIconButton
         :label="themeLabel"
         :icon="themeIcon"
@@ -37,8 +33,8 @@
         >
           <span class="app-header__avatar" aria-hidden="true">{{ displayInitial }}</span>
           <span class="app-header__user-copy">
-            <span>{{ displayName || 'QWeb User' }}</span>
-            <small>{{ userGroup }}</small>
+            <span>{{ displayName || '未命名用户' }}</span>
+            <small>{{ userGroupLabel }}</small>
           </span>
           <span class="material-symbols-rounded" aria-hidden="true">expand_more</span>
         </button>
@@ -63,26 +59,26 @@ import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useAuth } from "@/composables/useAuth"
 import { useTheme, type ThemeMode } from "@/composables/useTheme"
+import { useSiteStore } from "@/stores/site"
 import AppIconButton from "@/components/common/AppIconButton.vue"
+import LanguageSelect from "@/components/common/LanguageSelect.vue"
 
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const { displayName, userGroup, logout } = useAuth()
 const { mode } = useTheme()
+const siteStore = useSiteStore()
 
 const userMenuOpen = ref(false)
 
-const displayInitial = computed(() => (displayName.value || "Q").charAt(0).toUpperCase())
+const displayInitial = computed(() => (displayName.value || siteStore.brandInitial).charAt(0).toUpperCase())
+const userGroupLabel = computed(() => t(`user.groups.${userGroup.value}`))
 const themeIcon = computed(() => {
   if (mode.value === "dark") return "dark_mode"
   if (mode.value === "light") return "light_mode"
   return "contrast"
 })
 const themeLabel = computed(() => `切换主题，当前：${mode.value}`)
-
-function toggleLocale(): void {
-  locale.value = locale.value === "zh-CN" ? "en-US" : "zh-CN"
-}
 
 function toggleTheme(): void {
   const modes: ThemeMode[] = ["system", "light", "dark"]

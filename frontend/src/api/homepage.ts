@@ -10,6 +10,22 @@ import apiClient from './client'
 import type { ApiResponse } from '@/types/api'
 import type { AxiosResponse } from 'axios'
 
+export interface SiteMetadata {
+  id: string
+  site_name: string
+  site_title: string
+  subtitle: string
+  logo_url: string
+  favicon_url: string
+  brand_initial: string
+  updated_at: string
+}
+
+export type SiteMetadataUpdatePayload = Partial<Pick<
+  SiteMetadata,
+  'site_name' | 'site_title' | 'subtitle' | 'logo_url' | 'favicon_url' | 'brand_initial'
+>>
+
 export interface ServiceLink {
   id: string
   title: string
@@ -29,6 +45,21 @@ export interface ServiceLinkAdmin extends ServiceLink {
 }
 
 export type ServiceLinkCreatePayload = Omit<ServiceLinkAdmin, 'id' | 'created_at' | 'updated_at'>
+
+/** 公开接口：获取站点元数据 */
+export function getPublicSiteMetadata(): Promise<AxiosResponse<ApiResponse<SiteMetadata>>> {
+  return apiClient.get('/homepage/metadata/')
+}
+
+/** 管理接口：获取站点元数据 */
+export function getAdminSiteMetadata(): Promise<AxiosResponse<ApiResponse<SiteMetadata>>> {
+  return apiClient.get('/homepage/admin/metadata/')
+}
+
+/** 管理接口：更新站点元数据 */
+export function updateSiteMetadata(data: SiteMetadataUpdatePayload): Promise<AxiosResponse<ApiResponse<SiteMetadata>>> {
+  return apiClient.patch('/homepage/admin/metadata/', data)
+}
 
 /** 公开接口：获取可见的服务链接列表 */
 export function getPublicServiceLinks(): Promise<AxiosResponse<ApiResponse<ServiceLink[]>>> {

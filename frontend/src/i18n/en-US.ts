@@ -13,6 +13,7 @@ export default {
     cancel: "Cancel",
     save: "Save",
     switchLang: "Switch language",
+    language: "Language",
     delete: "Delete",
     edit: "Edit",
     create: "Create",
@@ -115,6 +116,7 @@ export default {
     accounts: "Accounts",
     homepage: "Homepage",
     serviceLinks: "Service Links",
+    siteSettings: "Site Settings",
   },
 
   user: {
@@ -218,5 +220,20 @@ export default {
       tool: "Tool",
       other: "Other",
     },
+  },
+  siteSettings: {
+    title: "Site Settings",
+    subtitle: "Configure the site name, logo, and favicon shared by the public pages and console.",
+    basicInfo: "Brand information",
+    basicInfoHint: "These values are used by the page title, sidebar, public homepage, and favicon.",
+    siteName: "Site Name",
+    siteTitle: "Browser Title",
+    siteSubtitle: "Site Subtitle",
+    logoUrl: "Logo URL",
+    faviconUrl: "favicon URL",
+    brandInitial: "Brand Initial",
+    preview: "Preview",
+    saved: "Site settings saved",
+    saveFailed: "Failed to save site settings",
   },
 }

@@ -1,0 +1,42 @@
+type: object
+required:
+  - id
+  - site_name
+  - site_title
+  - subtitle
+  - logo_url
+  - favicon_url
+  - brand_initial
+  - updated_at
+properties:
+  id:
+    type: string
+    format: uuid
+  site_name:
+    type: string
+    maxLength: 100
+    example: QWeb
+  site_title:
+    type: string
+    maxLength: 150
+    example: Qintsg's Web
+  subtitle:
+    type: string
+    maxLength: 300
+  logo_url:
+    type: string
+    format: uri
+    maxLength: 500
+    nullable: true
+  favicon_url:
+    type: string
+    format: uri
+    maxLength: 500
+    nullable: true
+  brand_initial:
+    type: string
+    maxLength: 4
+    example: Q
+  updated_at:
+    type: string
+    format: date-time

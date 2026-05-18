@@ -60,7 +60,7 @@ async function handleRegister(): Promise<void> {
 <template>
   <section class="auth-panel" aria-labelledby="register-title">
     <header class="auth-panel__header">
-      <p>New identity</p>
+      <p>创建身份</p>
       <h2 id="register-title">{{ t('auth.register') }}</h2>
       <span>{{ t('auth.registerSubtitle') }}</span>
     </header>

@@ -9,12 +9,13 @@
 <template>
   <div class="public-layout">
     <header class="public-layout__header">
-      <router-link to="/" class="public-layout__brand" aria-label="返回 QWeb 首页">
-        <span aria-hidden="true">Q</span>
-        <strong>Qintsg's Web</strong>
+      <router-link to="/" class="public-layout__brand" :aria-label="`返回 ${siteStore.siteName} 首页`">
+        <img v-if="siteStore.metadata.logo_url" :src="siteStore.metadata.logo_url" alt="" />
+        <span v-else aria-hidden="true">{{ siteStore.brandInitial }}</span>
+        <strong>{{ siteStore.siteName }}</strong>
       </router-link>
       <div class="public-layout__actions">
-        <AppIconButton :label="t('common.switchLang')" icon="translate" @click="toggleLocale" />
+        <LanguageSelect />
         <AppIconButton :label="themeLabel" :icon="themeIcon" @click="toggleTheme" />
       </div>
     </header>
@@ -22,9 +23,9 @@
     <main id="main-content" class="public-layout__main" tabindex="-1">
       <section class="public-layout__panel" aria-labelledby="auth-shell-title">
         <div class="public-layout__intro">
-          <p class="public-layout__kicker">Secure personal infrastructure</p>
-          <h1 id="auth-shell-title">QWeb 身份入口</h1>
-          <p>统一进入服务链接、IAM、审计与个人工作区。</p>
+          <p class="public-layout__kicker">安全访问入口</p>
+          <h1 id="auth-shell-title">{{ siteStore.siteName }} 身份入口</h1>
+          <p>{{ siteStore.metadata.subtitle || '统一进入服务链接、IAM、审计与个人工作区。' }}</p>
         </div>
         <router-view v-slot="{ Component }">
           <Transition name="page-fade" mode="out-in">
@@ -38,12 +39,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
-import { useI18n } from "vue-i18n"
 import AppIconButton from "@/components/common/AppIconButton.vue"
+import LanguageSelect from "@/components/common/LanguageSelect.vue"
 import { useTheme, type ThemeMode } from "@/composables/useTheme"
+import { useSiteStore } from "@/stores/site"
 
-const { t, locale } = useI18n()
 const { mode } = useTheme()
+const siteStore = useSiteStore()
 
 const themeIcon = computed(() => {
   if (mode.value === "dark") return "dark_mode"
@@ -51,10 +53,6 @@ const themeIcon = computed(() => {
   return "contrast"
 })
 const themeLabel = computed(() => `切换主题，当前：${mode.value}`)
-
-function toggleLocale(): void {
-  locale.value = locale.value === "zh-CN" ? "en-US" : "zh-CN"
-}
 
 function toggleTheme(): void {
   const modes: ThemeMode[] = ["system", "light", "dark"]
@@ -107,7 +105,8 @@ function toggleTheme(): void {
   color: var(--md-sys-color-on-surface);
 }
 
-.public-layout__brand span {
+.public-layout__brand span,
+.public-layout__brand img {
   inline-size: 2.5rem;
   block-size: 2.5rem;
   display: inline-grid;
@@ -115,6 +114,7 @@ function toggleTheme(): void {
   border-radius: var(--md-sys-shape-corner-large);
   color: var(--md-sys-color-on-primary);
   background: var(--md-sys-color-primary);
+  object-fit: cover;
   font-family: var(--md-sys-typescale-title-medium-font);
   font-size: var(--md-sys-typescale-title-medium-size);
   font-weight: var(--md-sys-typescale-title-medium-weight);

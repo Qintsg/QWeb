@@ -153,10 +153,10 @@ onMounted(fetchLinks)
     <PageHeader
       :title="t('serviceLinks.title')"
       :description="t('serviceLinks.subtitle')"
-      eyebrow="Homepage"
+      eyebrow="首页管理"
     >
       <template #actions>
-        <StatusPill :label="`${links.length} links`" tone="primary" icon="hub" />
+        <StatusPill :label="`${links.length} 个入口`" tone="primary" icon="hub" />
         <md-filled-button type="button" @click="openCreateDialog">
           <span slot="icon" class="material-symbols-rounded" aria-hidden="true">add_link</span>
           {{ t('common.create') }}

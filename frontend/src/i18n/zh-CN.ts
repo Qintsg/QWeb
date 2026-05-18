@@ -13,6 +13,7 @@ export default {
     cancel: "取消",
     save: "保存",
     switchLang: "切换语言",
+    language: "语言",
     delete: "删除",
     edit: "编辑",
     create: "新建",
@@ -115,6 +116,7 @@ export default {
     accounts: "账号管理",
     homepage: "首页管理",
     serviceLinks: "服务链接",
+    siteSettings: "站点设置",
   },
 
   user: {
@@ -218,5 +220,20 @@ export default {
       tool: "工具",
       other: "其他",
     },
+  },
+  siteSettings: {
+    title: "站点设置",
+    subtitle: "配置前台与控制台共用的站点名称、Logo 和浏览器图标。",
+    basicInfo: "品牌信息",
+    basicInfoHint: "这些内容会用于页面标题、侧边栏、公开首页和 favicon。",
+    siteName: "站点名称",
+    siteTitle: "浏览器标题",
+    siteSubtitle: "站点副标题",
+    logoUrl: "Logo 地址",
+    faviconUrl: "favicon 地址",
+    brandInitial: "品牌首字母",
+    preview: "预览",
+    saved: "站点设置已保存",
+    saveFailed: "站点设置保存失败",
   },
 }

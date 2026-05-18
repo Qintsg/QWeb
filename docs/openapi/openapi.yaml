@@ -89,8 +89,12 @@ paths:
     $ref: ./paths/audit.yaml#/~1api~1v1~1logs~1
   /api/v1/login-logs/:
     $ref: ./paths/audit.yaml#/~1api~1v1~1login-logs~1
+  /api/v1/homepage/metadata/:
+    $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1metadata~1
   /api/v1/homepage/links/:
     $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1links~1
+  /api/v1/homepage/admin/metadata/:
+    $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1admin~1metadata~1
   /api/v1/homepage/admin/links/:
     $ref: ./paths/homepage.yaml#/~1api~1v1~1homepage~1admin~1links~1
   /api/v1/homepage/admin/links/{id}/:
@@ -152,6 +156,8 @@ components:
       $ref: ./components/schemas/AuditLog.yaml
     LoginLog:
       $ref: ./components/schemas/LoginLog.yaml
+    SiteMetadata:
+      $ref: ./components/schemas/SiteMetadata.yaml
     ServiceLink:
       $ref: ./components/schemas/ServiceLink.yaml
     ServiceLinkAdmin:

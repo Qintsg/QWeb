@@ -57,7 +57,7 @@ async function handleCreateOwner(): Promise<void> {
 <template>
   <section class="auth-panel" aria-labelledby="bootstrap-owner-title">
     <header class="auth-panel__header">
-      <p>First run</p>
+      <p>首次部署</p>
       <h2 id="bootstrap-owner-title">{{ t('auth.bootstrapOwnerTitle') }}</h2>
       <span>{{ t('auth.bootstrapOwnerSubtitle') }}</span>
     </header>
