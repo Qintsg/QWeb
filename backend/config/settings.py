@@ -142,7 +142,7 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CORS_ALLOWED_ORIGINS",
-        "http://127.0.0.1:3000,http://localhost:3000",
+        "http://127.0.0.1:5173,http://localhost:5173",
     ).split(",")
     if origin.strip()
 ]
@@ -167,7 +167,7 @@ GITHUB_OAUTH_CLIENT_ID = os.getenv("GITHUB_OAUTH_CLIENT_ID", "")
 GITHUB_OAUTH_CLIENT_SECRET = os.getenv("GITHUB_OAUTH_CLIENT_SECRET", "")
 GITHUB_OAUTH_CALLBACK_URL = os.getenv(
     "GITHUB_OAUTH_CALLBACK_URL",
-    "http://127.0.0.1:3000/auth/github/callback",
+    "http://127.0.0.1:5173/auth/github/callback",
 )
 GITHUB_OAUTH_STATE_MAX_AGE = int(os.getenv("GITHUB_OAUTH_STATE_MAX_AGE", "600"))
 

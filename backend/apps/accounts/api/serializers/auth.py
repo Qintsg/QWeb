@@ -72,6 +72,13 @@ class RegisterSerializer(serializers.Serializer):
         return attrs
 
 
+class BootstrapOwnerSerializer(RegisterSerializer):
+    """首次部署创建站长账号请求。
+
+    仅用于系统没有 owner 角色用户时的初始化入口，字段规则与普通注册一致。
+    """
+
+
 class LoginSerializer(serializers.Serializer):
     """用户登录请求。
 

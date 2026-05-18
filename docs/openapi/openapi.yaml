@@ -37,6 +37,10 @@ paths:
     $ref: ./paths/system.yaml#/~1api~1health~1
   /api/schema/:
     $ref: ./paths/system.yaml#/~1api~1schema~1
+  /api/v1/auth/bootstrap/status/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1bootstrap~1status~1
+  /api/v1/auth/bootstrap/owner/:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1bootstrap~1owner~1
   /api/v1/auth/register/:
     $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1register~1
   /api/v1/auth/login/:

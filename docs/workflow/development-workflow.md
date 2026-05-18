@@ -29,14 +29,14 @@ cd backend
 uv sync
 cp .env.example .env           # 修改 .env 中的数据库与 Redis 配置
 uv run python manage.py migrate
-uv run python manage.py createsuperuser
+uv run python manage.py seed_admin      # 可选：交互式创建站长；也可首次访问前端时按页面引导创建
 uv run python manage.py runserver 0.0.0.0:8000
 
 # 4. 前端环境
 cd ../frontend
 npm install
 cp .env.example .env           # 修改 API 代理地址
-npm run dev                    # 启动在 http://localhost:3000
+npm run dev                    # 启动在 http://localhost:5173
 ```
 
 ### 1.3 端口规划
@@ -44,7 +44,7 @@ npm run dev                    # 启动在 http://localhost:3000
 | 服务 | 端口 | 说明 |
 |------|------|------|
 | Django 后端 | 8000 | API 服务 |
-| Vite 前端 | 3000 | 开发服务器 |
+| Vite 前端 | 5173 | 开发服务器 |
 | PostgreSQL | 5432 | 数据库 |
 | Redis | 6379 | 缓存/队列 |
 
@@ -53,7 +53,7 @@ npm run dev                    # 启动在 http://localhost:3000
 本地 GitHub OAuth App 的回调地址应配置为：
 
 ```text
-http://127.0.0.1:3000/auth/github/callback
+http://127.0.0.1:5173/auth/github/callback
 ```
 
 后端使用以下环境变量读取 GitHub OAuth 配置：
@@ -61,7 +61,7 @@ http://127.0.0.1:3000/auth/github/callback
 ```env
 GITHUB_OAUTH_CLIENT_ID=your-client-id
 GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
-GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
+GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:5173/auth/github/callback
 GITHUB_OAUTH_STATE_MAX_AGE=600
 ```
 

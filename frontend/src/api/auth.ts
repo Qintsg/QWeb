@@ -13,6 +13,9 @@ import type {
   LoginResponse,
   RegisterRequest,
   RefreshResponse,
+  BootstrapOwnerRequest,
+  BootstrapOwnerResponse,
+  BootstrapStatus,
   ChangePasswordRequest,
   UserInfo,
   ResolvedPermissions,
@@ -22,6 +25,16 @@ import type {
   OAuthCallbackResponse,
   OAuthRegisterRequest,
 } from "@/types/auth"
+
+/** 获取首次部署引导状态 */
+export function getBootstrapStatus() {
+  return apiClient.get<ApiResponse<BootstrapStatus>>("/auth/bootstrap/status/")
+}
+
+/** 首次部署创建站长账号 */
+export function createBootstrapOwner(payload: BootstrapOwnerRequest) {
+  return apiClient.post<ApiResponse<BootstrapOwnerResponse>>("/auth/bootstrap/owner/", payload)
+}
 
 /** 用户注册 */
 export function register(payload: RegisterRequest) {

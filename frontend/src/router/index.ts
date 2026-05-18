@@ -20,6 +20,12 @@ import { usePermissionStore } from '@/stores/permission'
 /** 公开路由（无需登录） */
 const publicRoutes: RouteRecordRaw[] = [
   {
+    path: '/bootstrap/owner',
+    name: 'bootstrap-owner',
+    component: () => import('@/pages/BootstrapOwnerPage.vue'),
+    meta: { layout: 'public', title: '创建站长账号' },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/pages/LoginPage.vue'),
@@ -145,6 +151,17 @@ router.beforeEach(async (to, _from, next) => {
     await authStore.initialize()
   }
 
+  // 首次部署时，先由后端权威状态决定是否进入站长账号创建流程。
+  const ownerBootstrapRequired = await authStore.checkBootstrapStatus()
+  if (ownerBootstrapRequired && to.name !== 'bootstrap-owner') {
+    next({ name: 'bootstrap-owner' })
+    return
+  }
+  if (!ownerBootstrapRequired && to.name === 'bootstrap-owner') {
+    next({ name: authStore.isAuthenticated ? 'dashboard' : 'login' })
+    return
+  }
+
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth && !authStore.isAuthenticated) {
@@ -153,7 +170,7 @@ router.beforeEach(async (to, _from, next) => {
     return
   }
 
-  if (authStore.isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+  if (authStore.isAuthenticated && (to.name === 'login' || to.name === 'register' || to.name === 'bootstrap-owner')) {
     // 已登录 → 跳过登录/注册页面，前往仪表盘
     next({ name: 'dashboard' })
     return

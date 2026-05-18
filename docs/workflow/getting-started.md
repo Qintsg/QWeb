@@ -29,12 +29,12 @@ cd QWeb
 
 ```bash
 # 使用项目提供的初始化脚本
-psql -U postgres -f docs/postgresql-init.sql
+psql -U postgres -v qweb_db=qweb -v qweb_user=qweb_app -v qweb_password='replace-with-local-password' -f docs/postgresql-init.sql
 ```
 
 脚本将创建：
 - 数据库: `qweb`
-- 用户: `qintsg`
+- 用户: 由执行脚本时的 `qweb_user` 变量指定
 - 授予所有权限
 
 ---
@@ -53,8 +53,8 @@ cp .env.example .env
 # 数据库迁移
 uv run python manage.py migrate
 
-# 创建超级管理员
-uv run python manage.py createsuperuser
+# 首次部署站长账号会在首次访问前端时引导创建；也可使用交互式命令创建
+uv run python manage.py seed_admin
 
 # 启动开发服务器
 uv run python manage.py runserver 0.0.0.0:8000
@@ -63,7 +63,7 @@ uv run python manage.py runserver 0.0.0.0:8000
 如需启用 GitHub 登录，需要在 GitHub OAuth App 中配置回调地址：
 
 ```text
-http://127.0.0.1:3000/auth/github/callback
+http://127.0.0.1:5173/auth/github/callback
 ```
 
 并在 `backend/.env` 中填写：
@@ -71,7 +71,7 @@ http://127.0.0.1:3000/auth/github/callback
 ```env
 GITHUB_OAUTH_CLIENT_ID=your-client-id
 GITHUB_OAUTH_CLIENT_SECRET=your-client-secret
-GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:3000/auth/github/callback
+GITHUB_OAUTH_CALLBACK_URL=http://127.0.0.1:5173/auth/github/callback
 ```
 
 前端通过 `/api/v1/auth/oauth/github/authorize/` 获取授权地址。首次 GitHub 登录未绑定本地账号时，会在回调页选择“绑定已有账号”或“创建新账号”；邮箱相同不会自动绑定。
@@ -101,7 +101,7 @@ cp .env.example .env
 npm run dev
 ```
 
-前端启动后访问：http://localhost:3000
+前端启动后访问：http://localhost:5173
 
 ---
 

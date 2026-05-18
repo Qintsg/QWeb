@@ -94,6 +94,8 @@
 
 | 方法 | 路径                              | 说明         |
 | ---- | --------------------------------- | ------------ |
+| GET  | /api/v1/auth/bootstrap/status       | 查询首次部署是否需要创建站长账号 |
+| POST | /api/v1/auth/bootstrap/owner        | 首次部署创建站长账号并授予 owner 角色 |
 | POST | /api/v1/auth/register             | 注册本地账号，并创建用户扩展表 |
 | POST | /api/v1/auth/login                | 用户名、邮箱或手机号 + 密码登录 |
 | GET  | /api/v1/auth/oauth/{provider}/authorize | 获取 OAuth 授权地址，当前支持 `github` |

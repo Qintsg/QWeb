@@ -12,6 +12,8 @@ import { useRouter } from "vue-router"
 import {
   bindOAuthAccount,
   completeOAuthLogin,
+  createBootstrapOwner,
+  getBootstrapStatus,
   getOAuthAuthorizeUrl,
   login as apiLogin,
   logout as apiLogout,
@@ -26,6 +28,7 @@ import type {
   OAuthBindRequest,
   OAuthCallbackRequest,
   OAuthRegisterRequest,
+  RegisterRequest,
 } from "@/types/auth"
 
 export const useAuthStore = defineStore("auth", () => {
@@ -35,6 +38,8 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref<UserInfo | null>(null)
   const loading = ref(false)
   const initialized = ref(false)
+  const ownerBootstrapRequired = ref(false)
+  const bootstrapChecked = ref(false)
 
   /* ── 计算属性 ── */
   const isAuthenticated = computed(() => !!user.value && !!getAccessToken())
@@ -43,6 +48,30 @@ export const useAuthStore = defineStore("auth", () => {
     if (user.value?.user_type === "admin" || user.value?.is_staff) return "admin"
     return "user"
   })
+
+  /* ── 首次部署状态 ── */
+  async function checkBootstrapStatus(): Promise<boolean> {
+    if (bootstrapChecked.value) return ownerBootstrapRequired.value
+    const { data } = await getBootstrapStatus()
+    ownerBootstrapRequired.value = data.data.owner_required
+    bootstrapChecked.value = true
+    return ownerBootstrapRequired.value
+  }
+
+  async function createOwnerAccount(payload: RegisterRequest) {
+    loading.value = true
+    try {
+      const { data } = await createBootstrapOwner(payload)
+      const result = data.data
+      setTokens(result.access, result.refresh)
+      ownerBootstrapRequired.value = false
+      bootstrapChecked.value = true
+      await fetchUser()
+      return result
+    } finally {
+      loading.value = false
+    }
+  }
 
   /* ── 登录 ── */
   async function login(credentials: LoginRequest) {
@@ -129,6 +158,7 @@ export const useAuthStore = defineStore("auth", () => {
     } finally {
       user.value = null
       initialized.value = false
+      bootstrapChecked.value = false
       clearTokens()
       const permissionStore = usePermissionStore()
       permissionStore.$reset()
@@ -149,9 +179,13 @@ export const useAuthStore = defineStore("auth", () => {
     user,
     loading,
     initialized,
+    ownerBootstrapRequired,
+    bootstrapChecked,
     isAuthenticated,
     displayName,
     userGroup,
+    checkBootstrapStatus,
+    createOwnerAccount,
     login,
     startGitHubLogin,
     completeGitHubOAuth,
