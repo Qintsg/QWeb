@@ -9,9 +9,11 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
+import { useSiteStore } from "@/stores/site"
 import type { ServiceLink } from "@/api/homepage"
 
 const { t } = useI18n()
+const siteStore = useSiteStore()
 
 const props = defineProps<{
   isAuthenticated: boolean
@@ -28,9 +30,10 @@ function getIconForLink(link: ServiceLink): string {
 <template>
   <header class="hero">
     <nav class="hero__nav" aria-label="公开导航">
-      <a href="#services" class="hero__brand" aria-label="Qintsg's Web">
-        <span aria-hidden="true">Q</span>
-        <strong>Qintsg</strong>
+      <a href="#services" class="hero__brand" :aria-label="siteStore.siteTitle">
+        <img v-if="siteStore.metadata.logo_url" :src="siteStore.metadata.logo_url" alt="" />
+        <span v-else aria-hidden="true">{{ siteStore.brandInitial }}</span>
+        <strong>{{ siteStore.siteName }}</strong>
       </a>
       <div class="hero__nav-actions">
         <a href="https://github.com/qintsg" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -41,9 +44,9 @@ function getIconForLink(link: ServiceLink): string {
 
     <section class="hero__canvas" aria-labelledby="home-title">
       <div class="hero__copy">
-        <p class="hero__eyebrow">Personal Infrastructure Portal</p>
-        <h1 id="home-title">Qintsg's Web</h1>
-        <p class="hero__subtitle">把服务入口、身份权限、审计记录和个人项目收束到一个可控的 Material 3 门户。</p>
+        <p class="hero__eyebrow">个人基础设施入口</p>
+        <h1 id="home-title">{{ siteStore.siteTitle }}</h1>
+        <p class="hero__subtitle">{{ siteStore.metadata.subtitle }}</p>
         <div class="hero__actions">
           <router-link v-if="isAuthenticated" to="/dashboard" class="hero__primary-action">
             进入控制台
@@ -63,9 +66,9 @@ function getIconForLink(link: ServiceLink): string {
           <span></span><span></span><span></span>
         </div>
         <div class="hero__terminal">
-          <p>qweb.status</p>
+          <p>站点状态</p>
           <strong>{{ serviceLinks.length }}</strong>
-          <span>visible services</span>
+          <span>个可见服务</span>
         </div>
         <ul class="hero__featured" aria-label="精选服务">
           <li v-for="link in featuredLinks" :key="link.id">
@@ -127,7 +130,8 @@ function getIconForLink(link: ServiceLink): string {
   gap: var(--space-sm);
 }
 
-.hero__brand span {
+.hero__brand span,
+.hero__brand img {
   inline-size: 2.5rem;
   block-size: 2.5rem;
   display: inline-grid;
@@ -135,6 +139,7 @@ function getIconForLink(link: ServiceLink): string {
   border-radius: var(--md-sys-shape-corner-large);
   color: var(--md-sys-color-on-primary);
   background: var(--md-sys-color-primary);
+  object-fit: cover;
 }
 
 .hero__brand strong,

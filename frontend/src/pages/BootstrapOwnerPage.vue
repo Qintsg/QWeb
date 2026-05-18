@@ -1,25 +1,25 @@
 <!--
-  注册页面视图。
+  首次部署站长账号创建页面。
 
   :project: QWeb
-  :file: RegisterPage.vue
+  :file: BootstrapOwnerPage.vue
   :author: Qintsg
-  :date: 2026-05-17 00:00
+  :date: 2026-05-18 11:35
 -->
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
-import { register } from "@/api/auth"
+import { useAuthStore } from "@/stores/auth"
 
 const { t } = useI18n()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const username = ref("")
 const email = ref("")
 const password = ref("")
 const confirmPassword = ref("")
-const loading = ref(false)
 const errorMsg = ref("")
 
 const usernameHint = computed(() => t("auth.usernameRule"))
@@ -36,43 +36,40 @@ function validateForm(): boolean {
   return true
 }
 
-async function handleRegister(): Promise<void> {
+async function handleCreateOwner(): Promise<void> {
   if (!validateForm()) return
 
-  loading.value = true
   errorMsg.value = ""
   try {
-    await register({
+    await authStore.createOwnerAccount({
       username: username.value.trim(),
       email: email.value.trim(),
       password: password.value,
       password_confirm: confirmPassword.value,
     })
-    router.push("/login")
+    router.push({ name: "dashboard" })
   } catch (err: unknown) {
-    errorMsg.value = (err as Error).message || t("auth.registerFailed")
-  } finally {
-    loading.value = false
+    errorMsg.value = (err as Error).message || t("auth.bootstrapOwnerFailed")
   }
 }
 </script>
 
 <template>
-  <section class="auth-panel" aria-labelledby="register-title">
+  <section class="auth-panel" aria-labelledby="bootstrap-owner-title">
     <header class="auth-panel__header">
-      <p>创建身份</p>
-      <h2 id="register-title">{{ t('auth.register') }}</h2>
-      <span>{{ t('auth.registerSubtitle') }}</span>
+      <p>首次部署</p>
+      <h2 id="bootstrap-owner-title">{{ t('auth.bootstrapOwnerTitle') }}</h2>
+      <span>{{ t('auth.bootstrapOwnerSubtitle') }}</span>
     </header>
 
-    <form class="auth-form" @submit.prevent="handleRegister">
-      <div v-if="errorMsg" id="register-error" class="auth-alert" role="alert">
+    <form class="auth-form" @submit.prevent="handleCreateOwner">
+      <div v-if="errorMsg" id="bootstrap-owner-error" class="auth-alert" role="alert">
         <span class="material-symbols-rounded" aria-hidden="true">error</span>
         <span>{{ errorMsg }}</span>
       </div>
 
       <md-outlined-text-field
-        id="register-username"
+        id="bootstrap-owner-username"
         :label="t('auth.username')"
         :value="username"
         supporting-text=" "
@@ -83,7 +80,7 @@ async function handleRegister(): Promise<void> {
       <p class="auth-help">{{ usernameHint }}</p>
 
       <md-outlined-text-field
-        id="register-email"
+        id="bootstrap-owner-email"
         type="email"
         :label="t('auth.email')"
         :value="email"
@@ -93,7 +90,7 @@ async function handleRegister(): Promise<void> {
       ></md-outlined-text-field>
 
       <md-outlined-text-field
-        id="register-password"
+        id="bootstrap-owner-password"
         type="password"
         :label="t('auth.password')"
         :value="password"
@@ -103,7 +100,7 @@ async function handleRegister(): Promise<void> {
       ></md-outlined-text-field>
 
       <md-outlined-text-field
-        id="register-confirm"
+        id="bootstrap-owner-confirm"
         type="password"
         :label="t('auth.confirmPassword')"
         :value="confirmPassword"
@@ -112,15 +109,15 @@ async function handleRegister(): Promise<void> {
         @input="confirmPassword = ($event.target as HTMLInputElement).value"
       ></md-outlined-text-field>
 
-      <md-filled-button type="submit" class="auth-button" :disabled="loading" :aria-busy="loading">
-        <md-circular-progress v-if="loading" slot="icon" indeterminate></md-circular-progress>
-        {{ loading ? t('common.loading') : t('auth.register') }}
+      <md-filled-button
+        type="submit"
+        class="auth-button"
+        :disabled="authStore.loading"
+        :aria-busy="authStore.loading"
+      >
+        <md-circular-progress v-if="authStore.loading" slot="icon" indeterminate></md-circular-progress>
+        {{ authStore.loading ? t('common.loading') : t('auth.createOwnerAccount') }}
       </md-filled-button>
-
-      <p class="auth-link">
-        {{ t('auth.hasAccount') }}
-        <router-link to="/login">{{ t('auth.login') }}</router-link>
-      </p>
     </form>
   </section>
 </template>
@@ -156,8 +153,7 @@ async function handleRegister(): Promise<void> {
 }
 
 .auth-panel__header span,
-.auth-help,
-.auth-link {
+.auth-help {
   color: var(--md-sys-color-on-surface-variant);
   font-family: var(--md-sys-typescale-body-medium-font);
   font-size: var(--md-sys-typescale-body-medium-size);
@@ -189,14 +185,5 @@ async function handleRegister(): Promise<void> {
   font-size: var(--md-sys-typescale-body-medium-size);
   font-weight: var(--md-sys-typescale-body-medium-weight);
   line-height: var(--md-sys-typescale-body-medium-line-height);
-}
-
-.auth-link {
-  text-align: center;
-}
-
-.auth-link a {
-  color: var(--md-sys-color-primary);
-  font-weight: var(--md-sys-typescale-label-large-weight);
 }
 </style>

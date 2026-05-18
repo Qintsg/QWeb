@@ -9,6 +9,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissionStore } from '@/stores/permission'
+import { useSiteStore } from '@/stores/site'
 
 /**
  * 路由配置
@@ -19,6 +20,12 @@ import { usePermissionStore } from '@/stores/permission'
 
 /** 公开路由（无需登录） */
 const publicRoutes: RouteRecordRaw[] = [
+  {
+    path: '/bootstrap/owner',
+    name: 'bootstrap-owner',
+    component: () => import('@/pages/BootstrapOwnerPage.vue'),
+    meta: { layout: 'public', title: '创建站长账号' },
+  },
   {
     path: '/login',
     name: 'login',
@@ -72,6 +79,12 @@ const authenticatedRoutes: RouteRecordRaw[] = [
     name: 'permissions',
     component: () => import('@/pages/PermissionsPage.vue'),
     meta: { title: '权限管理', permission: 'iam.permission.view' },
+  },
+  {
+    path: '/site-settings',
+    name: 'site-settings',
+    component: () => import('@/pages/SiteSettingsPage.vue'),
+    meta: { title: '站点设置', permission: 'system_config.config.update' },
   },
   {
     path: '/audit-logs',
@@ -145,6 +158,17 @@ router.beforeEach(async (to, _from, next) => {
     await authStore.initialize()
   }
 
+  // 首次部署时，先由后端权威状态决定是否进入站长账号创建流程。
+  const ownerBootstrapRequired = await authStore.checkBootstrapStatus()
+  if (ownerBootstrapRequired && to.name !== 'bootstrap-owner') {
+    next({ name: 'bootstrap-owner' })
+    return
+  }
+  if (!ownerBootstrapRequired && to.name === 'bootstrap-owner') {
+    next({ name: authStore.isAuthenticated ? 'dashboard' : 'login' })
+    return
+  }
+
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth && !authStore.isAuthenticated) {
@@ -153,7 +177,7 @@ router.beforeEach(async (to, _from, next) => {
     return
   }
 
-  if (authStore.isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+  if (authStore.isAuthenticated && (to.name === 'login' || to.name === 'register' || to.name === 'bootstrap-owner')) {
     // 已登录 → 跳过登录/注册页面，前往仪表盘
     next({ name: 'dashboard' })
     return
@@ -180,7 +204,7 @@ router.beforeEach(async (to, _from, next) => {
 /** 路由后置守卫：更新页面标题 */
 router.afterEach((to) => {
   const title = to.meta.title as string | undefined
-  document.title = title ? `${title} - Qintsg's Web` : "Qintsg's Web"
+  useSiteStore().applyBrowserMetadata(title)
 })
 
 export default router

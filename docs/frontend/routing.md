@@ -34,6 +34,7 @@
 /wiki                       # Wiki 首页（公开/部分）
 /wiki/:slug                 # Wiki 页面
 
+/bootstrap/owner             # 首次部署创建站长账号
 /auth/login                 # 登录
 /auth/register              # 注册
 /auth/forgot-password       # 忘记密码
@@ -69,7 +70,7 @@
 /admin/roles                # 角色管理
 /admin/permissions          # 权限管理
 /admin/audit                # 审计日志
-/admin/config               # 系统配置
+/admin/config               # 站点设置、系统配置与模块开关
 /admin/notifications        # 通知管理
 ```
 
@@ -77,6 +78,8 @@
 
 ### 2.1 认证路由约定
 
+- 首次部署时，前端先调用 `/api/v1/auth/bootstrap/status/`；若后端返回需要创建站长账号，则所有路由优先重定向到 `/bootstrap/owner`。
+- `/bootstrap/owner` 提交 `/api/v1/auth/bootstrap/owner/` 创建第一个站长账号并授予 `owner` 角色；一旦已有 owner 用户，该公开入口关闭。
 - GitHub 回调页统一承载三种状态：已绑定登录成功、未绑定时选择绑定已有账号、未绑定时创建新账号。
 - 前端统一调用 provider 化接口 `/api/v1/auth/oauth/{provider}/...`，当前仅接线 `github`；旧 `/api/v1/auth/github/...` 后端入口已删除。
 - 第三方邮箱相同只能用于提示用户，不作为自动绑定依据；绑定已有账号必须完成本地账号认证。
@@ -89,13 +92,14 @@
 
 ```text
 router.beforeEach:
-1. 检查目标路由 meta.requiresAuth
-2. 未登录 → 重定向 /auth/login?redirect=目标路径
-3. 已登录访问 /auth/* → 重定向 /dashboard
-4. 检查目标路由 meta.permission，权限码使用 `{module}.{resource}.{action}` 格式，与后端 IAM 保持一致
-5. 权限不足 → 重定向 /403，并保留来源路径
-6. 检查目标路由 meta.requiredModule
-7. 模块已关闭 → 重定向 /module-disabled
+1. 调用后端首次部署状态接口；如需要创建站长账号，优先重定向 /bootstrap/owner
+2. 检查目标路由 meta.requiresAuth
+3. 未登录 → 重定向 /auth/login?redirect=目标路径
+4. 已登录访问 /auth/* 或 /bootstrap/owner → 重定向 /dashboard
+5. 检查目标路由 meta.permission，权限码使用 `{module}.{resource}.{action}` 格式，与后端 IAM 保持一致
+6. 权限不足 → 重定向 /403，并保留来源路径
+7. 检查目标路由 meta.requiredModule
+8. 模块已关闭 → 重定向 /module-disabled
 ```
 
 ### 3.2 路由 Meta 定义

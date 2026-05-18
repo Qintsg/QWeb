@@ -94,6 +94,8 @@
 
 | 方法 | 路径                              | 说明         |
 | ---- | --------------------------------- | ------------ |
+| GET  | /api/v1/auth/bootstrap/status       | 查询首次部署是否需要创建站长账号 |
+| POST | /api/v1/auth/bootstrap/owner        | 首次部署创建站长账号并授予 owner 角色 |
 | POST | /api/v1/auth/register             | 注册本地账号，并创建用户扩展表 |
 | POST | /api/v1/auth/login                | 用户名、邮箱或手机号 + 密码登录 |
 | GET  | /api/v1/auth/oauth/{provider}/authorize | 获取 OAuth 授权地址，当前支持 `github` |
@@ -312,6 +314,9 @@
 
 | 方法  | 路径                            | 说明         |
 | ----- | ------------------------------- | ------------ |
+| GET   | /api/v1/homepage/metadata       | 获取公开站点名称、Logo 与 favicon |
+| GET   | /api/v1/homepage/admin/metadata | 管理端查看站点元数据 |
+| PATCH | /api/v1/homepage/admin/metadata | 更新站点名称、Logo 与 favicon |
 | GET   | /api/v1/system/config           | 获取配置     |
 | PATCH | /api/v1/system/config           | 更新配置     |
 | GET   | /api/v1/system/modules          | 模块列表     |

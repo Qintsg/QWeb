@@ -9,7 +9,15 @@
 '''
 from django.contrib import admin
 
-from apps.homepage.models import ServiceLink
+from apps.homepage.models import ServiceLink, SiteMetadata
+
+
+@admin.register(SiteMetadata)
+class SiteMetadataAdmin(admin.ModelAdmin):
+    """定义站点元数据 Django Admin 管理界面配置。"""
+
+    list_display = ("site_name", "site_title", "updated_at")
+    search_fields = ("site_name", "site_title", "subtitle")
 
 
 @admin.register(ServiceLink)

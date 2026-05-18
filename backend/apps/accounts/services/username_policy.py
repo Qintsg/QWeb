@@ -29,7 +29,6 @@ RESERVED_USERNAMES = {
     "logout",
     "me",
     "null",
-    "qintsg",
     "root",
     "settings",
     "signup",

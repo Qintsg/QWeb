@@ -9,10 +9,13 @@
 <template>
   <nav class="app-nav" aria-label="主导航">
     <router-link to="/dashboard" class="app-nav__brand" aria-label="返回仪表盘">
-      <span class="app-nav__logo" aria-hidden="true">Q</span>
+      <span class="app-nav__logo" aria-hidden="true">
+        <img v-if="siteStore.metadata.logo_url" :src="siteStore.metadata.logo_url" alt="" />
+        <span v-else>{{ siteStore.brandInitial }}</span>
+      </span>
       <span class="app-nav__brand-copy">
-        <strong>Qintsg</strong>
-        <small>Infrastructure OS</small>
+        <strong>{{ siteStore.siteName }}</strong>
+        <small>管理控制台</small>
       </span>
     </router-link>
 
@@ -31,9 +34,11 @@
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { usePermission } from "@/composables/usePermission"
+import { useSiteStore } from "@/stores/site"
 
 const { t } = useI18n()
 const { hasPermission } = usePermission()
+const siteStore = useSiteStore()
 
 interface NavItem {
   path: string
@@ -48,6 +53,7 @@ const navItems: NavItem[] = [
   { path: "/roles", labelKey: "nav.roleManagement", icon: "admin_panel_settings", permission: "iam.role.view" },
   { path: "/permissions", labelKey: "nav.permissionManagement", icon: "vpn_key", permission: "iam.permission.view" },
   { path: "/service-links", labelKey: "nav.serviceLinks", icon: "hub", permission: "homepage.service_link.manage" },
+  { path: "/site-settings", labelKey: "nav.siteSettings", icon: "tune", permission: "system_config.config.update" },
   { path: "/audit-logs", labelKey: "nav.auditLogs", icon: "assignment", permission: "audit.log.view" },
   { path: "/login-logs", labelKey: "nav.loginLogs", icon: "shield_lock", permission: "audit.log.view" },
   { path: "/profile", labelKey: "nav.profile", icon: "person" },
@@ -94,6 +100,16 @@ const visibleNavItems = computed(() =>
   font-size: var(--md-sys-typescale-title-large-size);
   font-weight: var(--md-sys-typescale-title-large-weight);
   line-height: var(--md-sys-typescale-title-large-line-height);
+}
+
+.app-nav__logo img,
+.app-nav__logo > span {
+  inline-size: 100%;
+  block-size: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  object-fit: cover;
 }
 
 .app-nav__brand-copy {

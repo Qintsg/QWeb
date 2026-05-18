@@ -11,6 +11,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.accounts.api.views.auth_views import (
+    BootstrapOwnerView,
+    BootstrapStatusView,
     LoginView,
     LogoutView,
     OAuthAuthorizeView,
@@ -30,6 +32,8 @@ router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     # ---- 认证 ----
+    path("auth/bootstrap/status/", BootstrapStatusView.as_view(), name="bootstrap-status"),
+    path("auth/bootstrap/owner/", BootstrapOwnerView.as_view(), name="bootstrap-owner"),
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/oauth/<str:provider>/authorize/", OAuthAuthorizeView.as_view(), name="oauth-authorize"),

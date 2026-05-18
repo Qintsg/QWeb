@@ -41,7 +41,7 @@ function getIconForLink(link: ServiceLink): string {
     <section id="services" class="services" aria-labelledby="services-title">
       <div class="services__header">
         <div>
-          <p class="services__eyebrow">Service Directory</p>
+          <p class="services__eyebrow">服务目录</p>
           <h2 id="services-title">服务与项目</h2>
         </div>
         <StatusPill :label="`${serviceLinks.length} 个可见入口`" tone="primary" icon="hub" />

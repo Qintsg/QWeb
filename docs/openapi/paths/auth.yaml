@@ -1,3 +1,109 @@
+/api/v1/auth/bootstrap/status/:
+  get:
+    tags:
+      - auth
+    operationId: getBootstrapStatus
+    summary: 查询首次部署状态
+    description: 返回当前系统是否仍需要创建站长账号。
+    security: []
+    responses:
+      "200":
+        description: 首次部署状态。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 获取首次部署状态成功
+                data:
+                  type: object
+                  required:
+                    - owner_required
+                  properties:
+                    owner_required:
+                      type: boolean
+                      description: 没有 owner 角色用户时为 true。
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/auth/bootstrap/owner/:
+  post:
+    tags:
+      - auth
+    operationId: createBootstrapOwner
+    summary: 首次部署创建站长账号
+    description: 仅在系统没有任何 owner 角色用户时可用；创建账号后自动授予 owner 角色并签发 JWT。
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - username
+              - email
+              - password
+              - password_confirm
+            properties:
+              username:
+                type: string
+                minLength: 3
+                maxLength: 32
+                pattern: "^[A-Za-z0-9](?!.*[._-]{2})[A-Za-z0-9._-]*[A-Za-z0-9]$"
+              email:
+                type: string
+                format: email
+              password:
+                type: string
+                format: password
+                minLength: 8
+              password_confirm:
+                type: string
+                format: password
+          example:
+            username: site-owner
+            email: owner@example.com
+            password: StrongPass123!
+            password_confirm: StrongPass123!
+    responses:
+      "201":
+        description: 站长账号创建成功。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 站长账号创建成功
+                data:
+                  $ref: ../components/schemas/AuthenticatedSession.yaml
+      "409":
+        description: 已存在 owner 角色用户，首次部署入口已关闭。
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/ErrorResponse.yaml
+      "422":
+        $ref: ../components/responses/ValidationError.yaml
+
 /api/v1/auth/register/:
   post:
     tags:

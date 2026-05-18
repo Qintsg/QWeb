@@ -1,3 +1,111 @@
+/api/v1/homepage/metadata/:
+  get:
+    tags:
+      - homepage
+    operationId: getPublicSiteMetadata
+    summary: 获取公开站点元数据
+    security: []
+    responses:
+      "200":
+        description: 当前站点品牌元数据。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - message
+                - data
+              properties:
+                code:
+                  type: integer
+                  example: 0
+                message:
+                  type: string
+                  example: 获取站点元数据成功
+                data:
+                  $ref: ../components/schemas/SiteMetadata.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+
+/api/v1/homepage/admin/metadata/:
+  get:
+    tags:
+      - homepage
+    operationId: getAdminSiteMetadata
+    summary: 获取管理端站点元数据
+    responses:
+      "200":
+        description: 当前站点品牌元数据。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                data:
+                  $ref: ../components/schemas/SiteMetadata.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+  patch:
+    tags:
+      - homepage
+    operationId: updateSiteMetadata
+    summary: 更新站点元数据
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              site_name:
+                type: string
+                maxLength: 100
+              site_title:
+                type: string
+                maxLength: 150
+              subtitle:
+                type: string
+                maxLength: 300
+              logo_url:
+                type: string
+                format: uri
+                maxLength: 500
+              favicon_url:
+                type: string
+                format: uri
+                maxLength: 500
+              brand_initial:
+                type: string
+                maxLength: 4
+    responses:
+      "200":
+        description: 站点元数据已更新。
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+                  example: 站点元数据已更新
+                data:
+                  $ref: ../components/schemas/SiteMetadata.yaml
+      "400":
+        $ref: ../components/responses/ValidationError.yaml
+      "401":
+        $ref: ../components/responses/Unauthorized.yaml
+      "403":
+        $ref: ../components/responses/Forbidden.yaml
+
 /api/v1/homepage/links/:
   get:
     tags:

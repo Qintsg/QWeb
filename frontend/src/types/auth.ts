@@ -114,6 +114,14 @@ export interface OAuthRegisterRequest {
 
 export type OAuthCallbackResponse = LoginResponse | OAuthChoiceResponse
 
+export interface BootstrapStatus {
+  owner_required: boolean
+}
+
+export type BootstrapOwnerRequest = RegisterRequest
+
+export type BootstrapOwnerResponse = LoginResponse
+
 export interface TokenPair {
   access: string
   refresh: string

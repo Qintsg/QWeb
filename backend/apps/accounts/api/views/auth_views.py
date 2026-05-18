@@ -19,6 +19,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView
 
 from apps.accounts.api.serializers.auth import (
+    BootstrapOwnerSerializer,
     ChangePasswordSerializer,
     LoginSerializer,
     LogoutSerializer,
@@ -33,6 +34,10 @@ from apps.accounts.services.auth_service import (
     authenticate_user,
     register_user,
 )
+from apps.accounts.services.bootstrap_service import (
+    create_owner_user,
+    get_bootstrap_status,
+)
 from apps.accounts.services.oauth_service import (
     bind_oauth_to_existing_user,
     build_oauth_authorization_url,
@@ -46,6 +51,55 @@ from apps.accounts.services.token_service import (
 )
 from apps.audit.services.login_audit import log_logout
 from apps.core.responses import success_response
+
+
+class BootstrapStatusView(GenericAPIView):
+    """首次部署状态接口。
+
+    GET /api/v1/auth/bootstrap/status/
+    公开接口，用于前端判断是否需要进入站长创建流程。
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request: Request) -> Response:
+        """处理 GET 请求并返回统一响应。"""
+        return success_response(data=get_bootstrap_status(), message="获取首次部署状态成功")
+
+
+class BootstrapOwnerView(GenericAPIView):
+    """首次部署创建站长账号接口。
+
+    POST /api/v1/auth/bootstrap/owner/
+    仅在系统没有任何 owner 角色用户时可用。
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    serializer_class = BootstrapOwnerSerializer
+
+    def post(self, request: Request) -> Response:
+        """处理 POST 请求并返回统一响应。"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = create_owner_user(
+            username=serializer.validated_data["username"],
+            email=serializer.validated_data["email"],
+            password=serializer.validated_data["password"],
+            request=request._request,
+        )
+        return success_response(
+            data={
+                "status": "authenticated",
+                "user": UserSerializer(result["user"]).data,
+                "access": result["access"],
+                "refresh": result["refresh"],
+                "redirect": "/dashboard",
+            },
+            message="站长账号创建成功",
+            status=201,
+        )
 
 
 class RegisterView(GenericAPIView):
